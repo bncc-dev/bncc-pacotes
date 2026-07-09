@@ -1,0 +1,11 @@
+{
+  "name": "bncc-pacotes",
+  "private": true,
+  "description": "Monorepo dos pacotes bncc.dev: npm (bncc), servidor MCP e PyPI",
+  "scripts": {
+    "sincronizar": "node scripts/sincronizar-dados.mjs",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test"
+  },
+  "packageManager": "pnpm@10.28.2"
+}

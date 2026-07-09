@@ -1,0 +1,12 @@
+{
+  "data_version": "dados-2026.07",
+  "origem": "github.com/bncc-dev/bncc-dados",
+  "commit": "46accba58c68af21235c0b3d1d5ab3855834f739",
+  "sincronizado_de": "/Users/marcosbeto/Dev/bncc-dados",
+  "checksums_sha256": {
+    "estrutura.json": "0c499251a18a08508a74b1f4fa3ce4aae79ab9871bf0be65e4384629fb30b665",
+    "educacao-infantil.json": "e8549b4e35313b18d4fa02eb07b4ff603c3fef173224528a7aadd965680892e9",
+    "ensino-fundamental.json": "e18f7573a5c80ca326292160b8cc431992db80371923f2851974b919ac925817",
+    "ensino-medio.json": "380ff4761d5e287791de025ed806bcf343936a6398dbbab2e9265a2c42917adf"
+  }
+}
