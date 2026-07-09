@@ -26,6 +26,11 @@ const v = versao();
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:site_name" content="bncc.dev" />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <script is:inline>
+      // aplica o tema salvo antes do primeiro paint (evita flash)
+      const temaSalvo = localStorage.getItem('tema');
+      if (temaSalvo) document.documentElement.dataset.theme = temaSalvo;
+    </script>
   </head>
   <body>
     <header class="topbar">
@@ -41,6 +46,10 @@ const v = versao();
         <a href="/medio/">Médio</a>
         <a href="/sobre/">Sobre</a>
         <a href="https://github.com/bncc-dev" rel="noopener">GitHub</a>
+        <button class="theme-btn" type="button" id="alternar-tema" aria-label="Alternar entre tema claro e escuro" title="Tema claro/escuro">
+          <svg id="icone-sol" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true" style="display:none"><path d="M8 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-11a.75.75 0 0 1 .75.75v1a.75.75 0 0 1-1.5 0v-1A.75.75 0 0 1 8 1Zm0 12a.75.75 0 0 1 .75.75v1a.75.75 0 0 1-1.5 0v-1A.75.75 0 0 1 8 13Zm7-5a.75.75 0 0 1-.75.75h-1a.75.75 0 0 1 0-1.5h1A.75.75 0 0 1 15 8ZM3.5 8a.75.75 0 0 1-.75.75h-1a.75.75 0 0 1 0-1.5h1A.75.75 0 0 1 3.5 8Zm8.8-4.95a.75.75 0 0 1 0 1.06l-.7.7a.75.75 0 1 1-1.07-1.06l.71-.7a.75.75 0 0 1 1.06 0ZM5.46 10.54a.75.75 0 0 1 0 1.06l-.7.7a.75.75 0 0 1-1.07-1.06l.71-.7a.75.75 0 0 1 1.06 0Zm7.9 1.76a.75.75 0 0 1-1.06 0l-.7-.7a.75.75 0 1 1 1.06-1.07l.7.71a.75.75 0 0 1 0 1.06ZM5.46 5.46a.75.75 0 0 1-1.06 0l-.7-.7a.75.75 0 0 1 1.06-1.07l.7.71a.75.75 0 0 1 0 1.06Z"/></svg>
+          <svg id="icone-lua" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true" style="display:none"><path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+        </button>
         <span class="badge-version">{v.data_version} · BNCC 2018</span>
       </nav>
     </header>
@@ -63,6 +72,25 @@ const v = versao();
     </footer>
 
     <script is:inline>
+      // tema claro/escuro (persiste a escolha; padrão segue o sistema)
+      const btnTema = document.getElementById('alternar-tema');
+      const iconeSol = document.getElementById('icone-sol');
+      const iconeLua = document.getElementById('icone-lua');
+      const temaAtual = () => document.documentElement.dataset.theme
+        || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      const atualizarIcone = () => {
+        const escuro = temaAtual() === 'dark';
+        iconeSol.style.display = escuro ? 'block' : 'none';   // no escuro, oferece o sol
+        iconeLua.style.display = escuro ? 'none' : 'block';
+      };
+      btnTema.addEventListener('click', () => {
+        const novo = temaAtual() === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = novo;
+        localStorage.setItem('tema', novo);
+        atualizarIcone();
+      });
+      atualizarIcone();
+
       // ir-para-código (busca textual completa chega com a plataforma)
       const form = document.getElementById('busca-codigo');
       if (form) {
