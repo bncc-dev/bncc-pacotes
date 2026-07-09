@@ -1,0 +1,28 @@
+{
+  "name": "@bncc/mcp",
+  "version": "0.0.1",
+  "description": "Servidor MCP da BNCC: as 1.580 aprendizagens da Base Nacional Comum Curricular, verificadas e com fonte oficial, como tools para agentes de IA. Casca sobre @bncc/dados.",
+  "keywords": ["bncc", "mcp", "modelcontextprotocol", "educacao", "claude", "agentes"],
+  "license": "MIT",
+  "homepage": "https://github.com/bncc-dev/bncc-pacotes",
+  "repository": { "type": "git", "url": "git+https://github.com/bncc-dev/bncc-pacotes.git" },
+  "type": "module",
+  "bin": { "bncc-mcp": "dist/servidor.js" },
+  "files": ["dist", "README.md"],
+  "publishConfig": { "access": "public" },
+  "scripts": {
+    "build": "tsup src/servidor.ts src/tools.ts --format esm --dts --clean",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@bncc/dados": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^3.0.0"
+  }
+}
