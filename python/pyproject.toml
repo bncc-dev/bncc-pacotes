@@ -1,6 +1,6 @@
 [project]
 name = "bncc"
-version = "0.0.1"
+version = "0.1.0"
 description = "A BNCC (Base Nacional Comum Curricular) como dados estruturados e verificados, com API de consulta em português. Dados embutidos, zero dependências, zero rede."
 readme = "README.md"
 requires-python = ">=3.10"
