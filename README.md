@@ -6,7 +6,7 @@ Monorepo das interfaces para máquina do bncc.dev (Fase 2): o dataset [bncc-dado
 |---|---|---|
 | `packages/bncc` | Pacote npm @bncc/dados: dados embutidos + API de consulta tipada em português | M1 pronto (aguarda publicação) |
 | `packages/mcp` | Servidor MCP @bncc/mcp (7 tools, casca sobre @bncc/dados), via npx | M2 pronto (aguarda publicação) |
-| `python/` | Pacote PyPI com API equivalente e paridade testada | M3 planejado |
+| `python/` | Pacote PyPI bncc: API equivalente em snake_case, paridade provada pelas mesmas fixtures | M3 pronto (aguarda publicação) |
 
 Os dados embutidos são sincronizados de um commit específico do bncc-dados por `scripts/sincronizar-dados.mjs`, com data-version e checksums registrados em `dados/VERSAO.json` de cada pacote.
 

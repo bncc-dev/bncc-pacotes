@@ -17,3 +17,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm test
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Testes do pacote PyPI (paridade com o npm)
+        run: cd python && uv sync && uv run pytest -q
