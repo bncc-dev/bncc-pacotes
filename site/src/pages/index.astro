@@ -1,38 +1,143 @@
 ---
 import Base from '../layouts/Base.astro';
-import { ETAPAS, estatisticas } from '../lib/dados';
+import { estatisticas, estrutura, porCodigo } from '../lib/dados';
+
 const s = estatisticas();
+const exemplo = porCodigo('EF67LP08');
+const comps = estrutura().componentes_curriculares.filter((c) => c.etapa === 'EF');
+const prompt = `Use os dados de bncc.dev como única fonte das habilidades da BNCC. Nunca invente códigos nem enunciados: consulte bncc.dev/habilidade/{codigo} ou o pacote npm @bncc/dados. Linke cada habilidade citada para a página correspondente em bncc.dev.`;
+const snippetNpm = `$ npm install @bncc/dados
+
+import { porCodigo } from '@bncc/dados';
+porCodigo('EF67LP08').texto;`;
+const snippetPy = `$ pip install bncc
+
+import bncc
+bncc.por_codigo('EF67LP08')['texto']`;
+const snippetMcp = `{ "mcpServers": { "bncc":
+    { "command": "npx", "args": ["-y", "@bncc/mcp"] } } }`;
 ---
 <Base titulo="bncc.dev · a BNCC como dados abertos, estruturados e verificados"
-      descricao={`As ${s.total} aprendizagens da Base Nacional Comum Curricular com fonte oficial, dados abertos (CC BY 4.0), pacotes npm/PyPI e servidor MCP.`}>
-  <h1 class="titulo-secao">A BNCC como dados abertos, estruturados e verificados</h1>
-  <p class="subtitulo">
-    Uma página permanente para cada uma das {s.total.toLocaleString('pt-BR')} aprendizagens da
-    Base Nacional Comum Curricular: texto oficial conferido contra o documento homologado,
-    contexto pedagógico completo e fonte citável.
-  </p>
-  <div class="grade-etapas">
-    <a class="cartao-etapa" href="/infantil/" style={`--cor: ${ETAPAS.EI.cor}`}>
-      <strong>Educação Infantil</strong>
-      <span>{s.educacaoInfantil} objetivos em 5 campos de experiências, com a progressão entre faixas etárias</span>
-    </a>
-    <a class="cartao-etapa" href="/fundamental/" style={`--cor: ${ETAPAS.EF.cor}`}>
-      <strong>Ensino Fundamental</strong>
-      <span>{s.ensinoFundamental.toLocaleString('pt-BR')} habilidades em 9 componentes, do 1º ao 9º ano</span>
-    </a>
-    <a class="cartao-etapa" href="/medio/" style={`--cor: ${ETAPAS.EM.cor}`}>
-      <strong>Ensino Médio</strong>
-      <span>{s.ensinoMedio} habilidades em 4 áreas, com competências vinculadas</span>
-    </a>
+      descricao={`As ${s.total.toLocaleString('pt-BR')} aprendizagens da Base Nacional Comum Curricular com fonte oficial: consulte no site, use via pacotes npm/PyPI ou conecte agentes de IA pelo servidor MCP.`}>
+
+  <div class="opening">
+    <h1 class="thesis">A BNCC como dados abertos e verificados. <span class="quem">Para quem ensina e para quem desenvolve.</span></h1>
+    <p class="lede">Cada dado é conferido com os documentos oficiais do MEC. Consulte aqui no site ou leve para o que você cria: pacotes de programação, conexão para assistentes de IA e uma página permanente para cada habilidade.</p>
+
+    <div class="hero-split">
+      <div class="hero-pane ensinar" aria-label="Para quem ensina">
+        <span class="pane-label">Para quem ensina</span>
+        <p class="pane-sub">Consulte a Base sem instalar nada, sem cadastro.</p>
+        <form class="big-search" role="search" id="busca-home">
+          <svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+          <input type="search" placeholder="Digite um código… ex.: EF67LP08" aria-label="Ir para um código da BNCC" />
+          <button class="btn-buscar" type="submit">Abrir</button>
+        </form>
+        <p class="search-hints">por exemplo: <a href="/habilidade/EF67LP08/">EF67LP08</a> · <a href="/objetivo/EI02TS01/">EI02TS01</a> · busca por tema chega com a plataforma</p>
+        <div class="materias" aria-label="Atalhos por etapa">
+          <a class="materia" href="/infantil/">Educação Infantil</a>
+          <a class="materia" href="/fundamental/">Fundamental</a>
+          <a class="materia" href="/medio/">Médio</a>
+        </div>
+        <p class="pane-foot"><a href="/fundamental/">ou navegue por etapa, ano e componente →</a></p>
+      </div>
+      <div class="hero-pane desenvolver" aria-label="Para quem desenvolve">
+        <span class="pane-label">Para quem desenvolve</span>
+        <p class="pane-sub">Com código ou sem: copie e comece agora.</p>
+        <div class="install-tabs" role="tablist" aria-label="Comece agora">
+          <button class="install-tab tab" role="tab" aria-selected="true" data-panel="hero-prompt" type="button">prompt</button>
+          <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-npm" type="button">npm</button>
+          <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-python" type="button">python</button>
+          <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-mcp" type="button">MCP</button>
+        </div>
+        <div class="prompt-panel" id="hero-prompt" role="tabpanel">
+          <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+          <q>{prompt}</q>
+        </div>
+        <div class="codeblock" id="hero-npm" role="tabpanel" hidden>
+          <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+          <pre set:text={snippetNpm} />
+        </div>
+        <div class="codeblock" id="hero-python" role="tabpanel" hidden>
+          <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+          <pre set:text={snippetPy} />
+        </div>
+        <div class="codeblock" id="hero-mcp" role="tabpanel" hidden>
+          <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+          <pre set:text={snippetMcp} />
+        </div>
+        <p class="search-hints">o prompt funciona em ferramentas como Lovable, Replit e v0; os pacotes chegam aos registries na release 1.0</p>
+        <p class="pane-foot"><a href="https://github.com/bncc-dev/bncc-pacotes" rel="noopener">pacotes e MCP →</a> · <a href="https://github.com/bncc-dev/bncc-dados" rel="noopener">dados brutos →</a></p>
+      </div>
+      <span class="hero-dot" aria-hidden="true">·</span>
+    </div>
+    <p class="feito-para"><strong>Feito para:</strong> <a href="/fundamental/">professoras e professores</a> · <a href="https://github.com/bncc-dev/bncc-pacotes" rel="noopener">devs e edtechs</a> · <a href="/llms.txt">agentes de IA</a> · <a href="/sobre/">quem mantém</a></p>
   </div>
-  <section class="bloco">
-    <h2>Para quem constrói</h2>
-    <p>
-      Todo o dado é aberto (CC BY 4.0) e rastreável à fonte oficial, com extração reprodutível e
-      validação contínua: <a href="https://github.com/bncc-dev/bncc-dados">bncc-dados</a>.
-      Para consumir em código: pacote npm <code>@bncc/dados</code>, pacote Python <code>bncc</code>
-      e servidor MCP <code>@bncc/mcp</code> para agentes de IA
-      (<a href="https://github.com/bncc-dev/bncc-pacotes">bncc-pacotes</a>).
-    </p>
+
+  <section class="faixa-home" aria-labelledby="h-explorar">
+    <h2 id="h-explorar">Explore por etapa, do berçário ao terceiro ano do médio</h2>
+    <p class="h2-hint">Toda a Base Nacional Comum Curricular sem folhear PDF: escolha a etapa, o ano e o componente, em linguagem de escola.</p>
+    <div class="etapas">
+      <a class="etapa" href="/infantil/">
+        <span class="nome">Educação Infantil</span>
+        <span class="faixa">0 a 5 anos · 5 campos de experiências</span>
+        <span class="qtd">{s.educacaoInfantil} objetivos</span>
+      </a>
+      <a class="etapa" href="/fundamental/">
+        <span class="nome">Ensino Fundamental</span>
+        <span class="faixa">1º ao 9º ano · 9 componentes</span>
+        <span class="qtd">{s.ensinoFundamental.toLocaleString('pt-BR')} habilidades</span>
+      </a>
+      <a class="etapa" href="/medio/">
+        <span class="nome">Ensino Médio</span>
+        <span class="faixa">1ª a 3ª série · 4 áreas</span>
+        <span class="qtd">{s.ensinoMedio} habilidades</span>
+      </a>
+    </div>
+    <div class="materias" aria-label="Atalhos por componente">
+      {comps.map((c) => (
+        <a class="materia" href={`/fundamental/${c.id.replace('ef-comp-', '')}/`}>{c.nome}</a>
+      ))}
+    </div>
+  </section>
+
+  <section class="faixa-home" aria-labelledby="h-exemplo">
+    <h2 id="h-exemplo">Cada habilidade tem sua própria página: um link para citar e compartilhar</h2>
+    <p class="h2-hint">Cole no planejamento, mande no grupo da escola, referencie no material. O link é permanente e a fonte oficial está sempre indicada.</p>
+    <a class="verbete" href="/habilidade/EF67LP08/">
+      <span class="cod-row">
+        <span class="cod">EF67LP08</span>
+        <span class="contexto">Ensino Fundamental · 6º–7º ano · Língua Portuguesa · Campo jornalístico/midiático</span>
+      </span>
+      <p>{exemplo.texto.slice(0, 220)}…</p>
+      <span class="cta">abrir esta habilidade →</span>
+    </a>
+  </section>
+
+  <section class="faixa-home" aria-labelledby="h-confianca">
+    <h2 id="h-confianca">Por que confiar</h2>
+    <p class="h2-hint">Extração reprodutível a partir das fontes oficiais, verificação contra o documento homologado e toda decisão de interpretação documentada em público.</p>
+    <div class="numbers">
+      <div class="num"><span class="v">{s.total.toLocaleString('pt-BR')}</span><span class="k">aprendizagens</span></div>
+      <div class="num"><span class="v">1.576</span><span class="k">textos idênticos ao PDF oficial</span></div>
+      <div class="num"><span class="v">{s.competenciasGerais + s.competenciasEspecificas}</span><span class="k">competências</span></div>
+      <div class="num"><span class="v">100%</span><span class="k">com fonte citável</span></div>
+    </div>
+    <p class="trust-line">As 4 divergências entre as próprias fontes oficiais estão <strong>documentadas uma a uma</strong>, com a decisão tomada e a justificativa: <a href="https://github.com/bncc-dev/bncc-dados/blob/main/DECISOES.md" rel="noopener">DECISOES.md</a>. A reprodutibilidade não é promessa: é um teste que roda a cada mudança.</p>
+    <p class="pledge"><strong>Compromisso:</strong> dados, pacotes e servidor MCP são abertos e livres, sem API key e sem cadastro. O que é aberto nunca deixa de ser: <a href="https://github.com/bncc-dev/bncc-dados/blob/main/docs/divisao-aberto-comercial.md" rel="noopener">a regra de ouro está por escrito</a>.</p>
   </section>
 </Base>
+
+<script is:inline>
+  const bh = document.getElementById('busca-home');
+  if (bh) {
+    const input = bh.querySelector('input');
+    bh.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = input.value.trim().toUpperCase();
+      if (/^EI0[123](EO|CG|TS|EF|ET)\d{2}$/.test(q)) location.href = `/objetivo/${q}/`;
+      else if (/^(EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(q)) location.href = `/habilidade/${q}/`;
+      else { input.setCustomValidity('Digite um código BNCC, ex.: EF67LP08'); input.reportValidity(); setTimeout(() => input.setCustomValidity(''), 1500); }
+    });
+  }
+</script>
