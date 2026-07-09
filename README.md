@@ -4,7 +4,7 @@ Monorepo das interfaces para máquina do bncc.dev (Fase 2): o dataset [bncc-dado
 
 | Pacote | O que é | Estado |
 |---|---|---|
-| `packages/bncc` | Pacote npm: dados embutidos + API de consulta tipada em português | M1 em desenvolvimento |
+| `packages/bncc` | Pacote npm @bncc/dados: dados embutidos + API de consulta tipada em português | M1 em desenvolvimento |
 | `packages/mcp` | Servidor MCP (casca sobre o pacote bncc), via npx | M2 planejado |
 | `python/` | Pacote PyPI com API equivalente e paridade testada | M3 planejado |
 
