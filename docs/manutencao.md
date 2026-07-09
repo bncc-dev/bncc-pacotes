@@ -39,9 +39,9 @@ Regra de ouro: **npm e PyPI andam juntos, sempre.**
 ## Publicar (após o gate `dados-v1.0.0`)
 
 - npm (requer 2FA interativo do mantenedor):
-  `cd packages/bncc && pnpm build && npm publish --access public`
-  `cd packages/mcp && pnpm build && npm publish --access public`
-  Atenção: `@bncc/dados` do MCP deve apontar para a versão publicada (o `workspace:*` é convertido pelo pnpm no publish).
+  `cd packages/bncc && pnpm build && pnpm publish --access public`
+  `cd packages/mcp && pnpm build && pnpm publish --access public`
+  **SEMPRE `pnpm publish`, nunca `npm publish`**: só o pnpm converte o `workspace:*` do MCP para a versão real. Publicar com npm gera pacote ininstalável (aconteceu com o 0.1.0 do MCP, depreciado em 09/07/2026).
 - PyPI (requer token `UV_PUBLISH_TOKEN`):
   `cd python && uv build && uv publish`
 - Ordem: `@bncc/dados` primeiro, depois `@bncc/mcp`, depois PyPI.
