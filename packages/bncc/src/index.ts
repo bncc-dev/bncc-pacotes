@@ -1,18 +1,21 @@
 /**
- * bncc — a BNCC como dados estruturados, com API de consulta em português.
+ * @bncc/dados — a BNCC como dados estruturados e verificados, com API de
+ * consulta em português. Dados embutidos, zero dependências, zero rede.
  *
- * M0: carregamento dos dados embutidos e metadados de versão.
- * A API de consulta (porCodigo, buscar, habilidadesEF...) chega no M1.
+ * Projeto bncc.dev · dados CC BY 4.0 · código MIT
  */
+export { decodificar, CAMPOS_EI, GRUPOS_EI, COMPONENTES_EF, BLOCOS_EF, AREAS_EM } from './decodificar.js';
+export type { CodigoDecodificado, CodigoEI, CodigoEF, CodigoEM } from './decodificar.js';
+export {
+  porCodigo, buscar, habilidadesEF, habilidadesEM, objetivosEI,
+  estrutura, progressaoEI, estatisticas,
+} from './consultas.js';
+export type { FiltroEF, FiltroEM, FiltroEI, FiltroBusca } from './consultas.js';
+export type * from './tipos.js';
+
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-
-const DADOS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'dados');
-
-function carregar<T>(arquivo: string): T {
-  return JSON.parse(readFileSync(join(DADOS_DIR, arquivo), 'utf8')) as T;
-}
 
 export interface Versao {
   data_version: string;
@@ -23,10 +26,6 @@ export interface Versao {
 
 /** Metadados da versão dos dados embutidos (data-version, commit de origem, checksums). */
 export function versao(): Versao {
-  return carregar<Versao>('VERSAO.json');
-}
-
-/** Acesso bruto aos arquivos de dados embutidos (API tipada de consulta chega no M1). */
-export function dadosBrutos(arquivo: 'estrutura' | 'educacao-infantil' | 'ensino-fundamental' | 'ensino-medio'): unknown {
-  return carregar(`${arquivo}.json`);
+  const dir = join(dirname(fileURLToPath(import.meta.url)), '..', 'dados');
+  return JSON.parse(readFileSync(join(dir, 'VERSAO.json'), 'utf8')) as Versao;
 }
