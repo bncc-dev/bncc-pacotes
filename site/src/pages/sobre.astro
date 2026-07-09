@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import { estatisticas, versao } from '../lib/dados';
+const s = estatisticas();
+const v = versao();
+---
+<Base titulo="Sobre · bncc.dev" descricao="O que é o bncc.dev: a fonte pública de referência para dados estruturados da BNCC, mantida pela Profy.">
+  <h1 class="titulo-secao">Sobre o bncc.dev</h1>
+  <p>
+    Todo software para a educação básica brasileira reconstrói a mesma fundação: a estrutura da BNCC.
+    Os dados oficiais existem, mas vivem em PDFs e planilhas, sem identificadores relacionais, sem API,
+    sem versionamento. O bncc.dev resolve isso uma vez, em público.
+  </p>
+  <p>
+    Cada registro é extraído das fontes oficiais do MEC por um processo reprodutível, conferido
+    caractere a caractere contra o documento homologado e publicado como dado aberto. As divergências
+    entre as próprias fontes oficiais são documentadas, nunca corrigidas em silêncio.
+  </p>
+  <p>
+    São {s.total.toLocaleString('pt-BR')} aprendizagens ({s.educacaoInfantil} da Educação Infantil,
+    {s.ensinoFundamental.toLocaleString('pt-BR')} do Ensino Fundamental e {s.ensinoMedio} do Ensino Médio),
+    10 competências gerais e {s.competenciasEspecificas} competências específicas. Versão dos dados exibidos:
+    <code>{v.data_version}</code>.
+  </p>
+  <section class="bloco">
+    <h2>Confiança e metodologia</h2>
+    <p>
+      A metodologia completa (fontes com checksum, verificação, validação em CI, decisões de
+      interpretação) está documentada no repositório
+      <a href="https://github.com/bncc-dev/bncc-dados">bncc-dados</a>. Correções exigem referência
+      à fonte oficial.
+    </p>
+  </section>
+  <section class="bloco">
+    <h2>Quem mantém</h2>
+    <p>
+      O bncc.dev é mantido pela <a href="https://profy.com.br">Profy</a>, que é também sua primeira
+      consumidora. Dados sob CC BY 4.0; código sob MIT. O que é aberto é irrevogavelmente aberto.
+    </p>
+  </section>
+</Base>

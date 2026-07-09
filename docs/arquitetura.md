@@ -14,6 +14,7 @@ flowchart LR
     FIX["fixtures/consultas-douradas.json"] -.->|vitest| NPM
     FIX -.->|pytest| PY
     MCP --> AGENTES["Claude Code, Cursor..."]
+    NPM -->|getStaticPaths no build| SITE["site/ (Astro)<br/>1.679 páginas estáticas<br/>bncc.dev"]
     NPM --> APPS["apps TypeScript"]
     PY --> CIENCIA["Python, pandas, notebooks"]
 ```
@@ -65,8 +66,14 @@ Mapeamento de versões: a versão do pacote segue semver próprio; a data-versio
 
 Nada sai como 1.0 nos registries antes da release `dados-v1.0.0` do bncc-dados (revisão pedagógica registrada). Estado da reserva de nomes: `@bncc/dados@0.0.1` publicado (escopo @bncc garantido); PyPI `bncc` aguardando credenciais.
 
+### `site/` → bncc.dev (páginas canônicas)
+
+- Astro 5, geração 100% estática no build: 1.679 páginas (1.580 aprendizagens + navegação por etapa/componente/ano/área/campo), zero JS no cliente.
+- Consome o `@bncc/dados` via workspace (dogfooding: o site é o primeiro consumidor real do pacote). O pacote fica `ssr.external` no Vite porque carrega os JSONs relativos ao próprio módulo.
+- Design editorial: cores por etapa herdadas da linguagem visual do documento oficial; código como carimbo tipográfico; selo de verificação com a página do PDF em cada página; JSON-LD LearningResource; sitemap; llms.txt.
+- Deploy acontece na release (Cloudflare Pages); extração para repo próprio quando o pacote for publicado.
+
 ## O que fica fora deste repo
 
 - Extração e validação dos dados: bncc-dados.
-- Site de páginas canônicas: bncc-site (M4).
 - API hospedada: repo futuro bncc-api (Fase 4, condicionada a tração).

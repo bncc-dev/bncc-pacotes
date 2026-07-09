@@ -1,0 +1,62 @@
+---
+import '@fontsource-variable/archivo';
+import '@fontsource-variable/source-serif-4';
+import '../styles/global.css';
+import { versao } from '../lib/dados';
+
+interface Props {
+  titulo: string;
+  descricao: string;
+  etapa?: 'EI' | 'EF' | 'EM';
+  jsonLd?: object;
+}
+const { titulo, descricao, etapa, jsonLd } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const v = versao();
+---
+<!doctype html>
+<html lang="pt-BR" data-etapa={etapa}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descricao} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="article" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="bncc.dev" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+  </head>
+  <body>
+    <header class="cabecalho">
+      <div class="cabecalho-inner">
+        <a class="marca" href="/">bncc<span>.dev</span></a>
+        <nav>
+          <a href="/infantil/">Infantil</a>
+          <a href="/fundamental/">Fundamental</a>
+          <a href="/medio/">Médio</a>
+          <a href="/sobre/">Sobre</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="rodape">
+      <div class="rodape-inner">
+        <div>
+          bncc.dev · a BNCC como dados abertos, estruturados e verificados · mantido pela
+          <a href="https://profy.com.br">Profy</a>
+        </div>
+        <div>
+          Dados: <a href="https://github.com/bncc-dev/bncc-dados">bncc-dados</a> (CC BY 4.0), versão {v.data_version} ·
+          Pacotes: <a href="https://github.com/bncc-dev/bncc-pacotes">@bncc/dados, @bncc/mcp, bncc (PyPI)</a> (MIT)
+        </div>
+        <div>Fonte oficial: Base Nacional Comum Curricular, documento homologado (MEC). Cada texto é conferido contra o PDF oficial.</div>
+      </div>
+    </footer>
+  </body>
+</html>

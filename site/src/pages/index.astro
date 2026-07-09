@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+import { ETAPAS, estatisticas } from '../lib/dados';
+const s = estatisticas();
+---
+<Base titulo="bncc.dev · a BNCC como dados abertos, estruturados e verificados"
+      descricao={`As ${s.total} aprendizagens da Base Nacional Comum Curricular com fonte oficial, dados abertos (CC BY 4.0), pacotes npm/PyPI e servidor MCP.`}>
+  <h1 class="titulo-secao">A BNCC como dados abertos, estruturados e verificados</h1>
+  <p class="subtitulo">
+    Uma página permanente para cada uma das {s.total.toLocaleString('pt-BR')} aprendizagens da
+    Base Nacional Comum Curricular: texto oficial conferido contra o documento homologado,
+    contexto pedagógico completo e fonte citável.
+  </p>
+  <div class="grade-etapas">
+    <a class="cartao-etapa" href="/infantil/" style={`--cor: ${ETAPAS.EI.cor}`}>
+      <strong>Educação Infantil</strong>
+      <span>{s.educacaoInfantil} objetivos em 5 campos de experiências, com a progressão entre faixas etárias</span>
+    </a>
+    <a class="cartao-etapa" href="/fundamental/" style={`--cor: ${ETAPAS.EF.cor}`}>
+      <strong>Ensino Fundamental</strong>
+      <span>{s.ensinoFundamental.toLocaleString('pt-BR')} habilidades em 9 componentes, do 1º ao 9º ano</span>
+    </a>
+    <a class="cartao-etapa" href="/medio/" style={`--cor: ${ETAPAS.EM.cor}`}>
+      <strong>Ensino Médio</strong>
+      <span>{s.ensinoMedio} habilidades em 4 áreas, com competências vinculadas</span>
+    </a>
+  </div>
+  <section class="bloco">
+    <h2>Para quem constrói</h2>
+    <p>
+      Todo o dado é aberto (CC BY 4.0) e rastreável à fonte oficial, com extração reprodutível e
+      validação contínua: <a href="https://github.com/bncc-dev/bncc-dados">bncc-dados</a>.
+      Para consumir em código: pacote npm <code>@bncc/dados</code>, pacote Python <code>bncc</code>
+      e servidor MCP <code>@bncc/mcp</code> para agentes de IA
+      (<a href="https://github.com/bncc-dev/bncc-pacotes">bncc-pacotes</a>).
+    </p>
+  </section>
+</Base>

@@ -1,0 +1,37 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { estrutura, habilidadesEF, rotaDe } from '../../../lib/dados';
+
+export function getStaticPaths() {
+  const caminhos: Array<{ params: { componente: string; ano: string } }> = [];
+  for (const c of estrutura().componentes_curriculares.filter((c) => c.etapa === 'EF')) {
+    const slug = c.id.replace('ef-comp-', '');
+    const anos = [...new Set(habilidadesEF({ componente: c.id }).flatMap((h) => h.anos!))];
+    for (const ano of anos) caminhos.push({ params: { componente: slug, ano: String(ano) } });
+  }
+  return caminhos;
+}
+
+const id = `ef-comp-${Astro.params.componente}`;
+const ano = Number(Astro.params.ano);
+const comp = estrutura().componentes_curriculares.find((c) => c.id === id)!;
+const habs = habilidadesEF({ componente: id, ano });
+---
+<Base titulo={`${comp.nome} · ${ano}º ano · BNCC · bncc.dev`} etapa="EF"
+      descricao={`As ${habs.length} habilidades de ${comp.nome} do ${ano}º ano do Ensino Fundamental na BNCC.`}>
+  <nav class="trilha">
+    <li><a href="/">bncc.dev</a></li>
+    <li><a href="/fundamental/">Ensino Fundamental</a></li>
+    <li><a href={`/fundamental/${Astro.params.componente}/`}>{comp.nome}</a></li>
+    <li>{ano}º ano</li>
+  </nav>
+  <h1 class="titulo-secao">{comp.nome} · {ano}º ano</h1>
+  <ul class="lista">
+    {habs.map((h) => (
+      <li><a href={rotaDe(h.codigo)}>
+        <span class="cod">{h.codigo}</span>
+        <span class="resumo">{h.texto.length > 140 ? h.texto.slice(0, 137) + '…' : h.texto}</span>
+      </a></li>
+    ))}
+  </ul>
+</Base>

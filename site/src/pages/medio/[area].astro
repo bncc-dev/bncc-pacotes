@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import { estrutura, habilidadesEM, rotaDe } from '../../lib/dados';
+
+export function getStaticPaths() {
+  return estrutura().areas_conhecimento
+    .filter((a) => a.etapa === 'EM')
+    .map((a) => ({ params: { area: a.id.replace('em-area-', '') } }));
+}
+
+const id = `em-area-${Astro.params.area}`;
+const area = estrutura().areas_conhecimento.find((a) => a.id === id)!;
+const habs = habilidadesEM({ area: id });
+---
+<Base titulo={`${area.nome} · Ensino Médio · BNCC · bncc.dev`} etapa="EM"
+      descricao={`As ${habs.length} habilidades de ${area.nome} no Ensino Médio da BNCC, com competências vinculadas.`}>
+  <nav class="trilha">
+    <li><a href="/">bncc.dev</a></li>
+    <li><a href="/medio/">Ensino Médio</a></li>
+    <li>{area.nome}</li>
+  </nav>
+  <h1 class="titulo-secao">{area.nome}</h1>
+  <ul class="lista">
+    {habs.map((h) => (
+      <li><a href={rotaDe(h.codigo)}>
+        <span class="cod">{h.codigo}</span>
+        <span class="resumo">{h.texto.length > 140 ? h.texto.slice(0, 137) + '…' : h.texto}</span>
+      </a></li>
+    ))}
+  </ul>
+</Base>

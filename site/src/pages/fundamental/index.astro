@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import { estrutura, habilidadesEF } from '../../lib/dados';
+const comps = estrutura().componentes_curriculares.filter((c) => c.etapa === 'EF');
+const contagem = (id: string) => habilidadesEF({ componente: id }).length;
+---
+<Base titulo="Ensino Fundamental · BNCC · bncc.dev" etapa="EF"
+      descricao="As 1.304 habilidades do Ensino Fundamental na BNCC, por componente curricular e ano, com texto oficial verificado.">
+  <nav class="trilha"><li><a href="/">bncc.dev</a></li><li>Ensino Fundamental</li></nav>
+  <h1 class="titulo-secao">Ensino Fundamental</h1>
+  <p class="subtitulo">9 componentes curriculares, do 1º ao 9º ano. Escolha um componente:</p>
+  <ul class="lista">
+    {comps.map((c) => (
+      <li><a href={`/fundamental/${c.id.replace('ef-comp-', '')}/`}>
+        <span class="cod">{c.sigla_codigo}</span>{c.nome}
+        <span class="resumo"> · {contagem(c.id)} habilidades{c.presenca ? ' · 6º ao 9º ano' : ''}</span>
+      </a></li>
+    ))}
+  </ul>
+</Base>

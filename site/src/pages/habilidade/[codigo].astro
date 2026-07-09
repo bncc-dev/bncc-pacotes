@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import PaginaAprendizagem from '../../components/PaginaAprendizagem.astro';
+import { habilidadesEF, habilidadesEM, jsonLd, metaDescricao, porCodigo } from '../../lib/dados';
+
+export function getStaticPaths() {
+  return [...habilidadesEF(), ...habilidadesEM()].map((h) => ({ params: { codigo: h.codigo } }));
+}
+
+const reg = porCodigo(Astro.params.codigo!);
+const titulo = `${reg.codigo} · BNCC · ${reg.etapa === 'EF' ? reg.componente!.nome : reg.area!.nome}`;
+---
+<Base titulo={titulo} descricao={metaDescricao(reg)} etapa={reg.etapa}
+      jsonLd={jsonLd(reg, new URL(Astro.url.pathname, Astro.site).href)}>
+  <PaginaAprendizagem reg={reg} />
+</Base>

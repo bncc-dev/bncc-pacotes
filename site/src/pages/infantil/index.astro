@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import { estrutura, objetivosEI } from '../../lib/dados';
+const campos = estrutura().campos_experiencias;
+---
+<Base titulo="Educação Infantil · BNCC · bncc.dev" etapa="EI"
+      descricao="Os 93 objetivos de aprendizagem e desenvolvimento da Educação Infantil na BNCC, por campo de experiências e faixa etária.">
+  <nav class="trilha"><li><a href="/">bncc.dev</a></li><li>Educação Infantil</li></nav>
+  <h1 class="titulo-secao">Educação Infantil</h1>
+  <p class="subtitulo">5 campos de experiências, 3 grupos por faixa etária, com a progressão oficial entre as faixas. Escolha um campo:</p>
+  <ul class="lista">
+    {campos.map((c) => (
+      <li><a href={`/infantil/${c.id.replace('ei-campo-', '')}/`}>
+        {c.nome}
+        <span class="resumo"> · {objetivosEI({ campo: c.id }).length} objetivos</span>
+      </a></li>
+    ))}
+  </ul>
+</Base>

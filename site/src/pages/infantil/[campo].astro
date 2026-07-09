@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import { GRUPOS_EI_ROTULOS, estrutura, objetivosEI, rotaDe } from '../../lib/dados';
+
+export function getStaticPaths() {
+  return estrutura().campos_experiencias.map((c) => ({ params: { campo: c.id.replace('ei-campo-', '') } }));
+}
+
+const id = `ei-campo-${Astro.params.campo}`;
+const campo = estrutura().campos_experiencias.find((c) => c.id === id)!;
+const grupos = ['ei-grupo-01', 'ei-grupo-02', 'ei-grupo-03'];
+---
+<Base titulo={`${campo.nome} · Educação Infantil · BNCC · bncc.dev`} etapa="EI"
+      descricao={`Os objetivos de aprendizagem do campo de experiências "${campo.nome}" na Educação Infantil da BNCC, por faixa etária.`}>
+  <nav class="trilha">
+    <li><a href="/">bncc.dev</a></li>
+    <li><a href="/infantil/">Educação Infantil</a></li>
+    <li>{campo.nome}</li>
+  </nav>
+  <h1 class="titulo-secao">{campo.nome}</h1>
+  {grupos.map((g) => (
+    <section class="bloco">
+      <h2>{GRUPOS_EI_ROTULOS[g]}</h2>
+      <ul class="lista">
+        {objetivosEI({ campo: id, grupoEtario: g }).map((o) => (
+          <li><a href={rotaDe(o.codigo)}>
+            <span class="cod">{o.codigo}</span>
+            <span class="resumo">{o.texto}</span>
+          </a></li>
+        ))}
+      </ul>
+    </section>
+  ))}
+</Base>

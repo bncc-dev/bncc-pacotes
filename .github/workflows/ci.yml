@@ -25,3 +25,20 @@ jobs:
       - uses: astral-sh/setup-uv@v5
       - name: Testes do pacote PyPI (paridade com o npm)
         run: cd python && uv sync && uv run pytest -q
+
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build do pacote de dados (dependência do site)
+        run: pnpm --filter @bncc/dados build
+      - name: Build do site (1.679 páginas estáticas)
+        run: pnpm --filter site build
+      - name: Verificar contagem e links internos
+        run: node site/scripts/verificar-links.mjs

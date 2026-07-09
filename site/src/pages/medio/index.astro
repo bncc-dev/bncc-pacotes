@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import { estrutura, habilidadesEM } from '../../lib/dados';
+const areas = estrutura().areas_conhecimento.filter((a) => a.etapa === 'EM');
+---
+<Base titulo="Ensino Médio · BNCC · bncc.dev" etapa="EM"
+      descricao="As 183 habilidades do Ensino Médio na BNCC, por área do conhecimento, com competências vinculadas e texto oficial verificado.">
+  <nav class="trilha"><li><a href="/">bncc.dev</a></li><li>Ensino Médio</li></nav>
+  <h1 class="titulo-secao">Ensino Médio</h1>
+  <p class="subtitulo">4 áreas do conhecimento, sem seriação (a progressão é definida pelos currículos). Escolha uma área:</p>
+  <ul class="lista">
+    {areas.map((a) => (
+      <li><a href={`/medio/${a.id.replace('em-area-', '')}/`}>
+        {a.nome}
+        <span class="resumo"> · {habilidadesEM({ area: a.id }).length} habilidades</span>
+      </a></li>
+    ))}
+  </ul>
+</Base>

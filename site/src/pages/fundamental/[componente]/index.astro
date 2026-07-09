@@ -1,0 +1,33 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { estrutura, habilidadesEF } from '../../../lib/dados';
+
+export function getStaticPaths() {
+  return estrutura().componentes_curriculares
+    .filter((c) => c.etapa === 'EF')
+    .map((c) => ({ params: { componente: c.id.replace('ef-comp-', '') } }));
+}
+
+const id = `ef-comp-${Astro.params.componente}`;
+const comp = estrutura().componentes_curriculares.find((c) => c.id === id)!;
+const habs = habilidadesEF({ componente: id });
+const anos = [...new Set(habs.flatMap((h) => h.anos!))].sort((a, b) => a - b);
+---
+<Base titulo={`${comp.nome} · Ensino Fundamental · BNCC · bncc.dev`} etapa="EF"
+      descricao={`As ${habs.length} habilidades de ${comp.nome} no Ensino Fundamental, por ano, com texto oficial verificado.`}>
+  <nav class="trilha">
+    <li><a href="/">bncc.dev</a></li>
+    <li><a href="/fundamental/">Ensino Fundamental</a></li>
+    <li>{comp.nome}</li>
+  </nav>
+  <h1 class="titulo-secao">{comp.nome}</h1>
+  <p class="subtitulo">{habs.length} habilidades. Por ano:</p>
+  <ul class="lista">
+    {anos.map((ano) => (
+      <li><a href={`/fundamental/${Astro.params.componente}/${ano}/`}>
+        <span class="cod">{ano}º ano</span>
+        <span class="resumo">{habs.filter((h) => h.anos!.includes(ano)).length} habilidades</span>
+      </a></li>
+    ))}
+  </ul>
+</Base>

@@ -6,3 +6,5 @@ __pycache__/
 .DS_Store
 python/dist/
 python/.venv/
+site/dist/
+site/.astro/

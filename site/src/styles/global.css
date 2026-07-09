@@ -1,0 +1,199 @@
+/* bncc.dev · design editorial de referência
+   Tipografia: Archivo (UI) + Source Serif 4 (enunciados oficiais)
+   Cor: papel e tinta, com o acento da etapa herdado da linguagem visual
+   do documento oficial (EI verde, EF azul, EM dourado). Zero JS. */
+
+:root {
+  --papel: #faf7f2;
+  --papel-alto: #ffffff;
+  --tinta: #1c1a17;
+  --tinta-suave: #5c5850;
+  --linha: #e4ded4;
+  --acento: #1e5b8a; /* sobrescrito por etapa via data-etapa */
+  --acento-tint: color-mix(in srgb, var(--acento) 8%, var(--papel));
+  --serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, serif;
+  --sans: 'Archivo Variable', 'Archivo', 'Helvetica Neue', sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+}
+
+[data-etapa='EI'] { --acento: #2e7d4f; }
+[data-etapa='EF'] { --acento: #1e5b8a; }
+[data-etapa='EM'] { --acento: #b8860b; }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --papel: #17161a;
+    --papel-alto: #201f24;
+    --tinta: #ece8e1;
+    --tinta-suave: #a49e93;
+    --linha: #34323a;
+  }
+  [data-etapa='EI'] { --acento: #58b384; }
+  [data-etapa='EF'] { --acento: #5b9dd0; }
+  [data-etapa='EM'] { --acento: #d9a83c; }
+}
+
+* { box-sizing: border-box; }
+
+html {
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body { margin: 0; }
+
+main {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+}
+
+a { color: var(--acento); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+
+/* ── cabeçalho do site ─────────────────────────────── */
+.cabecalho {
+  border-bottom: 1px solid var(--linha);
+  background: var(--papel-alto);
+}
+.cabecalho-inner {
+  max-width: 46rem; margin: 0 auto; padding: 0.8rem 1.25rem;
+  display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap;
+}
+.marca {
+  font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em;
+  color: var(--tinta); text-decoration: none;
+}
+.marca span { color: var(--acento); }
+.cabecalho nav { display: flex; gap: 1rem; font-size: 0.85rem; }
+.cabecalho nav a { color: var(--tinta-suave); text-decoration: none; }
+.cabecalho nav a:hover { color: var(--acento); }
+
+/* ── trilha ────────────────────────────────────────── */
+.trilha {
+  font-size: 0.78rem; color: var(--tinta-suave);
+  margin: 1.6rem 0 0; display: flex; gap: 0.45rem; flex-wrap: wrap;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.trilha a { color: var(--tinta-suave); text-decoration: none; }
+.trilha a:hover { color: var(--acento); }
+.trilha li { list-style: none; }
+.trilha li + li::before { content: '·'; margin-right: 0.45rem; color: var(--linha); }
+.trilha { padding: 0; }
+
+/* ── o carimbo: código da aprendizagem ─────────────── */
+.carimbo {
+  font-family: var(--mono);
+  font-size: clamp(2.4rem, 8vw, 4rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--acento);
+  margin: 0.5rem 0 0;
+  line-height: 1;
+}
+.carimbo-etapa {
+  font-size: 0.85rem; font-weight: 600; color: var(--tinta-suave);
+  text-transform: uppercase; letter-spacing: 0.14em; margin-top: 0.4rem;
+}
+
+/* ── enunciado oficial ─────────────────────────────── */
+.enunciado {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  line-height: 1.55;
+  font-weight: 450;
+  margin: 1.8rem 0;
+  text-wrap: pretty;
+}
+
+.selo {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.8rem; color: var(--tinta-suave);
+  border: 1px solid var(--linha); border-radius: 999px;
+  padding: 0.3rem 0.85rem; background: var(--papel-alto);
+}
+.selo::before { content: '✓'; color: var(--acento); font-weight: 700; }
+
+/* ── ficha ─────────────────────────────────────────── */
+.ficha {
+  display: grid; grid-template-columns: max-content 1fr; gap: 0.55rem 1.4rem;
+  margin: 2rem 0; padding: 1.4rem 1.5rem;
+  background: var(--acento-tint);
+  border-left: 3px solid var(--acento); border-radius: 0 6px 6px 0;
+  font-size: 0.95rem;
+}
+.ficha dt {
+  color: var(--tinta-suave); font-size: 0.75rem;
+  text-transform: uppercase; letter-spacing: 0.09em; align-self: baseline; padding-top: 0.15rem;
+}
+.ficha dd { margin: 0; }
+
+/* ── progressão EI / competências ──────────────────── */
+.bloco { margin: 2.4rem 0; }
+.bloco h2 {
+  font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--tinta-suave); font-weight: 600; margin-bottom: 0.9rem;
+}
+.progressao { display: grid; gap: 0.7rem; padding: 0; margin: 0; }
+.progressao li {
+  list-style: none; padding: 0.9rem 1.1rem;
+  background: var(--papel-alto); border: 1px solid var(--linha); border-radius: 6px;
+}
+.progressao li.atual { border-color: var(--acento); }
+.progressao .cod { font-family: var(--mono); font-weight: 600; color: var(--acento); margin-right: 0.6rem; }
+.progressao .faixa { display: block; font-size: 0.75rem; color: var(--tinta-suave); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem; }
+
+/* ── bloco dev ─────────────────────────────────────── */
+.dev {
+  background: var(--tinta); color: var(--papel);
+  border-radius: 8px; padding: 1.3rem 1.5rem; margin: 2.4rem 0; font-size: 0.85rem;
+}
+@media (prefers-color-scheme: dark) { .dev { background: var(--papel-alto); color: var(--tinta); border: 1px solid var(--linha); } }
+.dev h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 0.8rem; opacity: 0.7; }
+.dev pre { margin: 0.4rem 0; overflow-x: auto; font-family: var(--mono); font-size: 0.82rem; line-height: 1.7; }
+.dev a { color: inherit; }
+
+/* ── vizinhança ────────────────────────────────────── */
+.vizinhanca {
+  display: flex; justify-content: space-between; gap: 1rem;
+  border-top: 1px solid var(--linha); margin-top: 3rem; padding-top: 1.2rem;
+  font-family: var(--mono); font-size: 0.9rem;
+}
+.vizinhanca a { text-decoration: none; }
+
+/* ── listagens ─────────────────────────────────────── */
+.lista { padding: 0; margin: 1.5rem 0; display: grid; gap: 0.55rem; }
+.lista li { list-style: none; }
+.lista a {
+  display: block; padding: 0.85rem 1.1rem; text-decoration: none; color: var(--tinta);
+  background: var(--papel-alto); border: 1px solid var(--linha); border-radius: 6px;
+}
+.lista a:hover { border-color: var(--acento); }
+.lista .cod { font-family: var(--mono); font-weight: 600; color: var(--acento); margin-right: 0.6rem; }
+.lista .resumo { color: var(--tinta-suave); font-size: 0.92rem; }
+
+.grade-etapas { display: grid; gap: 1rem; margin: 2rem 0; }
+@media (min-width: 640px) { .grade-etapas { grid-template-columns: repeat(3, 1fr); } }
+.cartao-etapa {
+  display: block; text-decoration: none; color: var(--tinta);
+  border: 1px solid var(--linha); border-top: 4px solid var(--cor, var(--acento));
+  border-radius: 8px; padding: 1.2rem 1.3rem; background: var(--papel-alto);
+}
+.cartao-etapa:hover { border-color: var(--cor, var(--acento)); }
+.cartao-etapa strong { display: block; font-size: 1.05rem; margin-bottom: 0.3rem; }
+.cartao-etapa span { color: var(--tinta-suave); font-size: 0.88rem; }
+
+/* ── rodapé ────────────────────────────────────────── */
+.rodape {
+  border-top: 1px solid var(--linha); margin-top: 3rem;
+  font-size: 0.8rem; color: var(--tinta-suave);
+}
+.rodape-inner { max-width: 46rem; margin: 0 auto; padding: 1.6rem 1.25rem; display: grid; gap: 0.4rem; }
+.rodape a { color: var(--tinta-suave); }
+
+h1.titulo-secao { font-family: var(--serif); font-size: 2rem; font-weight: 550; margin: 1.8rem 0 0.6rem; }
+.subtitulo { color: var(--tinta-suave); max-width: 38rem; }

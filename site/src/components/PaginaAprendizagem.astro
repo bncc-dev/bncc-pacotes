@@ -1,0 +1,97 @@
+---
+/** Corpo compartilhado das páginas de habilidade (EF/EM) e objetivo (EI). */
+import { ETAPAS, GRUPOS_EI_ROTULOS, progressaoEI, rotaDe, vizinhanca } from '../lib/dados';
+import type { AprendizagemResolvida } from '../lib/dados';
+
+interface Props { reg: AprendizagemResolvida }
+const { reg } = Astro.props;
+const etapa = ETAPAS[reg.etapa];
+const viz = vizinhanca(reg);
+const progressao = reg.etapa === 'EI' ? progressaoEI(reg.codigo) : null;
+const paginaPdf = reg.fonte.localizador_pdf?.match(/página PDF (\d+)/)?.[1];
+const tipo = reg.etapa === 'EI' ? 'Objetivo de aprendizagem e desenvolvimento' : 'Habilidade';
+---
+<nav class="trilha" aria-label="Você está em">
+  <li><a href="/">bncc.dev</a></li>
+  <li><a href={`/${etapa.rota}/`}>{etapa.nome}</a></li>
+  {reg.componente && reg.etapa === 'EF' && (
+    <li><a href={`/fundamental/${reg.componente.id.replace('ef-comp-', '')}/`}>{reg.componente.nome}</a></li>
+  )}
+  {reg.area && <li><a href={`/medio/${reg.area.id.replace('em-area-', '')}/`}>{reg.area.nome}</a></li>}
+  {reg.campoExperiencias && (
+    <li><a href={`/infantil/${reg.campoExperiencias.id.replace('ei-campo-', '')}/`}>{reg.campoExperiencias.nome}</a></li>
+  )}
+</nav>
+
+<h1 class="carimbo">{reg.codigo}</h1>
+<div class="carimbo-etapa">{tipo} · {etapa.nome}</div>
+
+<p class="enunciado">{reg.texto}</p>
+
+{paginaPdf && (
+  <span class="selo">Texto conferido contra o documento homologado da BNCC, página {paginaPdf} do PDF oficial</span>
+)}
+
+<dl class="ficha">
+  {reg.componente && <><dt>Componente</dt><dd>{reg.componente.nome}</dd></>}
+  {reg.area && <><dt>Área</dt><dd>{reg.area.nome}</dd></>}
+  {reg.anos && reg.etapa === 'EF' && (
+    <><dt>{reg.anos.length > 1 ? 'Anos' : 'Ano'}</dt>
+    <dd>{reg.anos.map((a) => `${a}º`).join(', ')} {reg.anos.length > 1 ? 'anos' : 'ano'} do Ensino Fundamental</dd></>
+  )}
+  {reg.etapa === 'EM' && <><dt>Séries</dt><dd>1ª a 3ª (sem seriação: a progressão é definida pelos currículos)</dd></>}
+  {reg.grupoEtario && <><dt>Grupo etário</dt><dd>{GRUPOS_EI_ROTULOS[reg.grupoEtario]}</dd></>}
+  {reg.campoExperiencias && <><dt>Campo de experiências</dt><dd>{reg.campoExperiencias.nome}</dd></>}
+  {reg.organizacao?.nomes.unidadeTematica && <><dt>Unidade temática</dt><dd>{reg.organizacao.nomes.unidadeTematica}</dd></>}
+  {reg.organizacao?.nomes.camposAtuacao && (
+    <><dt>Campo de atuação</dt><dd>{(reg.organizacao.nomes.camposAtuacao as string[]).join(' · ')}</dd></>
+  )}
+  {reg.organizacao?.nomes.praticaLinguagem && <><dt>Prática de linguagem</dt><dd>{reg.organizacao.nomes.praticaLinguagem}</dd></>}
+  {reg.organizacao?.nomes.eixo && <><dt>Eixo</dt><dd>{reg.organizacao.nomes.eixo}</dd></>}
+  {reg.objetosConhecimento && reg.objetosConhecimento.length > 0 && (
+    <><dt>Objetos de conhecimento</dt><dd>{reg.objetosConhecimento.map((o) => o.nome).join(' · ')}</dd></>
+  )}
+</dl>
+
+{reg.competenciasEspecificas && reg.competenciasEspecificas.length > 0 && (
+  <section class="bloco">
+    <h2>Competência{reg.competenciasEspecificas.length > 1 ? 's' : ''} específica{reg.competenciasEspecificas.length > 1 ? 's' : ''} vinculada{reg.competenciasEspecificas.length > 1 ? 's' : ''}</h2>
+    <ul class="progressao">
+      {reg.competenciasEspecificas.map((c) => (
+        <li><span class="cod">CE {c.numero}</span>{c.texto}</li>
+      ))}
+    </ul>
+  </section>
+)}
+
+{progressao && (
+  <section class="bloco">
+    <h2>Progressão entre as faixas etárias (mesmo aspecto do campo)</h2>
+    <ul class="progressao">
+      {progressao.objetivos.map((o) => (
+        <li class={o.codigo === reg.codigo ? 'atual' : ''}>
+          <span class="faixa">{GRUPOS_EI_ROTULOS[o.grupoEtario!]}</span>
+          {o.codigo === reg.codigo
+            ? <><span class="cod">{o.codigo}</span>{o.texto}</>
+            : <><a class="cod" href={rotaDe(o.codigo)}>{o.codigo}</a>{o.texto}</>}
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<section class="dev">
+  <h2>Para desenvolvedores e agentes de IA</h2>
+  <pre>npm install @bncc/dados        # ou: pip install bncc
+porCodigo('{reg.codigo}')      // por_codigo('{reg.codigo}') em Python</pre>
+  <div>
+    Dado aberto (CC BY 4.0), rastreável à fonte oficial:
+    <a href="https://github.com/bncc-dev/bncc-dados">bncc-dados</a> ·
+    servidor MCP: <a href="https://github.com/bncc-dev/bncc-pacotes">@bncc/mcp</a>
+  </div>
+</section>
+
+<nav class="vizinhanca" aria-label="Sequência">
+  <span>{viz.anterior && <a href={rotaDe(viz.anterior.codigo)}>← {viz.anterior.codigo}</a>}</span>
+  <span>{viz.proxima && <a href={rotaDe(viz.proxima.codigo)}>{viz.proxima.codigo} →</a>}</span>
+</nav>
