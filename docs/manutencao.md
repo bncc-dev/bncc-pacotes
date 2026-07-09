@@ -53,6 +53,7 @@ Regra de ouro: **npm e PyPI andam juntos, sempre.**
 |---|---|---|
 | `testar` | pnpm install + build + test (recursivo) | Versão do pnpm vem SÓ do `packageManager` do package.json raiz (declarar também na action quebra com "multiple versions") |
 | `python` | uv sync + pytest em `python/` | uv resolve o ambiente do zero; pandas entra pelo grupo dev |
+| `site` | build do @bncc/dados + build do site + verificar-links | Falha com menos de 1.650 páginas ou qualquer link interno quebrado |
 
 ## Dependências: política
 
