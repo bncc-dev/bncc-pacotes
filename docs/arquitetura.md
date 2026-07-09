@@ -68,10 +68,11 @@ Nada sai como 1.0 nos registries antes da release `dados-v1.0.0` do bncc-dados (
 
 ### `site/` → bncc.dev (páginas canônicas)
 
-- Astro 5, geração 100% estática no build: 1.679 páginas (1.580 aprendizagens + navegação por etapa/componente/ano/área/campo), zero JS no cliente.
-- Consome o `@bncc/dados` via workspace (dogfooding: o site é o primeiro consumidor real do pacote). O pacote fica `ssr.external` no Vite porque carrega os JSONs relativos ao próprio módulo.
-- Design editorial: cores por etapa herdadas da linguagem visual do documento oficial; código como carimbo tipográfico; selo de verificação com a página do PDF em cada página; JSON-LD LearningResource; sitemap; llms.txt.
-- Deploy acontece na release (Cloudflare Pages); extração para repo próprio quando o pacote for publicado.
+- Astro 5, geração 100% estática no build: 1.679 páginas (1.580 aprendizagens + navegação por etapa/componente/ano/área/campo). JS mínimo inline (~1 KB: tema, ir-para-código, decoder, tabs, copiar).
+- Consome o `@bncc/dados` via workspace (dogfooding: o site é o primeiro consumidor real do pacote), sempre através da camada `src/lib/dados.ts`. O pacote fica `ssr.external` no Vite porque carrega os JSONs relativos ao próprio módulo.
+- Design system dos mocks aprovados do projeto (GitHub-ish, accent verde, temas claro/escuro com botão + localStorage). Página de aprendizagem com decodificador interativo, relacionadas por objeto/prática/competência, tabs "Para máquinas" (JSON real, npm, Python, MCP), sidebar de proveniência (planilha + página do PDF + DECISOES), reportar erro e citar. JSON-LD LearningResource, sitemap, llms.txt.
+- Selo de verificação com a página do PDF homologado em cada página: a credibilidade como elemento de interface.
+- Deploy acontece na release (Cloudflare Pages); extração para repo próprio quando o pacote for publicado. Detalhes: `site/README.md`.
 
 ## O que fica fora deste repo
 

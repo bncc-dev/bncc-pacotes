@@ -29,6 +29,13 @@ Regra de ouro: **npm e PyPI andam juntos, sempre.**
 4. Teste em `packages/mcp/test/tools.test.ts` (cliente real do SDK via InMemoryTransport) + rode `node scripts/e2e.mjs` (em packages/mcp) contra o binário.
 5. Convergência de nomes: prefixo `bncc_`, pt-BR, snake_case.
 
+## Manter o site (site/)
+
+- **Dados mudaram** (nova sincronização): `pnpm --filter site build` regenera as 1.679 páginas; o CI confere contagem mínima e links internos (`site/scripts/verificar-links.mjs`).
+- **Mudar conteúdo/design**: só via `src/` (páginas em `src/pages/`, componente central em `src/components/PaginaAprendizagem.astro`, design system em `src/styles/global.css`). Regras do diretório em `site/README.md`: dados só via `src/lib/dados.ts`, copy sem travessão, JS mínimo justificado.
+- **Nova página/rota**: adicionar em `src/pages/` com `getStaticPaths` consumindo o `@bncc/dados`; rodar build + verificar-links antes do push (link interno quebrado derruba o CI).
+- **Pegadinha conhecida**: o compilador do Astro confunde `<=`/`>=` dentro de expressões no template (interpreta como abertura de tag); mova comparações para o frontmatter.
+
 ## Publicar (após o gate `dados-v1.0.0`)
 
 - npm (requer 2FA interativo do mantenedor):

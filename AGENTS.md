@@ -10,6 +10,7 @@ Monorepo das interfaces para máquina do bncc.dev: pacote npm `@bncc/dados`, ser
 4. **O MCP não reimplementa consultas.** Handlers importam o `@bncc/dados`; se uma tool precisa de lógica nova, a lógica vai para o pacote (nos dois!) e a tool a consome.
 5. **Nada de publicar nos registries.** Publicação é gateada (release `dados-v1.0.0` do bncc-dados) e exige credenciais interativas do mantenedor humano.
 6. **Zero dependências de runtime** nos pacotes de dados; MCP só SDK + zod v3 (não subir para zod 4 sem o SDK suportar).
+7. **No site (`site/`)**: todo dado passa por `src/lib/dados.ts` (nunca JSON cru nas páginas); copy pública sem travessão; JS além do inline do Base.astro precisa de justificativa; relações não-oficiais (ex.: progressão entre anos) sempre rotuladas como aproximação. Ver `site/README.md`.
 
 ## Convenções
 
@@ -25,6 +26,7 @@ pnpm install && pnpm -r build && pnpm -r test   # node (npm + MCP)
 cd python && uv sync && uv run pytest           # python
 node scripts/sincronizar-dados.mjs ~/Dev/bncc-dados   # atualizar dados (checkout limpo!)
 cd packages/mcp && node scripts/e2e.mjs         # e2e do MCP contra o binário real
+pnpm --filter site build && node site/scripts/verificar-links.mjs   # site (1.679 páginas + links)
 ```
 
 ## Mapa do domínio em 30 segundos
