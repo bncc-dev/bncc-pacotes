@@ -34,8 +34,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
-    "test": "vitest run"
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean --shims",
+    "test": "vitest run && node test/cjs-smoke.cjs"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
