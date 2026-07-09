@@ -1,0 +1,72 @@
+# Arquitetura do bncc-pacotes
+
+Como as interfaces para máquina do bncc.dev se organizam, e por que assim.
+
+## O desenho em uma frase
+
+Uma única fonte de dados (bncc-dados), embutida de forma pinada em dois pacotes irmãos (npm e PyPI) que provam equivalência por fixtures compartilhadas, e um servidor MCP que é casca fina sobre o pacote npm.
+
+```mermaid
+flowchart LR
+    DADOS[("bncc-dados<br/>JSONs verificados<br/>data-version")] -->|sincronizar-dados.mjs<br/>commit + checksums| NPM["@bncc/dados (npm)<br/>API pt-BR camelCase"]
+    DADOS -->|mesma sincronização| PY["bncc (PyPI)<br/>API pt-BR snake_case"]
+    NPM -->|importa, zero reimplementação| MCP["@bncc/mcp<br/>7 tools stdio"]
+    FIX["fixtures/consultas-douradas.json"] -.->|vitest| NPM
+    FIX -.->|pytest| PY
+    MCP --> AGENTES["Claude Code, Cursor..."]
+    NPM --> APPS["apps TypeScript"]
+    PY --> CIENCIA["Python, pandas, notebooks"]
+```
+
+## Princípios (herdados do projeto, aplicados aqui)
+
+1. **Dado nunca flutua.** Os JSONs embutidos vêm de um commit específico do bncc-dados, com data-version e checksums registrados em `dados/VERSAO.json` de cada pacote. O script `scripts/sincronizar-dados.mjs` recusa checkout sujo. Ninguém edita `dados/` à mão.
+2. **Uma implementação de consulta por runtime, nunca duas no mesmo.** O MCP importa o `@bncc/dados`; handlers têm ~5 linhas. A duplicação inevitável (npm vs PyPI, runtimes diferentes) é vigiada pelo contrato de paridade (ver `docs/paridade.md`).
+3. **Zero dependências de runtime no pacote de dados.** O `@bncc/dados` usa só Node stdlib; o `bncc` (PyPI) só stdlib Python (pandas é extra opcional). O MCP depende apenas do SDK oficial + zod.
+4. **API em português.** Decisão de produto (público dev BR, dado em pt-BR): `porCodigo()` no npm, `por_codigo()` no PyPI. A mesma semântica, a convenção de cada ecossistema.
+5. **Erros ensinam.** Código inexistente responde "a numeração da BNCC tem lacunas legítimas" em vez de null silencioso. Anti-alucinação é requisito, não detalhe.
+
+## Os três pacotes
+
+### `packages/bncc` → npm `@bncc/dados`
+
+- TypeScript, build tsup (ESM + CJS + `.d.ts`), dados como arquivos JSON no tarball (204 KB).
+- Camadas internas: `indice.ts` (carregamento lazy + mapas), `decodificar.ts` (port do `pipeline/codigos.py` do bncc-dados), `consultas.ts` (superfície pública), `tipos.ts` (espelho manual dos JSON Schemas).
+- Superfície: `porCodigo`, `decodificar`, `habilidadesEF/EM`, `objetivosEI`, `buscar`, `progressaoEI`, `estrutura`, `estatisticas`, `versao`.
+
+### `packages/mcp` → npm `@bncc/mcp`
+
+- `@modelcontextprotocol/sdk` (stdio) + `zod@^3` (linha suportada pelo SDK; não usar zod 4).
+- 7 tools; 4 nomes convergem com o bncc-mcp pioneiro (dfdb76): `bncc_lookup`, `bncc_buscar`, `bncc_listar`, `bncc_estatisticas`; 3 são nossas: `bncc_decodificar`, `bncc_progressao_ei`, `bncc_estrutura`.
+- Decisões de formato: respostas JSON estruturado; listagens sempre com `limite` (default) + `total` para não inundar o contexto do agente; `fonte` presente em todo registro completo; erros com `isError` e mensagem pedagógica; `instructions` do servidor carregam o resumo do domínio.
+- Sem camada Mapa de Foco (licença CC BY-NC do Instituto Reúna).
+
+### `python/` → PyPI `bncc`
+
+- Hatchling, wheel de 208 KB, `requires-python >= 3.10`.
+- Camadas espelho: `_indice.py`, `_codigos.py` (cópia adaptada do pipeline do bncc-dados), `_consultas.py`, `_pandas.py` (extra opcional).
+- Registros como dicts snake_case com a mesma semântica dos objetos do npm.
+
+## Fluxo de versão
+
+```
+bncc-dados release dados-AAAA.MM
+        │  node scripts/sincronizar-dados.mjs ~/caminho/bncc-dados
+        ▼
+dados/ atualizados nos dois pacotes (VERSAO.json registra commit+checksums)
+        │  pnpm -r test && (cd python && uv run pytest)
+        ▼
+bump de versão dos pacotes (minor para dado novo) → publicação
+```
+
+Mapeamento de versões: a versão do pacote segue semver próprio; a data-version dos dados embutidos é sempre consultável em runtime via `versao()`. O README de cada release declara qual data-version embute.
+
+## Gate de publicação
+
+Nada sai como 1.0 nos registries antes da release `dados-v1.0.0` do bncc-dados (revisão pedagógica registrada). Estado da reserva de nomes: `@bncc/dados@0.0.1` publicado (escopo @bncc garantido); PyPI `bncc` aguardando credenciais.
+
+## O que fica fora deste repo
+
+- Extração e validação dos dados: bncc-dados.
+- Site de páginas canônicas: bncc-site (M4).
+- API hospedada: repo futuro bncc-api (Fase 4, condicionada a tração).
