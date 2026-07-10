@@ -14,7 +14,7 @@ flowchart LR
     FIX["fixtures/consultas-douradas.json"] -.->|vitest| NPM
     FIX -.->|pytest| PY
     MCP --> AGENTES["Claude Code, Cursor..."]
-    NPM -->|getStaticPaths no build| SITE["site/ (Astro)<br/>1.679 páginas estáticas<br/>bncc.dev"]
+    NPM -->|getStaticPaths no build| SITE["site/ (Astro)<br/>1.787 páginas estáticas<br/>bncc.dev"]
     NPM --> APPS["apps TypeScript"]
     PY --> CIENCIA["Python, pandas, notebooks"]
 ```
@@ -69,7 +69,7 @@ O marco `1.0.0` não sai antes da release `dados-v1.0.0` do bncc-dados (revisão
 
 ### `site/` → bncc.dev (páginas canônicas)
 
-- Astro 5, geração 100% estática no build: 1.679 páginas (1.580 aprendizagens + navegação por etapa/componente/ano/área/campo). JS mínimo inline (~1 KB: tema, ir-para-código, decoder, tabs, copiar).
+- Astro 5, geração 100% estática no build: 1.787 páginas (1.580 aprendizagens + 105 competências específicas + navegação por etapa/componente/ano/área/campo + busca + api + índices), 97 CSVs de listagem (mesmas colunas dos derivados do bncc-dados) e o índice de busca client-side (`/buscar-indice.json`). JS mínimo inline (~1 KB: tema, busca do topbar, decoder, tabs, copiar) + o script da página /buscar/ (busca client-side com filtros; troca para a API hospedada via constante no lançamento).
 - Consome o `@bncc/dados` via workspace (dogfooding: o site é o primeiro consumidor real do pacote), sempre através da camada `src/lib/dados.ts`. O pacote fica `ssr.external` no Vite porque carrega os JSONs relativos ao próprio módulo.
 - Design system dos mocks aprovados do projeto (GitHub-ish, accent verde, temas claro/escuro com botão + localStorage). Página de aprendizagem com decodificador interativo, relacionadas por objeto/prática/competência, tabs "Para máquinas" (JSON real, npm, Python, MCP), sidebar de proveniência (planilha + página do PDF + DECISOES), reportar erro e citar. JSON-LD LearningResource, sitemap, llms.txt.
 - Selo de verificação com a página do PDF homologado em cada página: a credibilidade como elemento de interface.

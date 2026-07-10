@@ -26,6 +26,7 @@ const habs = habilidadesEF({ componente: id, ano });
     <li>{ano}º ano</li>
   </nav>
   <h1 class="titulo-secao">{comp.nome} · {ano}º ano</h1>
+  <p class="acoes-listagem"><a class="btn" href={`/csv/fundamental-${Astro.params.componente}-${ano}ano.csv`} download>baixar CSV desta listagem</a></p>
   <ul class="lista">
     {habs.map((h) => (
       <li><a href={rotaDe(h.codigo)}>

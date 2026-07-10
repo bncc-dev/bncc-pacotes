@@ -134,7 +134,7 @@ const snippetMcp = `// Claude Code, Cursor etc. (servidor local via stdio)
     {daCompetencia.length > 0 && (
       <section aria-labelledby="h-competencia">
         <h2 id="h-competencia">Vinculadas à mesma competência específica</h2>
-        <p class="h2-hint">{reg.competenciasEspecificas!.map((c) => `CE ${c.numero}`).join(' · ')} de {reg.area!.nome}</p>
+        <p class="h2-hint">{reg.competenciasEspecificas!.map((c, i) => <>{i > 0 && ' · '}<a href={`/competencia/${c.id}/`}>CE {c.numero}</a></>)} de {reg.area!.nome}</p>
         <div class="rows">
           {daCompetencia.map((h) => (
             <a class="row" href={rotaDe(h.codigo)}>
@@ -223,7 +223,7 @@ const snippetMcp = `// Claude Code, Cursor etc. (servidor local via stdio)
         )}
         {reg.competenciasEspecificas && reg.competenciasEspecificas.length > 0 && (
           <div><dt>Competência{reg.competenciasEspecificas.length > 1 ? 's' : ''} específica{reg.competenciasEspecificas.length > 1 ? 's' : ''}</dt>
-          <dd>{reg.competenciasEspecificas.map((c) => `CE ${c.numero}`).join(' · ')}</dd></div>
+          <dd>{reg.competenciasEspecificas.map((c, i) => <>{i > 0 && ' · '}<a href={`/competencia/${c.id}/`}>CE {c.numero}</a></>)}</dd></div>
         )}
       </dl>
     </div>

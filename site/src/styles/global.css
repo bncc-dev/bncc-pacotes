@@ -369,3 +369,45 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
   .num:nth-child(n+3) { border-bottom: 0; }
   .num:nth-child(2), .num:last-child { border-right: 0; }
 }
+
+/* ---- Fase 4: busca, competências, CSV ---- */
+.acoes-listagem { margin: 4px 0 0; }
+.acoes-listagem .btn { text-decoration: none; }
+
+.busca-form { margin: 18px 0 10px; }
+.busca-linha { display: flex; gap: 8px; }
+.busca-linha input[type="search"] {
+  flex: 1; padding: 9px 12px; font-size: 15px; color: var(--ink);
+  background: var(--bg-inset); border: 1px solid var(--border-strong); border-radius: 6px;
+}
+.busca-linha input[type="search"]:focus { outline: none; border-color: var(--accent); }
+.busca-filtros { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.busca-filtros label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-muted); }
+.busca-filtros select {
+  padding: 6px 8px; font-size: 13px; color: var(--ink); max-width: 240px;
+  background: var(--bg-inset); border: 1px solid var(--border); border-radius: 6px;
+}
+.busca-status { font-size: 13px; color: var(--ink-muted); margin: 12px 0 6px; }
+#busca-resultados .resumo small { color: var(--ink-muted); font-size: 12px; }
+
+.lista-competencias { padding: 0; margin: 16px 0; counter-reset: none; }
+.lista-competencias li {
+  list-style: none; display: flex; gap: 14px; align-items: baseline;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px;
+}
+.lista-competencias .cod {
+  font-family: var(--mono); font-weight: 600; color: var(--accent-ink);
+  background: var(--accent-bg); border-radius: 6px; padding: 2px 9px; flex-shrink: 0;
+}
+.lista-competencias p { margin: 0; }
+
+.grupo-ce { margin: 10px 0; border: 1px solid var(--border); border-radius: 6px; padding: 0 14px; }
+.grupo-ce summary { cursor: pointer; padding: 10px 0; font-weight: 600; }
+.grupo-ce .qtd-ce { font-weight: 400; font-size: 12px; color: var(--ink-muted); margin-left: 6px; }
+.grupo-ce .lista { margin: 0 0 12px; }
+
+.texto-oficial {
+  margin: 18px 0; padding: 16px 18px; border-left: 3px solid var(--accent);
+  background: var(--bg-inset); border-radius: 0 6px 6px 0; font-size: 16px; line-height: 1.65;
+}
+.texto-oficial p { margin: 0; }

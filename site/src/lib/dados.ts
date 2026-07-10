@@ -142,6 +142,43 @@ export function mesmaCompetenciaEM(reg: AprendizagemResolvida, limite = 5): Apre
     .slice(0, limite);
 }
 
+/** Competência específica com contexto resolvido para exibição. */
+export interface CompetenciaResolvida {
+  id: string;
+  tipo: 'especifica_de_area' | 'especifica_de_componente';
+  numero: number;
+  texto: string;
+  etapa: 'EF' | 'EM';
+  contexto: { rotulo: string; nome: string; href?: string };
+}
+
+export function competenciasEspecificas(): CompetenciaResolvida[] {
+  const e = estrutura();
+  const areas = new Map(e.areas_conhecimento.map((a: any) => [a.id, a.nome]));
+  const comps = new Map(e.componentes_curriculares.map((c: any) => [c.id, c.nome]));
+  return e.competencias_especificas.map((c: any) => {
+    const etapa = c.id.startsWith('em') ? 'EM' : 'EF';
+    const contexto = c.area
+      ? {
+          rotulo: `Área · ${etapa === 'EM' ? 'Ensino Médio' : 'Ensino Fundamental'}`,
+          nome: areas.get(c.area) ?? c.area,
+          href: etapa === 'EM' ? `/medio/${c.area.replace('em-area-', '')}/` : undefined,
+        }
+      : {
+          rotulo: 'Componente · Ensino Fundamental',
+          nome: comps.get(c.componente) ?? c.componente,
+          href: `/fundamental/${c.componente.replace('ef-comp-', '')}/`,
+        };
+    return { id: c.id, tipo: c.tipo, numero: c.numero, texto: c.texto, etapa, contexto };
+  });
+}
+
+/** Habilidades do EM vinculadas a uma competência específica (vínculo oficial só existe no EM). */
+export function habilidadesDaCompetencia(id: string): AprendizagemResolvida[] {
+  if (!id.startsWith('em-')) return [];
+  return habilidadesEM().filter((h) => h.competenciasEspecificas!.some((c) => c.id === id));
+}
+
 /** URL de issue pré-preenchida para reportar erro num registro. */
 export function urlReportarErro(codigo: string): string {
   const titulo = encodeURIComponent(`Possível erro em ${codigo}`);

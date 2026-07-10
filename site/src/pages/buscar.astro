@@ -1,0 +1,190 @@
+---
+import Base from '../layouts/Base.astro';
+import { estatisticas } from '../lib/dados';
+
+const s = estatisticas();
+
+// Dia do lançamento: trocar por 'https://api.bncc.dev' para a busca passar a
+// consultar a API hospedada (mesmos dados; útil como vitrine da API). Vazio =
+// busca 100% client-side sobre o índice estático.
+const API_BASE = '';
+---
+<Base titulo="Buscar na BNCC · bncc.dev"
+      descricao={`Busque por tema nas ${s.total.toLocaleString('pt-BR')} aprendizagens da BNCC, com filtros por etapa, componente, ano e prática. Sem cadastro.`}>
+  <nav class="trilha">
+    <li><a href="/">bncc.dev</a></li>
+    <li>Buscar</li>
+  </nav>
+  <h1 class="titulo-secao">Buscar na BNCC</h1>
+  <p class="h2-hint">Busca por palavras nos enunciados oficiais, sem diferença de acentos ou maiúsculas. Combine com os filtros; um código exato (ex.: EF67LP08) abre a página direto.</p>
+
+  <form class="busca-form" id="form-buscar" data-api-base={API_BASE}>
+    <div class="busca-linha">
+      <input type="search" id="q" placeholder="ex.: fake news, frações, brincadeiras…" aria-label="Termo de busca" autofocus />
+      <button class="btn-buscar" type="submit">Buscar</button>
+    </div>
+    <div class="busca-filtros">
+      <label>Etapa
+        <select id="f-etapa">
+          <option value="">todas</option>
+          <option value="EI">Educação Infantil</option>
+          <option value="EF">Ensino Fundamental</option>
+          <option value="EM">Ensino Médio</option>
+        </select>
+      </label>
+      <label>Componente / área / campo
+        <select id="f-grupo"><option value="">todos</option></select>
+      </label>
+      <label>Ano (EF)
+        <select id="f-ano">
+          <option value="">todos</option>
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((a) => <option value={a}>{a}º</option>)}
+        </select>
+      </label>
+      <label>Prática / unidade / eixo
+        <select id="f-pratica"><option value="">todas</option></select>
+      </label>
+    </div>
+  </form>
+
+  <p class="busca-status" id="busca-status" role="status">Digite um termo ou escolha filtros.</p>
+  <ul class="lista" id="busca-resultados" hidden></ul>
+</Base>
+
+<script is:inline>
+  // Busca client-side sobre o índice estático (gerado no build a partir do
+  // @bncc/dados). Se data-api-base estiver preenchido (dia do lançamento),
+  // a busca textual passa a usar a API hospedada; os filtros seguem locais.
+  (() => {
+    const form = document.getElementById('form-buscar');
+    const $q = document.getElementById('q');
+    const $etapa = document.getElementById('f-etapa');
+    const $grupo = document.getElementById('f-grupo');
+    const $ano = document.getElementById('f-ano');
+    const $pratica = document.getElementById('f-pratica');
+    const $status = document.getElementById('busca-status');
+    const $lista = document.getElementById('busca-resultados');
+    const apiBase = form.dataset.apiBase;
+    const MAX = 100;
+
+    let indice = null;
+    const carregarIndice = async () => {
+      if (!indice) indice = await (await fetch('/buscar-indice.json')).json();
+      return indice;
+    };
+
+    const norm = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+    const rotaDe = (c) => (c.startsWith('EI') ? `/objetivo/${c}/` : `/habilidade/${c}/`);
+    const eCodigo = (q) => /^(EI0[123](EO|CG|TS|EF|ET)\d{2}|EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(q);
+
+    const opcoes = (select, valores, rotuloTodos) => {
+      const atual = select.value;
+      select.innerHTML = `<option value="">${rotuloTodos}</option>`;
+      for (const v of valores) {
+        const o = document.createElement('option');
+        o.value = v; o.textContent = v;
+        select.appendChild(o);
+      }
+      if ([...select.options].some((o) => o.value === atual)) select.value = atual;
+    };
+
+    const povoarFiltros = async () => {
+      const idx = await carregarIndice();
+      const etapa = $etapa.value;
+      const doEscopo = idx.filter((r) => !etapa || r.e === etapa);
+      opcoes($grupo, [...new Set(doEscopo.map((r) => r.g))].sort((a, b) => a.localeCompare(b, 'pt-BR')), 'todos');
+      const comGrupo = doEscopo.filter((r) => !$grupo.value || r.g === $grupo.value);
+      opcoes($pratica, [...new Set(comGrupo.map((r) => r.p).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR')), 'todas');
+    };
+
+    const render = (itens, total) => {
+      $lista.innerHTML = '';
+      for (const r of itens.slice(0, MAX)) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = rotaDe(r.c);
+        const cod = document.createElement('span');
+        cod.className = 'cod'; cod.textContent = r.c;
+        const resumo = document.createElement('span');
+        resumo.className = 'resumo';
+        const contexto = [r.g, r.a ? r.a.map((x) => x + 'º').join(' e ') + ' ano' : null, r.p].filter(Boolean).join(' · ');
+        const ctx = document.createElement('small');
+        ctx.textContent = contexto;
+        resumo.textContent = r.t.length > 160 ? r.t.slice(0, 157) + '…' : r.t;
+        resumo.appendChild(document.createElement('br'));
+        resumo.appendChild(ctx);
+        a.append(cod, resumo);
+        li.appendChild(a);
+        $lista.appendChild(li);
+      }
+      $lista.hidden = itens.length === 0;
+      $status.textContent = total === 0
+        ? 'Nada encontrado. Tente um termo mais curto ou menos filtros; a busca é no texto oficial dos enunciados.'
+        : total > MAX
+          ? `${total.toLocaleString('pt-BR')} resultados; mostrando os ${MAX} primeiros. Refine com os filtros.`
+          : `${total.toLocaleString('pt-BR')} resultado${total > 1 ? 's' : ''}.`;
+    };
+
+    const filtrarLocal = (idx, termo) => {
+      const alvo = norm(termo);
+      return idx.filter((r) =>
+        (!alvo || norm(r.t).includes(alvo) || r.c.toLowerCase().includes(alvo))
+        && (!$etapa.value || r.e === $etapa.value)
+        && (!$grupo.value || r.g === $grupo.value)
+        && (!$ano.value || (r.a && r.a.includes(Number($ano.value))))
+        && (!$pratica.value || r.p === $pratica.value));
+    };
+
+    const buscarViaApi = async (termo) => {
+      const url = new URL(apiBase + '/v1/busca');
+      url.searchParams.set('q', termo);
+      if ($etapa.value) url.searchParams.set('etapa', $etapa.value);
+      url.searchParams.set('limite', String(MAX));
+      const dados = await (await fetch(url)).json();
+      const itens = dados.itens.map((h) => ({
+        c: h.codigo, t: h.texto, e: h.etapa,
+        g: h.componente?.nome ?? h.area?.nome ?? h.campoExperiencias?.nome ?? '',
+        a: h.anos ?? null, p: null,
+      }));
+      return { itens, total: dados.total };
+    };
+
+    const executar = async () => {
+      const termo = $q.value.trim();
+      const codigo = termo.toUpperCase();
+      if (eCodigo(codigo)) { location.href = rotaDe(codigo); return; }
+      $status.textContent = 'Buscando…';
+      try {
+        if (apiBase && termo) {
+          const { itens, total } = await buscarViaApi(termo);
+          render(itens, total);
+        } else {
+          const idx = await carregarIndice();
+          const achados = filtrarLocal(idx, termo);
+          render(achados, achados.length);
+        }
+        const params = new URLSearchParams();
+        if (termo) params.set('q', termo);
+        if ($etapa.value) params.set('etapa', $etapa.value);
+        history.replaceState(null, '', params.size ? `?${params}` : location.pathname);
+      } catch {
+        $status.textContent = 'A busca falhou ao carregar. Recarregue a página e tente de novo.';
+      }
+    };
+
+    form.addEventListener('submit', (e) => { e.preventDefault(); executar(); });
+    for (const sel of [$etapa, $grupo, $ano, $pratica]) {
+      sel.addEventListener('change', async () => {
+        if (sel === $etapa || sel === $grupo) await povoarFiltros();
+        executar();
+      });
+    }
+    let debounce;
+    $q.addEventListener('input', () => { clearTimeout(debounce); debounce = setTimeout(executar, 250); });
+
+    const inicial = new URLSearchParams(location.search);
+    if (inicial.get('etapa')) $etapa.value = inicial.get('etapa');
+    povoarFiltros();
+    if (inicial.get('q')) { $q.value = inicial.get('q'); executar(); }
+  })();
+</script>

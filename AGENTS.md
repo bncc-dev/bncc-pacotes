@@ -26,7 +26,7 @@ pnpm install && pnpm -r build && pnpm -r test   # node (npm + MCP)
 cd python && uv sync && uv run pytest           # python
 node scripts/sincronizar-dados.mjs ~/Dev/bncc-dados   # atualizar dados (checkout limpo!)
 cd packages/mcp && node scripts/e2e.mjs         # e2e do MCP contra o binário real
-pnpm --filter site build && node site/scripts/verificar-links.mjs   # site (1.679 páginas + links)
+pnpm --filter site build && node site/scripts/verificar-links.mjs   # site (1.787 páginas + links)
 ```
 
 ## Mapa do domínio em 30 segundos

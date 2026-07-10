@@ -20,6 +20,7 @@ const habs = habilidadesEM({ area: id });
     <li>{area.nome}</li>
   </nav>
   <h1 class="titulo-secao">{area.nome}</h1>
+  <p class="acoes-listagem"><a class="btn" href={`/csv/medio-${Astro.params.area}.csv`} download>baixar CSV desta listagem</a></p>
   <ul class="lista">
     {habs.map((h) => (
       <li><a href={rotaDe(h.codigo)}>

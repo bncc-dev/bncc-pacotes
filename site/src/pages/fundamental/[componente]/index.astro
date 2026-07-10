@@ -21,6 +21,7 @@ const anos = [...new Set(habs.flatMap((h) => h.anos!))].sort((a, b) => a - b);
     <li>{comp.nome}</li>
   </nav>
   <h1 class="titulo-secao">{comp.nome}</h1>
+  <p class="acoes-listagem"><a class="btn" href={`/csv/fundamental-${Astro.params.componente}.csv`} download>baixar CSV desta listagem</a></p>
   <p class="subtitulo">{habs.length} habilidades. Por ano:</p>
   <ul class="lista">
     {anos.map((ano) => (

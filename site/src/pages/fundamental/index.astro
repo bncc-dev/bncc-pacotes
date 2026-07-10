@@ -8,6 +8,7 @@ const contagem = (id: string) => habilidadesEF({ componente: id }).length;
       descricao="As 1.304 habilidades do Ensino Fundamental na BNCC, por componente curricular e ano, com texto oficial verificado.">
   <nav class="trilha"><li><a href="/">bncc.dev</a></li><li>Ensino Fundamental</li></nav>
   <h1 class="titulo-secao">Ensino Fundamental</h1>
+  <p class="acoes-listagem"><a class="btn" href="/csv/fundamental.csv" download>baixar CSV da etapa completa</a></p>
   <p class="subtitulo">9 componentes curriculares, do 1º ao 9º ano. Escolha um componente:</p>
   <ul class="lista">
     {comps.map((c) => (

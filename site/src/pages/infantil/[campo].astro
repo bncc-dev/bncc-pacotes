@@ -18,6 +18,7 @@ const grupos = ['ei-grupo-01', 'ei-grupo-02', 'ei-grupo-03'];
     <li>{campo.nome}</li>
   </nav>
   <h1 class="titulo-secao">{campo.nome}</h1>
+  <p class="acoes-listagem"><a class="btn" href={`/csv/infantil-${Astro.params.campo}.csv`} download>baixar CSV desta listagem</a></p>
   {grupos.map((g) => (
     <section class="bloco">
       <h2>{GRUPOS_EI_ROTULOS[g]}</h2>

@@ -7,6 +7,7 @@ const areas = estrutura().areas_conhecimento.filter((a) => a.etapa === 'EM');
       descricao="As 183 habilidades do Ensino Médio na BNCC, por área do conhecimento, com competências vinculadas e texto oficial verificado.">
   <nav class="trilha"><li><a href="/">bncc.dev</a></li><li>Ensino Médio</li></nav>
   <h1 class="titulo-secao">Ensino Médio</h1>
+  <p class="acoes-listagem"><a class="btn" href="/csv/medio.csv" download>baixar CSV da etapa completa</a></p>
   <p class="subtitulo">4 áreas do conhecimento, sem seriação (a progressão é definida pelos currículos). Escolha uma área:</p>
   <ul class="lista">
     {areas.map((a) => (

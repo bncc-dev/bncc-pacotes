@@ -7,7 +7,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DIST = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
-const MINIMO_PAGINAS = 1650;
+const MINIMO_PAGINAS = 1750;
 
 function htmls(dir) {
   const saida = [];

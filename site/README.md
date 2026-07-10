@@ -1,12 +1,12 @@
 # site/ · bncc.dev
 
-O site de páginas canônicas da BNCC: 1.679 páginas estáticas geradas pelo Astro a partir do pacote `@bncc/dados` (workspace). Uma URL permanente por aprendizagem, mais navegação por etapa, componente, ano, área e campo de experiências.
+O site de consulta da BNCC: 1.787 páginas estáticas geradas pelo Astro a partir do pacote `@bncc/dados` (workspace). Uma URL permanente por aprendizagem e por competência específica, navegação por etapa/componente/ano/área/campo, busca client-side com filtros e CSVs por listagem.
 
 ## Rodar
 
 ```bash
 pnpm --filter site dev     # desenvolvimento com recarga (localhost:4321)
-pnpm --filter site build   # gera dist/ (1.679 páginas em ~2s)
+pnpm --filter site build   # gera dist/ (1.787 páginas em ~2s)
 node scripts/verificar-links.mjs   # contagem mínima + links internos (roda no CI)
 python3 -m http.server 4173 --directory dist   # servir o build pronto
 ```
@@ -15,7 +15,10 @@ python3 -m http.server 4173 --directory dist   # servir o build pronto
 
 - `/habilidade/{CODIGO}/` para EF e EM (1.487 páginas) e `/objetivo/{CODIGO}/` para EI (93).
 - Navegação: `/fundamental/{componente}/{ano}/`, `/medio/{area}/`, `/infantil/{campo}/`.
-- `/llms.txt` (índice para agentes), `sitemap-index.xml` (gerado).
+- Competências: `/competencias/` (10 gerais + índice das específicas) e `/competencia/{id}/` (105 páginas; habilidades vinculadas no EM, onde o vínculo é oficial).
+- Busca: `/buscar/` (client-side sobre `/buscar-indice.json`, ~98 KB gzip, carregado sob demanda; filtros por etapa, componente/área/campo, ano e prática). A constante `API_BASE` em `buscar.astro` liga a busca via api.bncc.dev no lançamento.
+- CSV: `/csv/{arquivo}.csv` (97 arquivos: etapas completas, componente, componente+ano, área, campo), com as MESMAS colunas dos derivados do bncc-dados; os CSVs de etapa completa são byte a byte idênticos aos derivados.
+- `/api/` (apresentação da API hospedada), `/llms.txt` (índice para agentes), `sitemap-index.xml` (gerado).
 
 ## Design
 
@@ -27,7 +30,7 @@ A página de aprendizagem traz: decodificador interativo do código, seções de
 
 1. **Todo dado vem de `src/lib/dados.ts`**, que é a única porta para o `@bncc/dados`. Páginas não leem JSON cru nem inventam conteúdo.
 2. **Copy pública sem travessão** (convenção do projeto): vírgula, dois-pontos, parênteses; `·` como separador de marca.
-3. **JavaScript mínimo**: só o inline do `Base.astro` (~1 KB: tema, ir-para-código, decoder, tabs, copiar). Interatividade nova precisa de justificativa; busca textual completa é da Fase 4.
+3. **JavaScript mínimo**: o inline do `Base.astro` (~1 KB: tema, busca do topbar, decoder, tabs, copiar) e o da página `/buscar/` (justificado: é a própria funcionalidade da página). Interatividade nova além disso precisa de justificativa.
 4. O `@bncc/dados` fica `ssr.external` no Vite (`astro.config.mjs`): ele resolve os JSONs relativos ao próprio módulo e não pode ser empacotado.
 5. Honestidade editorial: seções que sugerem relações não-oficiais (progressão entre anos) declaram isso no subtítulo.
 

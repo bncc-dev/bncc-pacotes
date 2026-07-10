@@ -31,7 +31,7 @@ Regra de ouro: **npm e PyPI andam juntos, sempre.**
 
 ## Manter o site (site/)
 
-- **Dados mudaram** (nova sincronização): `pnpm --filter site build` regenera as 1.679 páginas; o CI confere contagem mínima e links internos (`site/scripts/verificar-links.mjs`).
+- **Dados mudaram** (nova sincronização): `pnpm --filter site build` regenera as 1.787 páginas, os 97 CSVs e o índice de busca; o CI confere contagem mínima (1.750) e links internos (`site/scripts/verificar-links.mjs`).
 - **Mudar conteúdo/design**: só via `src/` (páginas em `src/pages/`, componente central em `src/components/PaginaAprendizagem.astro`, design system em `src/styles/global.css`). Regras do diretório em `site/README.md`: dados só via `src/lib/dados.ts`, copy sem travessão, JS mínimo justificado.
 - **Nova página/rota**: adicionar em `src/pages/` com `getStaticPaths` consumindo o `@bncc/dados`; rodar build + verificar-links antes do push (link interno quebrado derruba o CI).
 - **Pegadinha conhecida**: o compilador do Astro confunde `<=`/`>=` dentro de expressões no template (interpreta como abertura de tag); mova comparações para o frontmatter.
