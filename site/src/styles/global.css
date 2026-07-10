@@ -59,9 +59,11 @@ code, .mono { font-family: var(--mono); }
   background: var(--bg-subtle); border-bottom: 1px solid var(--border);
 }
 .wordmark {
+  display: inline-flex; align-items: center; gap: 7px;
   font-family: var(--mono); font-size: 15px; font-weight: 700;
   color: var(--ink); letter-spacing: -.02em; white-space: nowrap; text-decoration: none;
 }
+.wordmark .maca { width: 18px; height: auto; flex: none; }
 .wordmark:hover { text-decoration: none; }
 .wordmark .dot { color: var(--accent); }
 .search {
