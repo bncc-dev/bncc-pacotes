@@ -65,7 +65,7 @@ Mapeamento de versões: a versão do pacote segue semver próprio; a data-versio
 
 ## Gate de publicação
 
-O marco `1.0.0` não sai antes da release `dados-v1.0.0` do bncc-dados (revisão pedagógica registrada). Pré-releases publicadas em 09/07/2026: npm `@bncc/dados@0.1.0` e `@bncc/mcp@0.1.1` (o 0.1.0 do MCP foi depreciado: publicado com npm publish sem conversão do workspace); PyPI `bncc 0.1.0`.
+O marco `1.0.0` não sai antes da release `dados-v1.0.0` do bncc-dados (revisão pedagógica registrada). Pré-releases publicadas em 09/07/2026: npm `@bncc/dados@0.1.0` e `0.2.0` (núcleo injetável) e `@bncc/mcp@0.1.1` (o 0.1.0 do MCP foi depreciado: publicado com npm publish sem conversão do workspace); PyPI `bncc 0.1.0`.
 
 ### `site/` → bncc.dev (páginas canônicas)
 
