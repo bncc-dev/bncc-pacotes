@@ -128,6 +128,9 @@ a.chip:hover { border-color: var(--accent); color: var(--accent-ink); text-decor
 
 /* ---------- grid ---------- */
 .grid { display: grid; grid-template-columns: minmax(0, 1fr) 296px; gap: 40px; margin-top: 32px; }
+/* itens de grid não encolhem abaixo do min-content por padrão; sem isto,
+   o <pre> do JSON (linhas longas) alarga a coluna e estoura a página no mobile */
+.grid > * { min-width: 0; }
 section + section { margin-top: 36px; }
 h2 { font-size: 14px; font-weight: 600; margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
 .h2-hint { font-size: 12.5px; color: var(--ink-muted); margin: 6px 0 12px; }
@@ -208,7 +211,7 @@ footer.rodape a:hover { color: var(--accent); }
 /* ---------- responsivo ---------- */
 @media (max-width: 800px) {
   body { font-size: 15px; }
-  .grid { grid-template-columns: 1fr; gap: 28px; margin-top: 24px; }
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 24px; }
   .topbar { flex-wrap: wrap; gap: 10px; padding: 10px 16px; }
   .topbar-links { margin-left: auto; gap: 12px; }
   .topbar-links a { display: none; }
