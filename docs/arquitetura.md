@@ -15,6 +15,7 @@ flowchart LR
     FIX -.->|pytest| PY
     MCP --> AGENTES["Claude Code, Cursor..."]
     NPM -->|getStaticPaths no build| SITE["site/ (Astro)<br/>1.787 páginas estáticas<br/>bncc.dev"]
+    NPM -->|núcleo injetável<br/>@bncc/dados/nucleo| APIH["bncc-api (repo próprio)<br/>Workers + Hono<br/>api.bncc.dev"]
     NPM --> APPS["apps TypeScript"]
     PY --> CIENCIA["Python, pandas, notebooks"]
 ```
