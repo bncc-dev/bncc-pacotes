@@ -41,6 +41,7 @@ export function aprendizagemParaMd(reg: AprendizagemResolvida): string {
     `licenca: CC BY 4.0`,
     `url: ${SITE}${rotaDe(reg.codigo)}`,
     `fonte: ${paginaPdf ? `documento homologado do MEC, p. ${paginaPdf} do PDF` : 'planilhas oficiais do MEC'}`,
+    `citacao_sugerida: "${reg.codigo} · BNCC (${v.data_version}) · ${SITE}${rotaDe(reg.codigo)}"`,
     '---',
   );
 
@@ -99,7 +100,8 @@ export function aprendizagemParaMd(reg: AprendizagemResolvida): string {
     '## Fonte e licença',
     '',
     `Texto oficial conferido contra o documento homologado da BNCC${paginaPdf ? ` (p. ${paginaPdf} do PDF)` : ''}. ` +
-    `Dados ${v.data_version} sob CC BY 4.0; ao usar, cite bncc.dev. ` +
+    `Dados ${v.data_version} sob CC BY 4.0; ao usar, cite a fonte para permitir conferência. ` +
+    `Formato sugerido: "${reg.codigo} · BNCC (${v.data_version}) · ${SITE}${rotaDe(reg.codigo)}". ` +
     `Registro em JSON: https://api.bncc.dev/v1/aprendizagens/${reg.codigo}. ` +
     `Dataset completo: ${SITE}/llms-full.txt`,
     '',

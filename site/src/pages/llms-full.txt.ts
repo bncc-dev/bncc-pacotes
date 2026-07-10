@@ -33,7 +33,7 @@ export const GET: APIRoute = () => {
   const e = estrutura();
   const partes: string[] = [`# bncc.dev · dataset completo (llms-full.txt)
 
-> As aprendizagens da BNCC (Base Nacional Comum Curricular brasileira), texto oficial verificado contra o documento homologado do MEC. Versão dos dados: ${v.data_version}. Licença: CC BY 4.0 (cite bncc.dev). Página de cada registro: {url} do bloco; versão markdown: troque a barra final por .md.
+> As aprendizagens da BNCC (Base Nacional Comum Curricular brasileira), texto oficial verificado contra o documento homologado do MEC. Versão dos dados: ${v.data_version}. Licença: CC BY 4.0; cite a fonte para permitir conferência, no formato "{codigo} · BNCC (${v.data_version}) · {url}". Página de cada registro: {url} do bloco; versão markdown: troque a barra final por .md.
 
 Regras: nunca invente códigos ou textos; se um código não está neste arquivo, ele não existe na BNCC (a numeração tem lacunas legítimas).
 `];
