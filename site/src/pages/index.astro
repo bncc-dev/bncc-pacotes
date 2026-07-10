@@ -24,52 +24,71 @@ const snippetMcp = `{ "mcpServers": { "bncc":
     <h1 class="thesis">A BNCC como dados abertos e verificados. <span class="quem">Para quem ensina e para quem desenvolve.</span></h1>
     <p class="lede">Cada dado é conferido com os documentos oficiais do MEC. Consulte aqui no site ou leve para o que você cria: pacotes de programação, conexão para assistentes de IA e uma página permanente para cada habilidade.</p>
 
-    <div class="hero-split">
-      <div class="hero-pane ensinar" aria-label="Para quem ensina">
-        <span class="pane-label">Para quem ensina</span>
-        <p class="pane-sub">Consulte a Base sem instalar nada, sem cadastro.</p>
-        <form class="big-search" role="search" id="busca-home">
-          <svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
-          <input type="search" placeholder="Código ou tema… ex.: EF67LP08, frações" aria-label="Buscar na BNCC por código ou tema" />
-          <button class="btn-buscar" type="submit">Buscar</button>
-        </form>
-        <p class="search-hints">por exemplo: <a href="/habilidade/EF67LP08/">EF67LP08</a> · <a href="/objetivo/EI02TS01/">EI02TS01</a> · <a href="/buscar/?q=fake%20news">fake news</a> · <a href="/competencias/">competências</a></p>
-        <div class="materias" aria-label="Atalhos por etapa">
-          <a class="materia" href="/infantil/">Educação Infantil</a>
-          <a class="materia" href="/fundamental/">Fundamental</a>
-          <a class="materia" href="/medio/">Médio</a>
+    <div class="publicos">
+      <section class="publico" aria-labelledby="h-ensina">
+        <div class="pub-texto">
+          <span class="pub-label">Para quem ensina</span>
+          <h2 class="pub-frase" id="h-ensina">Busque por tema, cite com link permanente, baixe em planilha.</h2>
+          <ul class="mescla">
+            <li><strong>Busca em linguagem de escola,</strong> com filtro de ano e matéria. <span class="caso">"Frações" no 5º ano acha <a href="/habilidade/EF05MA03/">EF05MA03</a> com o texto oficial.</span></li>
+            <li><strong>Página permanente por habilidade,</strong> pronta para citar. <span class="caso">Cole <a href="/habilidade/EF67LP08/">bncc.dev/habilidade/EF67LP08</a> no planejamento ou no grupo da escola.</span></li>
+            <li><strong>Listagens em planilha (CSV)</strong> por matéria e ano. <span class="caso">Matemática do 5º ano inteira no seu diário, num clique.</span></li>
+          </ul>
         </div>
-        <p class="pane-foot"><a href="/fundamental/">ou navegue por etapa, ano e componente →</a></p>
-      </div>
-      <div class="hero-pane desenvolver" aria-label="Para quem desenvolve">
-        <span class="pane-label">Para quem desenvolve</span>
-        <p class="pane-sub">Com código ou sem: copie e comece agora.</p>
-        <div class="install-tabs" role="tablist" aria-label="Comece agora">
-          <button class="install-tab tab" role="tab" aria-selected="true" data-panel="hero-prompt" type="button">prompt</button>
-          <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-npm" type="button">npm</button>
-          <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-python" type="button">python</button>
-          <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-mcp" type="button">MCP</button>
+        <div class="pub-acao">
+          <form class="big-search" role="search" id="busca-home">
+            <svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+            <input type="search" placeholder="Código ou tema… ex.: EF67LP08, frações" aria-label="Buscar na BNCC por código ou tema" />
+            <button class="btn-buscar" type="submit">Buscar</button>
+          </form>
+          <p class="search-hints">por exemplo: <a href="/habilidade/EF67LP08/">EF67LP08</a> · <a href="/objetivo/EI02TS01/">EI02TS01</a> · <a href="/buscar/?q=fake%20news">fake news</a> · <a href="/competencias/">competências</a></p>
+          <a class="cta" href="/fundamental/">
+            <span class="t">Navegar por etapa e matéria</span>
+            <span class="d">Educação Infantil, Fundamental e Médio, com as contagens reais de cada recorte.</span>
+            <span class="g">explorar a Base →</span>
+          </a>
         </div>
-        <div class="prompt-panel" id="hero-prompt" role="tabpanel">
-          <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
-          <q>{prompt}</q>
+      </section>
+
+      <section class="publico invertido" aria-labelledby="h-dev">
+        <div class="pub-texto">
+          <span class="pub-label">Para quem desenvolve</span>
+          <h2 class="pub-frase" id="h-dev">O dataset verificado, embutido no seu código: npm, Python, API e MCP.</h2>
+          <ul class="mescla">
+            <li><strong>Pacotes com os dados dentro:</strong> sem rede, sem key, zero dependências. <span class="caso"><code>habilidadesEF(&#123; componente: 'LP', ano: 6 &#125;)</code> funciona offline.</span></li>
+            <li><strong>Servidor MCP para assistentes de IA</strong> que só responde o que existe. <span class="caso">Chega de EF67LP99 inventado pelo chatbot.</span></li>
+            <li><strong>API REST aberta</strong> com OpenAPI 3.1, sem cadastro. <span class="caso"><a href="/api/">api.bncc.dev</a>, com erros que ensinam.</span></li>
+          </ul>
         </div>
-        <div class="codeblock" id="hero-npm" role="tabpanel" hidden>
-          <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
-          <pre set:text={snippetNpm} />
+        <div class="pub-acao">
+          <div>
+            <div class="install-tabs" role="tablist" aria-label="Comece agora">
+              <button class="install-tab tab" role="tab" aria-selected="true" data-panel="hero-prompt" type="button">prompt</button>
+              <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-npm" type="button">npm</button>
+              <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-python" type="button">python</button>
+              <button class="install-tab tab" role="tab" aria-selected="false" data-panel="hero-mcp" type="button">MCP</button>
+            </div>
+            <div class="prompt-panel" id="hero-prompt" role="tabpanel">
+              <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+              <q>{prompt}</q>
+            </div>
+            <div class="codeblock" id="hero-npm" role="tabpanel" hidden>
+              <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+              <pre set:text={snippetNpm} />
+            </div>
+            <div class="codeblock" id="hero-python" role="tabpanel" hidden>
+              <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+              <pre set:text={snippetPy} />
+            </div>
+            <div class="codeblock" id="hero-mcp" role="tabpanel" hidden>
+              <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+              <pre set:text={snippetMcp} />
+            </div>
+          </div>
+          <p class="search-hints">o prompt funciona em ferramentas como Lovable, Replit e v0; pacotes já instaláveis (pré-release 0.x)</p>
+          <p class="pane-foot"><a href="https://www.npmjs.com/package/@bncc/dados" rel="noopener">npm →</a> · <a href="https://pypi.org/project/bncc/" rel="noopener">PyPI →</a> · <a href="/api/">API →</a> · <a href="https://github.com/bncc-dev/bncc-dados" rel="noopener">dados brutos →</a></p>
         </div>
-        <div class="codeblock" id="hero-python" role="tabpanel" hidden>
-          <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
-          <pre set:text={snippetPy} />
-        </div>
-        <div class="codeblock" id="hero-mcp" role="tabpanel" hidden>
-          <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
-          <pre set:text={snippetMcp} />
-        </div>
-        <p class="search-hints">o prompt funciona em ferramentas como Lovable, Replit e v0; pacotes já instaláveis (pré-release 0.1)</p>
-        <p class="pane-foot"><a href="https://www.npmjs.com/package/@bncc/dados" rel="noopener">npm →</a> · <a href="https://pypi.org/project/bncc/" rel="noopener">PyPI →</a> · <a href="https://github.com/bncc-dev/bncc-dados" rel="noopener">dados brutos →</a></p>
-      </div>
-      <span class="hero-dot" aria-hidden="true">·</span>
+      </section>
     </div>
     <p class="feito-para"><strong>Feito para:</strong> <a href="/fundamental/">professoras e professores</a> · <a href="https://github.com/bncc-dev/bncc-pacotes" rel="noopener">devs e edtechs</a> · <a href="/llms.txt">agentes de IA</a> · <a href="/sobre/">quem mantém</a></p>
   </div>

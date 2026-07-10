@@ -256,30 +256,34 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
 .feito-para strong { font-weight: 600; color: var(--ink); }
 .feito-para a { font-weight: 500; }
 
-.hero-split {
-  position: relative; display: grid; grid-template-columns: 1fr 1fr;
-  max-width: 940px; margin: 36px auto 0;
-  border: 1px solid var(--border-strong); border-radius: 12px;
-  background: var(--bg); text-align: left; overflow: hidden;
-  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 24px 64px -24px color-mix(in srgb, var(--accent) 40%, transparent);
-}
-.hero-pane { padding: 22px 24px 18px; min-width: 0; display: flex; flex-direction: column; }
-.hero-pane.ensinar { border-right: 1px solid var(--border); }
-.hero-pane.desenvolver { background: var(--bg-subtle); }
-.pane-label {
-  align-self: flex-start; font-size: 12px; font-weight: 700; letter-spacing: .08em;
+/* hero por público (composição A1): seções empilhadas, lados alternados */
+.publicos { max-width: 940px; margin: 22px auto 0; text-align: left; }
+.publico { display: grid; grid-template-columns: 1.15fr 1fr; gap: 34px; align-items: start; padding: 28px 0; }
+.publico + .publico { border-top: 1px solid var(--border); }
+.publico.invertido { grid-template-columns: 1fr 1.15fr; }
+.publico.invertido .pub-texto { grid-column: 2; grid-row: 1; }
+.publico.invertido .pub-acao { grid-column: 1; grid-row: 1; }
+.pub-label {
+  display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .08em;
   text-transform: uppercase; color: var(--accent-ink); background: var(--accent-bg);
-  border: 1px solid var(--accent); border-radius: 999px; padding: 2px 10px;
+  border: 1px solid var(--accent); border-radius: 999px; padding: 2px 11px; margin-bottom: 10px;
 }
-.pane-sub { margin: 3px 0 14px; font-size: 12.5px; color: var(--ink-muted); }
-.pane-foot { margin: auto 0 0; padding-top: 14px; font-size: 12.5px; }
+.pub-frase { font-size: 19px; font-weight: 650; letter-spacing: -.015em; line-height: 1.32; margin: 0 0 14px; border: 0; padding: 0; text-wrap: balance; }
+.mescla { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.mescla li { position: relative; padding-left: 26px; font-size: 14px; }
+.mescla li::before { content: "✓"; position: absolute; left: 0; top: 0; font-weight: 700; color: var(--accent); }
+.mescla li strong { font-weight: 650; }
+.mescla li .caso { color: var(--ink-muted); }
+.mescla li .caso code { font-size: 12px; color: var(--accent-ink); background: transparent; padding: 0; }
+.pub-acao { display: grid; gap: 10px; align-content: start; }
+.pub-acao .search-hints { margin: 0; }
+.cta { display: block; padding: 14px 17px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: inherit; }
+.cta:hover { border-color: var(--accent); text-decoration: none; background: var(--bg-subtle); }
+.cta .t { display: block; font-weight: 650; font-size: 14.5px; }
+.cta .d { display: block; font-size: 12.5px; color: var(--ink-muted); margin-top: 3px; }
+.cta .g { display: block; font-size: 12.5px; color: var(--accent-ink); font-weight: 600; margin-top: 8px; }
+.pane-foot { margin: 2px 0 0; font-size: 12.5px; }
 .pane-foot a { font-weight: 500; }
-.hero-dot {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1;
-  width: 24px; height: 24px; border-radius: 50%; pointer-events: none; background: var(--bg);
-  color: var(--accent); font-family: var(--mono); font-size: 24px; font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-}
 .big-search {
   display: flex; align-items: center; gap: 10px; margin: 0;
   padding: 11px 14px; background: var(--bg-subtle);
@@ -311,8 +315,8 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
   font-size: 12.5px; line-height: 1.6;
 }
 .prompt-panel q { quotes: none; }
-.hero-pane .codeblock { border-radius: 0 0 10px 10px; border-top: 0; }
-.hero-pane .codeblock pre { font-size: 12px; padding: 12px 14px; padding-right: 72px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.pub-acao .codeblock { border-radius: 0 0 10px 10px; border-top: 0; }
+.pub-acao .codeblock pre { font-size: 12px; padding: 12px 14px; padding-right: 72px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .btn-copiar {
   position: absolute; top: 8px; right: 8px; font: inherit; font-size: 12px; font-weight: 500;
   color: var(--ink); background: var(--bg); border: 1px solid var(--border);
@@ -360,9 +364,8 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
   h1.thesis { font-size: 30px; }
   h1.thesis .quem { font-size: 20px; }
   .lede { font-size: 15.5px; }
-  .hero-split { grid-template-columns: 1fr; }
-  .hero-pane.ensinar { border-right: 0; border-bottom: 1px solid var(--border); }
-  .hero-dot { display: none; }
+  .publico, .publico.invertido { grid-template-columns: 1fr; }
+  .publico.invertido .pub-texto, .publico.invertido .pub-acao { grid-column: auto; grid-row: auto; }
   .etapas { grid-template-columns: 1fr; }
   .numbers { flex-wrap: wrap; }
   .num { flex-basis: 50%; border-bottom: 1px solid var(--border); }
