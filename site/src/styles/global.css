@@ -34,6 +34,15 @@
   --code-bg: #151b23; --shadow-focus: 0 0 0 3px rgba(70, 192, 122, .3);
 }
 
+/* typo de computador antigo, só para a marca (Press Start 2P, OFL, self-hosted) */
+@font-face {
+  font-family: 'Press Start 2P';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/press-start-2p-latin.woff2') format('woff2');
+}
+
 .theme-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 28px; height: 28px; padding: 0; font: inherit; color: var(--ink-muted);
@@ -59,11 +68,12 @@ code, .mono { font-family: var(--mono); }
   background: var(--bg-subtle); border-bottom: 1px solid var(--border);
 }
 .wordmark {
-  display: inline-flex; align-items: center; gap: 7px;
-  font-family: var(--mono); font-size: 15px; font-weight: 700;
-  color: var(--ink); letter-spacing: -.02em; white-space: nowrap; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Press Start 2P', var(--mono); font-size: 12px; font-weight: 400;
+  color: var(--ink); letter-spacing: 0; white-space: nowrap; text-decoration: none;
 }
 .wordmark .maca { width: 18px; height: auto; flex: none; }
+.wordmark .dot { letter-spacing: 0; margin: 0 -2px; }
 .wordmark:hover { text-decoration: none; }
 .wordmark .dot { color: var(--accent); }
 .search {
