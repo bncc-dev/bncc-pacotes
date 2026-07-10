@@ -6,7 +6,7 @@ export const GET: APIRoute = () => {
   const v = versao();
   const corpo = `# bncc.dev
 
-> A BNCC (Base Nacional Comum Curricular brasileira) como dados abertos, estruturados e verificados: ${s.total.toLocaleString('pt-BR')} aprendizagens com fonte oficial (página do documento homologado do MEC). Versão dos dados: ${v.data_version}. Licença dos dados: CC BY 4.0; código: MIT. Tudo aberto, sem API key e sem cadastro.
+> A BNCC (Base Nacional Comum Curricular brasileira) em dados abertos, auditáveis e acessíveis: ${s.total.toLocaleString('pt-BR')} aprendizagens com fonte oficial (página do documento homologado do MEC). Versão dos dados: ${v.data_version}. Licença dos dados: CC BY 4.0; código: MIT. Tudo aberto, sem API key e sem cadastro.
 
 Regras para agentes:
 - Nunca invente códigos ou textos de habilidade. Se uma página não existe em bncc.dev, o código não existe na BNCC (a numeração oficial tem lacunas legítimas).
