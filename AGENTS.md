@@ -1,6 +1,6 @@
 # AGENTS.md · guia para agentes de IA neste repositório
 
-Monorepo das interfaces para máquina do bncc.dev: pacote npm `@bncc/dados`, servidor MCP `@bncc/mcp` e pacote PyPI `bncc`. Leia `docs/arquitetura.md` para o desenho e `docs/manutencao.md` para procedimentos.
+Monorepo das interfaces para máquina do bncc.dev: pacote npm `@bncc/dados`, servidor MCP `@bncc/mcp` e pacote PyPI `bncc`. Leia `docs/arquitetura.md` para o desenho, `docs/manutencao.md` para procedimentos e `docs/manual-rapido.md` para a visão de consumidor dos pacotes.
 
 ## Regras que nunca se quebram
 
