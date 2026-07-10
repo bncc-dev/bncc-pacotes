@@ -261,7 +261,7 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
 
 /* hero por público (composição A1): seções empilhadas, lados alternados */
 .publicos { max-width: 940px; margin: 22px auto 0; text-align: left; }
-.publico { display: grid; grid-template-columns: 1.15fr 1fr; gap: 34px; align-items: start; padding: 28px 0; }
+.publico { display: grid; grid-template-columns: 1.15fr 1fr; gap: 34px; align-items: center; padding: 28px 0; }
 .publico + .publico { border-top: 1px solid var(--border); }
 .pub-label {
   display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .08em;
@@ -275,7 +275,9 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
 .mescla li strong { font-weight: 650; }
 .mescla li .caso { color: var(--ink-muted); }
 .mescla li .caso code { font-size: 12px; color: var(--accent-ink); background: transparent; padding: 0; }
-.pub-acao { display: grid; gap: 10px; align-content: start; }
+.pub-acao { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.ou { display: flex; align-items: center; gap: 12px; margin: 10px 0; font-size: 12px; font-weight: 650; letter-spacing: .04em; color: var(--ink-muted); }
+.ou::before, .ou::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 .pub-acao .search-hints { margin: 0; }
 .cta { display: block; padding: 14px 17px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: inherit; }
 .cta:hover { border-color: var(--accent); text-decoration: none; background: var(--bg-subtle); }
@@ -283,6 +285,7 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
 .cta .d { display: block; font-size: 12.5px; color: var(--ink-muted); margin-top: 3px; }
 .cta .g { display: block; font-size: 12.5px; color: var(--accent-ink); font-weight: 600; margin-top: 8px; }
 .pane-foot { margin: 2px 0 0; font-size: 12.5px; }
+.pane-foot strong { font-weight: 650; color: var(--ink); }
 .pane-foot a { font-weight: 500; }
 .big-search {
   display: flex; align-items: center; gap: 10px; margin: 0;
@@ -435,3 +438,121 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
 .sugestoes mark { background: transparent; color: inherit; font-weight: 700; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 2px; }
 .sugestoes .ver-todos a { justify-content: center; font-size: 12.5px; color: var(--accent-ink); font-weight: 600; }
 .sugestoes .nada { padding: 10px 12px; font-size: 13px; color: var(--ink-muted); }
+
+/* ---- navegador de turma (home, seção ensina) ---- */
+.navegador {
+  display: grid; gap: 10px; min-width: 0;
+  padding: 14px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg);
+}
+.nav-titulo { font-size: 13px; font-weight: 650; }
+/* cores oficiais das etapas (linguagem visual do documento da BNCC);
+   o dourado do EM é escurecido para garantir contraste com texto branco */
+.navegador { --cor-etapa: #1e5b8a; }
+.navegador[data-etapa="EI"] { --cor-etapa: #2e7d4f; }
+.navegador[data-etapa="EF"] { --cor-etapa: #1e5b8a; }
+.navegador[data-etapa="EM"] { --cor-etapa: #8a6400; }
+.seg {
+  position: relative; display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--border); border-radius: 9px; background: var(--bg-inset); padding: 3px;
+}
+.seg-thumb {
+  position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 3);
+  border-radius: 6px; background: var(--cor-etapa);
+  transition: transform .28s cubic-bezier(.2, .8, .2, 1), background-color .28s ease;
+}
+.seg button {
+  position: relative; z-index: 1; font: inherit; font-size: 13px; font-weight: 500;
+  color: var(--ink-muted); background: transparent; border: 0; border-radius: 6px;
+  padding: 7px 6px; cursor: pointer; white-space: nowrap; transition: color .2s ease;
+}
+.seg button[aria-pressed="true"] { color: #fff; font-weight: 650; }
+.nav-selects { display: flex; gap: 8px; min-width: 0; }
+.nav-selects select {
+  flex: 1; min-width: 0; width: 100%; padding: 7px 9px; font: inherit; font-size: 13px; color: var(--ink);
+  background: var(--bg-inset); border: 1px solid var(--border); border-radius: 8px;
+  text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+}
+.nav-selects select#nav-ano { flex: 0 0 42%; }
+.nav-selects select[hidden] { display: none; }
+.btn-ir {
+  display: block; text-align: center; font-size: 13.5px; font-weight: 600;
+  color: #fff; background: var(--cor-etapa); border-radius: 8px; padding: 9px 14px;
+  transition: background-color .28s ease, filter .15s ease;
+}
+.btn-ir:hover { filter: brightness(.9); text-decoration: none; }
+
+/* ---- terminal do card dev (sempre escuro: terminal é terminal) ---- */
+.terminal {
+  min-width: 0; border-radius: 10px; overflow: hidden;
+  border: 1px solid #30363d; background: #0d1117;
+  box-shadow: 0 10px 32px -14px rgba(1, 4, 9, .55);
+}
+.term-bar { display: flex; align-items: center; gap: 8px; padding: 6px 8px 0 10px; background: #161b22; border-bottom: 1px solid #21262d; }
+.term-dots { display: inline-flex; gap: 5px; padding-bottom: 6px; flex-shrink: 0; }
+.term-dots i { width: 8px; height: 8px; border-radius: 50%; }
+.term-dots i:nth-child(1) { background: #ff5f57; }
+.term-dots i:nth-child(2) { background: #febc2e; }
+.term-dots i:nth-child(3) { background: #28c840; }
+.term-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.term-tabs .tab {
+  font-family: var(--mono); font-size: 11.5px; color: #8b949e;
+  background: transparent; border: 0; border-radius: 6px 6px 0 0;
+  padding: 6px 10px 7px; cursor: pointer; white-space: nowrap;
+}
+.term-tabs .tab:hover { color: #c9d1d9; }
+.term-tabs .tab[aria-selected="true"] { background: #0d1117; color: #e6edf3; }
+.term-painel { position: relative; min-height: 300px; }
+.term-painel pre {
+  margin: 0; padding: 14px 16px; padding-right: 76px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.65; color: #e6edf3;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.term-painel q {
+  quotes: none; display: block; padding: 13px 15px; padding-right: 76px;
+  font-size: 12.3px; line-height: 1.6; color: #aeb8c2;
+}
+.term-painel .btn-copiar { top: 9px; right: 9px; color: #c9d1d9; background: #21262d; border-color: #30363d; }
+.term-painel .btn-copiar:hover { border-color: #46c07a; color: #5bd58e; }
+
+/* mini testador da API (aba api) */
+.term-api { padding: 12px 14px 14px; display: grid; gap: 9px; }
+.term-api[hidden] { display: none; }
+.api-req { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.api-req .metodo { font-family: var(--mono); font-size: 11px; font-weight: 700; color: #5bd58e; border: 1px solid #2ea043; border-radius: 5px; padding: 3px 7px; flex-shrink: 0; }
+.api-req input {
+  flex: 1; min-width: 0; font-family: var(--mono); font-size: 12px; color: #e6edf3;
+  background: #010409; border: 1px solid #30363d; border-radius: 6px; padding: 6px 9px; outline: none;
+}
+.api-req input:focus { border-color: #46c07a; }
+.api-req button { font: inherit; font-size: 12px; font-weight: 600; color: #fff; background: #238636; border: 0; border-radius: 6px; padding: 6px 12px; cursor: pointer; flex-shrink: 0; }
+.api-req button:hover { background: #2ea043; }
+.api-atalhos { display: flex; gap: 6px; flex-wrap: wrap; }
+.api-atalhos button { font-family: var(--mono); font-size: 10.5px; color: #8b949e; background: #161b22; border: 1px solid #30363d; border-radius: 999px; padding: 2px 9px; cursor: pointer; }
+.api-atalhos button:hover { color: #e6edf3; border-color: #8b949e; }
+.api-status { font-family: var(--mono); font-size: 11px; color: #8b949e; }
+.api-status .ok { color: #5bd58e; font-weight: 700; }
+.api-status .err { color: #ff7b72; font-weight: 700; }
+.term-api pre#api-resp {
+  height: 176px; max-height: 176px; overflow: auto; padding: 10px 12px;
+  background: #010409; border: 1px solid #21262d; border-radius: 6px; color: #c9d1d9;
+  scrollbar-color: #30363d transparent;
+}
+.term-api pre#api-resp::-webkit-scrollbar { width: 8px; }
+.term-api pre#api-resp::-webkit-scrollbar-track { background: transparent; }
+.term-api pre#api-resp::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+.term-api pre#api-resp::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+/* ---- janela de arquivo (seção máquinas e IAs) ----
+   clara de propósito, como um bloco de notas: é um documento, não um
+   terminal. Fica clara nos dois temas, feito uma folha de papel. */
+.arquivo { min-width: 0; border-radius: 10px; overflow: hidden; border: 1px solid #c8ccd1; background: #eef0f2; box-shadow: 0 10px 28px -16px rgba(31, 35, 40, .35); position: relative; }
+.arquivo-bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: #e2e5e9; border-bottom: 1px solid #c8ccd1; }
+.arquivo-nome { font-family: var(--mono); font-size: 11.5px; font-weight: 600; color: #1f2328; }
+.arquivo-bar .btn-copiar { position: static; color: #24292f; background: #f6f8fa; border-color: #c8ccd1; }
+.arquivo-bar .btn-copiar:hover { border-color: #1a6e42; color: #135c36; }
+.arquivo pre { margin: 0; padding: 13px 16px 4px; font-family: var(--mono); font-size: 11.8px; line-height: 1.7; color: #24292f; white-space: pre; overflow-x: auto; scrollbar-color: #c1c7cd transparent; }
+.arquivo pre::first-line { color: #6e7781; }
+.arquivo .arquivo-nota { padding: 10px 16px 13px; color: #6e7781; }
+.arquivo pre::-webkit-scrollbar { height: 8px; }
+.arquivo pre::-webkit-scrollbar-track { background: transparent; }
+.arquivo pre::-webkit-scrollbar-thumb { background: #c1c7cd; border-radius: 4px; }

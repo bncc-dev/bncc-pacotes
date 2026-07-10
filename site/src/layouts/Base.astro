@@ -263,8 +263,10 @@ const v = versao();
         });
       };
       window.copiarBloco = (btn) => {
-        const pre = btn.parentElement.querySelector('pre');
-        window.copiarTexto(pre.innerText, btn);
+        // o botão pode morar numa barra (janela de arquivo) ou direto no painel
+        const escopo = btn.closest('.arquivo') || btn.parentElement;
+        const alvo = escopo.querySelector('pre, q');
+        window.copiarTexto(alvo.innerText, btn);
       };
     </script>
   </body>
