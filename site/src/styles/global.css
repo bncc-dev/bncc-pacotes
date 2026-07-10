@@ -411,3 +411,24 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
   background: var(--bg-inset); border-radius: 0 6px 6px 0; font-size: 16px; line-height: 1.65;
 }
 .texto-oficial p { margin: 0; }
+
+/* ---- sugestões de busca (topbar + home) ---- */
+.search, .big-search { position: relative; }
+.sugestoes {
+  position: absolute; top: calc(100% + 6px); left: -1px; right: -1px; z-index: 60;
+  margin: 0; padding: 4px; list-style: none;
+  background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .16);
+  max-height: min(420px, 60vh); overflow-y: auto; text-align: left;
+}
+.sugestoes li a {
+  display: flex; gap: 10px; align-items: baseline;
+  padding: 8px 10px; border-radius: 6px; color: var(--ink); text-decoration: none;
+}
+.sugestoes li a:hover, .sugestoes li.ativa a { background: var(--accent-bg); }
+.sugestoes .cod { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--accent-ink); flex-shrink: 0; }
+.sugestoes .trecho { font-size: 13px; line-height: 1.45; min-width: 0; }
+.sugestoes .trecho small { display: block; color: var(--ink-muted); font-size: 11.5px; margin-top: 1px; }
+.sugestoes mark { background: transparent; color: inherit; font-weight: 700; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 2px; }
+.sugestoes .ver-todos a { justify-content: center; font-size: 12.5px; color: var(--accent-ink); font-weight: 600; }
+.sugestoes .nada { padding: 10px 12px; font-size: 13px; color: var(--ink-muted); }

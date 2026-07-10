@@ -30,7 +30,7 @@ A página de aprendizagem traz: decodificador interativo do código, seções de
 
 1. **Todo dado vem de `src/lib/dados.ts`**, que é a única porta para o `@bncc/dados`. Páginas não leem JSON cru nem inventam conteúdo.
 2. **Copy pública sem travessão** (convenção do projeto): vírgula, dois-pontos, parênteses; `·` como separador de marca.
-3. **JavaScript mínimo**: o inline do `Base.astro` (~1 KB: tema, busca do topbar, decoder, tabs, copiar) e o da página `/buscar/` (justificado: é a própria funcionalidade da página). Interatividade nova além disso precisa de justificativa.
+3. **JavaScript mínimo**: o inline do `Base.astro` (~4 KB: tema, decoder, tabs, copiar e a busca com sugestões ao vivo, compartilhada entre topbar e home via `window.bnccSugestoes`) e o da página `/buscar/`. As sugestões usam o mesmo `/buscar-indice.json` da busca, carregado só no primeiro toque de digitação. Interatividade nova além disso precisa de justificativa.
 4. O `@bncc/dados` fica `ssr.external` no Vite (`astro.config.mjs`): ele resolve os JSONs relativos ao próprio módulo e não pode ser empacotado.
 5. Honestidade editorial: seções que sugerem relações não-oficiais (progressão entre anos) declaram isso no subtítulo.
 

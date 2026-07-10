@@ -94,22 +94,134 @@ const v = versao();
       });
       atualizarIcone();
 
-      // código exato abre a página direto; qualquer outro termo vai para /buscar/
+      // busca com sugestões ao vivo: compartilhada entre o topbar e a home.
+      // Usa o mesmo índice da página /buscar/ (carregado só no primeiro toque).
+      window.bnccSugestoes = (form, input) => {
+        const rotaDe = (c) => (c.startsWith('EI') ? `/objetivo/${c}/` : `/habilidade/${c}/`);
+        const eCodigo = (q) => /^(EI0[123](EO|CG|TS|EF|ET)\d{2}|EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(q);
+        const norm = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+        const MAX = 6;
+
+        let indice = null;
+        const carregar = async () => indice || (indice = await (await fetch('/buscar-indice.json')).json());
+
+        const box = document.createElement('ul');
+        box.className = 'sugestoes';
+        box.hidden = true;
+        box.setAttribute('role', 'listbox');
+        form.appendChild(box);
+        let ativa = -1;
+
+        const fechar = () => { box.hidden = true; ativa = -1; };
+        const marcar = (i) => {
+          ativa = i;
+          [...box.children].forEach((li, j) => li.classList.toggle('ativa', j === i));
+        };
+
+        const trecho = (texto, bruto) => {
+          const el = document.createElement('span');
+          el.className = 'trecho';
+          const pos = texto.toLowerCase().indexOf(bruto.toLowerCase());
+          if (pos === -1) { el.textContent = texto.length > 90 ? texto.slice(0, 87) + '…' : texto; return el; }
+          const ini = Math.max(0, pos - 28);
+          const fim = Math.min(texto.length, pos + bruto.length + 55);
+          if (ini > 0) el.append('…');
+          el.append(texto.slice(ini, pos));
+          const m = document.createElement('mark');
+          m.textContent = texto.slice(pos, pos + bruto.length);
+          el.append(m, texto.slice(pos + bruto.length, fim));
+          if (fim < texto.length) el.append('…');
+          return el;
+        };
+
+        const render = (achados, bruto, total) => {
+          box.innerHTML = '';
+          for (const r of achados) {
+            const li = document.createElement('li');
+            li.setAttribute('role', 'option');
+            const a = document.createElement('a');
+            a.href = rotaDe(r.c);
+            const cod = document.createElement('span');
+            cod.className = 'cod'; cod.textContent = r.c;
+            const tr = trecho(r.t, bruto);
+            const ctx = document.createElement('small');
+            ctx.textContent = [r.g, r.a && r.a.map((x) => x + 'º').join(' e ') + ' ano', r.p].filter(Boolean).join(' · ');
+            tr.appendChild(ctx);
+            a.append(cod, tr);
+            li.appendChild(a);
+            box.appendChild(li);
+          }
+          if (total === 0) {
+            const li = document.createElement('li');
+            li.className = 'nada';
+            li.textContent = 'Nada com esse termo nos enunciados oficiais.';
+            box.appendChild(li);
+          } else {
+            const li = document.createElement('li');
+            li.className = 'ver-todos';
+            li.setAttribute('role', 'option');
+            const a = document.createElement('a');
+            a.href = `/buscar/?q=${encodeURIComponent(bruto)}`;
+            a.textContent = total > achados.length
+              ? `ver todos os ${total.toLocaleString('pt-BR')} resultados →`
+              : 'abrir na busca completa →';
+            li.appendChild(a);
+            box.appendChild(li);
+          }
+          box.hidden = false;
+          marcar(-1);
+        };
+
+        let debounce;
+        input.addEventListener('input', () => {
+          clearTimeout(debounce);
+          const bruto = input.value.trim();
+          if (bruto.length < 2) { fechar(); return; }
+          debounce = setTimeout(async () => {
+            const idx = await carregar();
+            const alvo = norm(bruto);
+            const cod = bruto.toUpperCase();
+            const porCodigo = idx.filter((r) => r.c.startsWith(cod));
+            const porTexto = porCodigo.length < MAX ? idx.filter((r) => norm(r.t).includes(alvo)) : [];
+            const achados = [...porCodigo, ...porTexto].slice(0, MAX);
+            render(achados, bruto, porCodigo.length + porTexto.length);
+          }, 180);
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if (box.hidden) return;
+          const opcoes = [...box.querySelectorAll('li[role="option"]')];
+          if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const passo = e.key === 'ArrowDown' ? 1 : -1;
+            const idx = [...box.children].indexOf(opcoes[(opcoes.findIndex((o) => o.classList.contains('ativa')) + passo + opcoes.length) % opcoes.length]);
+            marcar(idx);
+          } else if (e.key === 'Escape') fechar();
+          else if (e.key === 'Enter' && ativa >= 0) {
+            e.preventDefault();
+            box.children[ativa].querySelector('a').click();
+          }
+        });
+
+        document.addEventListener('click', (e) => { if (!form.contains(e.target)) fechar(); });
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const bruto = input.value.trim();
+          if (!bruto) return;
+          const q = bruto.toUpperCase();
+          if (eCodigo(q)) location.href = rotaDe(q);
+          else location.href = `/buscar/?q=${encodeURIComponent(bruto)}`;
+        });
+      };
+
       const form = document.getElementById('busca-codigo');
       if (form) {
         const input = form.querySelector('input');
         document.addEventListener('keydown', (e) => {
           if (e.key === '/' && document.activeElement !== input) { e.preventDefault(); input.focus(); }
         });
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const bruto = input.value.trim();
-          if (!bruto) return;
-          const q = bruto.toUpperCase();
-          if (/^EI0[123](EO|CG|TS|EF|ET)\d{2}$/.test(q)) location.href = `/objetivo/${q}/`;
-          else if (/^(EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(q)) location.href = `/habilidade/${q}/`;
-          else location.href = `/buscar/?q=${encodeURIComponent(bruto)}`;
-        });
+        window.bnccSugestoes(form, input);
       }
 
       // decoder: hover/focus/tap

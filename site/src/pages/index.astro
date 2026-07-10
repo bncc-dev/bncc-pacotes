@@ -129,17 +129,7 @@ const snippetMcp = `{ "mcpServers": { "bncc":
 </Base>
 
 <script is:inline>
+  // mesma busca com sugestões do topbar (função definida no Base.astro)
   const bh = document.getElementById('busca-home');
-  if (bh) {
-    const input = bh.querySelector('input');
-    bh.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const bruto = input.value.trim();
-      if (!bruto) return;
-      const q = bruto.toUpperCase();
-      if (/^EI0[123](EO|CG|TS|EF|ET)\d{2}$/.test(q)) location.href = `/objetivo/${q}/`;
-      else if (/^(EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(q)) location.href = `/habilidade/${q}/`;
-      else location.href = `/buscar/?q=${encodeURIComponent(bruto)}`;
-    });
-  }
+  if (bh) window.bnccSugestoes(bh, bh.querySelector('input'));
 </script>
