@@ -70,6 +70,9 @@ code, .mono { font-family: var(--mono); }
   border-radius: 6px; color: var(--ink-muted); font-size: 13px;
 }
 .search input { border: 0; background: transparent; width: 100%; font: inherit; color: var(--ink); outline: none; }
+/* o anel de foco fica no container; o input interno não desenha o dele */
+.search:focus-within { box-shadow: var(--shadow-focus); border-color: var(--accent); }
+.search input:focus-visible, .big-search input:focus-visible { box-shadow: none; }
 .search kbd {
   font-family: var(--mono); font-size: 11px; color: var(--ink-muted);
   border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; background: var(--bg-subtle);
@@ -312,6 +315,7 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
   font-size: 12.5px; line-height: 1.6;
 }
 .prompt-panel q { quotes: none; }
+.prompt-panel.solo { border-radius: 10px; }
 .pub-acao .codeblock { border-radius: 0 0 10px 10px; border-top: 0; }
 .pub-acao .codeblock pre { font-size: 12px; padding: 12px 14px; padding-right: 72px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .btn-copiar {
