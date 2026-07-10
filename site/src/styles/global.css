@@ -34,13 +34,13 @@
   --code-bg: #151b23; --shadow-focus: 0 0 0 3px rgba(70, 192, 122, .3);
 }
 
-/* typo de computador antigo, só para a marca (Press Start 2P, OFL, self-hosted) */
+/* typo de computador antigo, só para a marca (Bytesized, OFL, self-hosted) */
 @font-face {
-  font-family: 'Press Start 2P';
+  font-family: 'Bytesized';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/press-start-2p-latin.woff2') format('woff2');
+  src: url('/fonts/bytesized-latin.woff2') format('woff2');
 }
 
 .theme-btn {
@@ -68,14 +68,15 @@ code, .mono { font-family: var(--mono); }
   background: var(--bg-subtle); border-bottom: 1px solid var(--border);
 }
 .wordmark {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: 'Press Start 2P', var(--mono); font-size: 12px; font-weight: 400;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Bytesized', var(--mono); font-size: 28px; font-weight: 400;
   color: var(--ink); letter-spacing: 0; white-space: nowrap; text-decoration: none;
 }
 .wordmark .maca { width: 18px; height: auto; flex: none; }
-.wordmark .dot { letter-spacing: 0; margin: 0 -2px; }
+/* na VT323 o ponto ocupa a célula monoespaçada inteira; cola o bncc.dev */
+.wordmark .dot { margin: 0 -9px; }
 .wordmark:hover { text-decoration: none; }
-.wordmark .dot { color: var(--accent); }
+.wordmark .dot { color: #e5484d; } /* vermelho da maçã pixel */
 .search {
   flex: 1; max-width: 420px; display: flex; align-items: center; gap: 8px;
   padding: 5px 12px; background: var(--bg); border: 1px solid var(--border);
