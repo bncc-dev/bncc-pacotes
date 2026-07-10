@@ -49,6 +49,23 @@ progressaoEI('EI02TS01');   // EI01TS01 → EI02TS01 → EI03TS01
 
 Regras que o pacote respeita (e você deveria também): códigos que não existem lançam erro em vez de inventar; a numeração tem lacunas legítimas; registros trazem `vigencia` para filtrar aprendizagens revogadas em versões futuras.
 
+## Uso sem sistema de arquivos (Workers, Deno Deploy, bundlers)
+
+A entrada padrão carrega os JSONs embutidos do disco. Em runtimes sem `fs`, importe o núcleo injetável e alimente-o com os dados (que o pacote também exporta como JSON):
+
+```ts
+import { criarConsultas } from '@bncc/dados/nucleo';
+import estrutura from '@bncc/dados/dados/estrutura.json';
+import educacaoInfantil from '@bncc/dados/dados/educacao-infantil.json';
+import ensinoFundamental from '@bncc/dados/dados/ensino-fundamental.json';
+import ensinoMedio from '@bncc/dados/dados/ensino-medio.json';
+
+const bncc = criarConsultas({ estrutura, educacaoInfantil, ensinoFundamental, ensinoMedio });
+bncc.porCodigo('EF67LP08').texto;
+```
+
+A mesma API (`porCodigo`, `buscar`, `habilidadesEF`...), a mesma semântica. É o caminho usado pela API hospedada do bncc.dev.
+
 ## Números
 
 1.580 aprendizagens (93 EI + 1.304 EF + 183 EM) · 10 competências gerais · 105 específicas · 885 contextos de organização · install até a primeira consulta em ~1 segundo.

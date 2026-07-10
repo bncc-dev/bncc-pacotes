@@ -32,7 +32,8 @@ flowchart LR
 ### `packages/bncc` → npm `@bncc/dados`
 
 - TypeScript, build tsup (ESM + CJS + `.d.ts`), dados como arquivos JSON no tarball (204 KB).
-- Camadas internas: `indice.ts` (carregamento lazy + mapas), `decodificar.ts` (port do `pipeline/codigos.py` do bncc-dados), `consultas.ts` (superfície pública), `tipos.ts` (espelho manual dos JSON Schemas).
+- Camadas internas: `nucleo.ts` (núcleo injetável: `criarConsultas(dados)` com índices + toda a lógica de consulta, zero fs), `consultas.ts` (casca fs: carrega os JSONs embutidos e delega), `decodificar.ts` (port do `pipeline/codigos.py` do bncc-dados), `tipos.ts` (espelho manual dos JSON Schemas).
+- Subpaths exportados desde a 0.2.0: `@bncc/dados/nucleo` e `@bncc/dados/dados/*.json`, para runtimes sem sistema de arquivos (Cloudflare Workers: é como o bncc-api consome o pacote).
 - Superfície: `porCodigo`, `decodificar`, `habilidadesEF/EM`, `objetivosEI`, `buscar`, `progressaoEI`, `estrutura`, `estatisticas`, `versao`.
 
 ### `packages/mcp` → npm `@bncc/mcp`
@@ -77,4 +78,4 @@ O marco `1.0.0` não sai antes da release `dados-v1.0.0` do bncc-dados (revisão
 ## O que fica fora deste repo
 
 - Extração e validação dos dados: bncc-dados.
-- API hospedada: repo futuro bncc-api (Fase 4, condicionada a tração).
+- API hospedada: repo bncc-api (Fase 4, em construção; consome `@bncc/dados/nucleo`).
