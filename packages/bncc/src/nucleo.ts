@@ -12,6 +12,12 @@ import type {
   HabilidadeEF, HabilidadeEM, ObjetivoEI,
 } from './tipos.js';
 
+// Reexporta o decodificador (puro) para que runtimes sem fs não precisem
+// tocar na entrada padrão do pacote, que importa node:fs.
+export { decodificar, CAMPOS_EI, GRUPOS_EI, COMPONENTES_EF, BLOCOS_EF, AREAS_EM } from './decodificar.js';
+export type { CodigoDecodificado, CodigoEI, CodigoEF, CodigoEM } from './decodificar.js';
+export type { AprendizagemResolvida } from './tipos.js';
+
 export interface DadosBNCC {
   estrutura: Estrutura;
   educacaoInfantil: { objetivos: ObjetivoEI[]; alinhamentos: Alinhamento[] };
