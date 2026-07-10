@@ -260,9 +260,6 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
 .publicos { max-width: 940px; margin: 22px auto 0; text-align: left; }
 .publico { display: grid; grid-template-columns: 1.15fr 1fr; gap: 34px; align-items: start; padding: 28px 0; }
 .publico + .publico { border-top: 1px solid var(--border); }
-.publico.invertido { grid-template-columns: 1fr 1.15fr; }
-.publico.invertido .pub-texto { grid-column: 2; grid-row: 1; }
-.publico.invertido .pub-acao { grid-column: 1; grid-row: 1; }
 .pub-label {
   display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .08em;
   text-transform: uppercase; color: var(--accent-ink); background: var(--accent-bg);
@@ -364,8 +361,7 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
   h1.thesis { font-size: 30px; }
   h1.thesis .quem { font-size: 20px; }
   .lede { font-size: 15.5px; }
-  .publico, .publico.invertido { grid-template-columns: 1fr; }
-  .publico.invertido .pub-texto, .publico.invertido .pub-acao { grid-column: auto; grid-row: auto; }
+  .publico { grid-template-columns: 1fr; }
   .etapas { grid-template-columns: 1fr; }
   .numbers { flex-wrap: wrap; }
   .num { flex-basis: 50%; border-bottom: 1px solid var(--border); }
