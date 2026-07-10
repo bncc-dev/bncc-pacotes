@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- monograma do wordmark bncc·dev: b + ponto verde, no escuro da marca -->
+  <rect width="64" height="64" rx="14" fill="#0d1117"/>
+  <text x="27" y="47" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="46" font-weight="700" fill="#e6edf3" text-anchor="middle">b</text>
+  <circle cx="48" cy="41" r="6.5" fill="#46c07a"/>
+</svg>

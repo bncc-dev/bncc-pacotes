@@ -1,10 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { estrutura, objetivosEI } from '../../lib/dados';
+import { breadcrumbJsonLd, estrutura, objetivosEI } from '../../lib/dados';
 const campos = estrutura().campos_experiencias;
+const total = objetivosEI().length;
 ---
-<Base titulo="Educação Infantil · BNCC · bncc.dev" etapa="EI"
-      descricao="Os 93 objetivos de aprendizagem e desenvolvimento da Educação Infantil na BNCC, por campo de experiências e faixa etária.">
+<Base titulo={`Educação Infantil · ${total} objetivos da BNCC · bncc.dev`} etapa="EI"
+      descricao={`Os ${total} objetivos de aprendizagem e desenvolvimento da Educação Infantil na BNCC, por campo de experiências e faixa etária.`}
+      jsonLd={breadcrumbJsonLd([{ nome: 'Educação Infantil' }])}>
   <nav class="trilha"><li><a href="/">bncc.dev</a></li><li>Educação Infantil</li></nav>
   <h1 class="titulo-secao">Educação Infantil</h1>
   <p class="acoes-listagem"><a class="btn" href="/csv/infantil.csv" download>baixar CSV da etapa completa</a></p>

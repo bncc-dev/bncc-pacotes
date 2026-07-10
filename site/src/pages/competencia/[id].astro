@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { competenciasEspecificas, habilidadesDaCompetencia, rotaDe } from '../../lib/dados';
+import { SITE, breadcrumbJsonLd, competenciasEspecificas, habilidadesDaCompetencia, rotaDe, versao } from '../../lib/dados';
 import type { CompetenciaResolvida } from '../../lib/dados';
 
 export function getStaticPaths() {
@@ -10,9 +10,37 @@ export function getStaticPaths() {
 const { ce } = Astro.props as { ce: CompetenciaResolvida };
 const vinculadas = habilidadesDaCompetencia(ce.id);
 const resumo = ce.texto.length > 110 ? ce.texto.slice(0, 107) + '…' : ce.texto;
+const jsonLdCe = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'LearningResource',
+    name: `Competência específica ${ce.numero} de ${ce.contexto.nome} · BNCC`,
+    identifier: ce.id,
+    description: ce.texto,
+    url: `${SITE}/competencia/${ce.id}/`,
+    inLanguage: 'pt-BR',
+    educationalLevel: ce.etapa === 'EM' ? 'Ensino Médio (1ª a 3ª série)' : 'Ensino Fundamental',
+    version: versao().data_version,
+    educationalAlignment: {
+      '@type': 'AlignmentObject',
+      alignmentType: 'educationalSubject',
+      educationalFramework: 'Base Nacional Comum Curricular (BNCC)',
+      targetName: `Competência específica ${ce.numero} · ${ce.contexto.nome}`,
+      targetDescription: ce.texto,
+    },
+    isPartOf: { '@id': `${SITE}/#dataset` },
+    isBasedOn: 'https://github.com/bncc-dev/bncc-dados',
+    license: 'https://creativecommons.org/licenses/by/4.0/deed.pt-br',
+  },
+  breadcrumbJsonLd([
+    { nome: 'Competências', url: '/competencias/' },
+    { nome: `CE ${ce.numero} · ${ce.contexto.nome}` },
+  ]),
+];
 ---
 <Base titulo={`Competência específica ${ce.numero} de ${ce.contexto.nome} · BNCC · bncc.dev`}
-      descricao={`CE ${ce.numero} (${ce.contexto.nome}, ${ce.etapa === 'EM' ? 'Ensino Médio' : 'Ensino Fundamental'}): ${resumo}`}>
+      descricao={`CE ${ce.numero} (${ce.contexto.nome}, ${ce.etapa === 'EM' ? 'Ensino Médio' : 'Ensino Fundamental'}): ${resumo}`}
+      etapa={ce.etapa} ogType="article" jsonLd={jsonLdCe}>
   <nav class="trilha">
     <li><a href="/">bncc.dev</a></li>
     <li><a href="/competencias/">Competências</a></li>

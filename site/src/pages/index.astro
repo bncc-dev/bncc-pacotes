@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { estatisticas, estrutura, habilidadesEF, habilidadesEM, objetivosEI, porCodigo } from '../lib/dados';
+import { datasetJsonLd, estatisticas, estrutura, habilidadesEF, habilidadesEM, objetivosEI, porCodigo, websiteJsonLd } from '../lib/dados';
 
 const s = estatisticas();
 const exemplo = porCodigo('EF67LP08');
@@ -54,7 +54,8 @@ const snippetMcp = `{ "mcpServers": { "bncc":
     { "command": "npx", "args": ["-y", "@bncc/mcp"] } } }`;
 ---
 <Base titulo="bncc.dev · a BNCC como dados abertos, estruturados e verificados"
-      descricao={`As ${s.total.toLocaleString('pt-BR')} aprendizagens da Base Nacional Comum Curricular com fonte oficial: consulte no site, use via pacotes npm/PyPI ou conecte agentes de IA pelo servidor MCP.`}>
+      descricao={`As ${s.total.toLocaleString('pt-BR')} aprendizagens da Base Nacional Comum Curricular com fonte oficial: consulte no site, use via pacotes npm/PyPI ou conecte agentes de IA pelo servidor MCP.`}
+      jsonLd={[websiteJsonLd(), datasetJsonLd()]}>
 
   <div class="opening">
     <h1 class="thesis">A BNCC em dados abertos, auditáveis e acessíveis. <span class="quem">Para quem ensina e para quem desenvolve.</span></h1>

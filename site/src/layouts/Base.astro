@@ -1,14 +1,20 @@
 ---
 import '../styles/global.css';
-import { versao } from '../lib/dados';
+import { ETAPAS, versao } from '../lib/dados';
 
 interface Props {
   titulo: string;
   descricao: string;
-  jsonLd?: object;
+  jsonLd?: object | object[];
+  /** Etapa da página, quando houver: define a cor do theme-color (linguagem visual da BNCC). */
+  etapa?: 'EI' | 'EF' | 'EM';
+  /** og:type: 'website' (padrão) ou 'article' nas páginas de detalhe. */
+  ogType?: 'website' | 'article';
 }
-const { titulo, descricao, jsonLd } = Astro.props;
+const { titulo, descricao, jsonLd, etapa, ogType = 'website' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og/bncc-dev.png', Astro.site).href;
+const temaCor = etapa ? ETAPAS[etapa].cor : '#1a6e42';
 const v = versao();
 ---
 <!doctype html>
@@ -19,12 +25,24 @@ const v = versao();
     <title>{titulo}</title>
     <meta name="description" content={descricao} />
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content={temaCor} />
     <meta property="og:title" content={titulo} />
     <meta property="og:description" content={descricao} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:type" content="article" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:site_name" content="bncc.dev" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="bncc.dev · a BNCC como dados abertos, estruturados e verificados" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descricao} />
+    <meta name="twitter:image" content={ogImage} />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <script is:inline>
       // aplica o tema salvo antes do primeiro paint (evita flash)

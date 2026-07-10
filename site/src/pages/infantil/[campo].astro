@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { GRUPOS_EI_ROTULOS, estrutura, objetivosEI, rotaDe } from '../../lib/dados';
+import { GRUPOS_EI_ROTULOS, breadcrumbJsonLd, estrutura, objetivosEI, rotaDe } from '../../lib/dados';
 
 export function getStaticPaths() {
   return estrutura().campos_experiencias.map((c) => ({ params: { campo: c.id.replace('ei-campo-', '') } }));
@@ -9,9 +9,11 @@ export function getStaticPaths() {
 const id = `ei-campo-${Astro.params.campo}`;
 const campo = estrutura().campos_experiencias.find((c) => c.id === id)!;
 const grupos = ['ei-grupo-01', 'ei-grupo-02', 'ei-grupo-03'];
+const total = objetivosEI({ campo: id }).length;
 ---
-<Base titulo={`${campo.nome} · Educação Infantil · BNCC · bncc.dev`} etapa="EI"
-      descricao={`Os objetivos de aprendizagem do campo de experiências "${campo.nome}" na Educação Infantil da BNCC, por faixa etária.`}>
+<Base titulo={`${campo.nome} · Educação Infantil · ${total} objetivos da BNCC · bncc.dev`} etapa="EI"
+      descricao={`Os ${total} objetivos de aprendizagem do campo de experiências "${campo.nome}" na Educação Infantil da BNCC, por faixa etária.`}
+      jsonLd={breadcrumbJsonLd([{ nome: 'Educação Infantil', url: '/infantil/' }, { nome: campo.nome }])}>
   <nav class="trilha">
     <li><a href="/">bncc.dev</a></li>
     <li><a href="/infantil/">Educação Infantil</a></li>

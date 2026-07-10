@@ -1,16 +1,20 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PaginaAprendizagem from '../../components/PaginaAprendizagem.astro';
-import { jsonLd, metaDescricao, objetivosEI, porCodigo } from '../../lib/dados';
+import {
+  GRUPOS_EI_ROTULOS, breadcrumbAprendizagem, breadcrumbJsonLd, jsonLd,
+  metaDescricao, objetivosEI, porCodigo,
+} from '../../lib/dados';
 
 export function getStaticPaths() {
   return objetivosEI().map((o) => ({ params: { codigo: o.codigo } }));
 }
 
 const reg = porCodigo(Astro.params.codigo!);
-const titulo = `${reg.codigo} · BNCC · ${reg.campoExperiencias!.nome}`;
+const grupo = GRUPOS_EI_ROTULOS[reg.grupoEtario!].split(' (')[0];
+const titulo = `${reg.codigo} · ${reg.campoExperiencias!.nome} · ${grupo} · objetivo da BNCC`;
 ---
-<Base titulo={titulo} descricao={metaDescricao(reg)} etapa="EI"
-      jsonLd={jsonLd(reg, new URL(Astro.url.pathname, Astro.site).href)}>
+<Base titulo={titulo} descricao={metaDescricao(reg)} etapa="EI" ogType="article"
+      jsonLd={[jsonLd(reg, new URL(Astro.url.pathname, Astro.site).href), breadcrumbJsonLd(breadcrumbAprendizagem(reg))]}>
   <PaginaAprendizagem reg={reg} />
 </Base>

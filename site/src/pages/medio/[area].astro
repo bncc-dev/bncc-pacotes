@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { estrutura, habilidadesEM, rotaDe } from '../../lib/dados';
+import { breadcrumbJsonLd, estrutura, habilidadesEM, rotaDe } from '../../lib/dados';
 
 export function getStaticPaths() {
   return estrutura().areas_conhecimento
@@ -12,8 +12,9 @@ const id = `em-area-${Astro.params.area}`;
 const area = estrutura().areas_conhecimento.find((a) => a.id === id)!;
 const habs = habilidadesEM({ area: id });
 ---
-<Base titulo={`${area.nome} · Ensino Médio · BNCC · bncc.dev`} etapa="EM"
-      descricao={`As ${habs.length} habilidades de ${area.nome} no Ensino Médio da BNCC, com competências vinculadas.`}>
+<Base titulo={`${area.nome} · Ensino Médio · ${habs.length} habilidades da BNCC · bncc.dev`} etapa="EM"
+      descricao={`As ${habs.length} habilidades de ${area.nome} no Ensino Médio da BNCC, com competências vinculadas.`}
+      jsonLd={breadcrumbJsonLd([{ nome: 'Ensino Médio', url: '/medio/' }, { nome: area.nome }])}>
   <nav class="trilha">
     <li><a href="/">bncc.dev</a></li>
     <li><a href="/medio/">Ensino Médio</a></li>

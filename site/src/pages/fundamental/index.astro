@@ -1,11 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { estrutura, habilidadesEF } from '../../lib/dados';
+import { breadcrumbJsonLd, estrutura, habilidadesEF } from '../../lib/dados';
 const comps = estrutura().componentes_curriculares.filter((c) => c.etapa === 'EF');
 const contagem = (id: string) => habilidadesEF({ componente: id }).length;
+const total = habilidadesEF().length;
 ---
-<Base titulo="Ensino Fundamental · BNCC · bncc.dev" etapa="EF"
-      descricao="As 1.304 habilidades do Ensino Fundamental na BNCC, por componente curricular e ano, com texto oficial verificado.">
+<Base titulo={`Ensino Fundamental · ${total.toLocaleString('pt-BR')} habilidades da BNCC · bncc.dev`} etapa="EF"
+      descricao={`As ${total.toLocaleString('pt-BR')} habilidades do Ensino Fundamental na BNCC, por componente curricular e ano, com texto oficial verificado.`}
+      jsonLd={breadcrumbJsonLd([{ nome: 'Ensino Fundamental' }])}>
   <nav class="trilha"><li><a href="/">bncc.dev</a></li><li>Ensino Fundamental</li></nav>
   <h1 class="titulo-secao">Ensino Fundamental</h1>
   <p class="acoes-listagem"><a class="btn" href="/csv/fundamental.csv" download>baixar CSV da etapa completa</a></p>

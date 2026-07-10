@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- arte OG padrão do site (1200x630); rasterizar para public/og/bncc-dev.png
+       (o ponto do wordmark é desenhado, não glifo, para não depender de fallback de fonte) -->
+  <rect width="1200" height="630" fill="#0d1117"/>
+  <rect x="2" y="2" width="1196" height="626" fill="none" stroke="#2f3742" stroke-width="4"/>
+  <circle cx="1060" cy="120" r="10" fill="#12261a"/>
+  <circle cx="1108" cy="152" r="7" fill="#1a6e42"/>
+  <circle cx="1076" cy="196" r="5" fill="#46c07a"/>
+  <text x="80" y="298" font-family="Menlo,Consolas,monospace" font-size="100" font-weight="700" fill="#e6edf3">bncc</text>
+  <circle cx="352" cy="264" r="11" fill="#46c07a"/>
+  <text x="382" y="298" font-family="Menlo,Consolas,monospace" font-size="100" font-weight="700" fill="#e6edf3">dev</text>
+  <text x="82" y="372" font-family="Helvetica,Arial,sans-serif" font-size="34" fill="#9198a1">a BNCC como dados abertos, estruturados e verificados</text>
+  <rect x="80" y="436" rx="24" height="48" width="700" fill="#12261a" stroke="#2ea043" stroke-width="2"/>
+  <text x="106" y="468" font-family="Helvetica,Arial,sans-serif" font-size="25" fill="#5bd58e">✓ 1.580 aprendizagens com fonte oficial · CC BY 4.0</text>
+</svg>

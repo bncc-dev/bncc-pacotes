@@ -1,16 +1,21 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PaginaAprendizagem from '../../components/PaginaAprendizagem.astro';
-import { habilidadesEF, habilidadesEM, jsonLd, metaDescricao, porCodigo } from '../../lib/dados';
+import {
+  breadcrumbAprendizagem, breadcrumbJsonLd, habilidadesEF, habilidadesEM,
+  jsonLd, metaDescricao, porCodigo,
+} from '../../lib/dados';
 
 export function getStaticPaths() {
   return [...habilidadesEF(), ...habilidadesEM()].map((h) => ({ params: { codigo: h.codigo } }));
 }
 
 const reg = porCodigo(Astro.params.codigo!);
-const titulo = `${reg.codigo} · BNCC · ${reg.etapa === 'EF' ? reg.componente!.nome : reg.area!.nome}`;
+const titulo = reg.etapa === 'EF'
+  ? `${reg.codigo} · ${reg.componente!.nome} · ${reg.anos!.map((a) => `${a}º`).join(' e ')} ano · habilidade da BNCC`
+  : `${reg.codigo} · ${reg.componente?.nome ?? reg.area!.nome} · Ensino Médio · habilidade da BNCC`;
 ---
-<Base titulo={titulo} descricao={metaDescricao(reg)} etapa={reg.etapa}
-      jsonLd={jsonLd(reg, new URL(Astro.url.pathname, Astro.site).href)}>
+<Base titulo={titulo} descricao={metaDescricao(reg)} etapa={reg.etapa} ogType="article"
+      jsonLd={[jsonLd(reg, new URL(Astro.url.pathname, Astro.site).href), breadcrumbJsonLd(breadcrumbAprendizagem(reg))]}>
   <PaginaAprendizagem reg={reg} />
 </Base>

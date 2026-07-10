@@ -11,6 +11,13 @@ import type { AprendizagemResolvida } from '@bncc/dados';
 export { decodificar, estatisticas, estrutura, habilidadesEF, habilidadesEM, objetivosEI, porCodigo, progressaoEI, versao };
 export type { AprendizagemResolvida };
 
+export const SITE = 'https://bncc.dev';
+
+/** URL absoluta de um caminho do site (para llms.txt, .md e JSON-LD, lidos fora do domínio). */
+export function urlAbsoluta(caminho: string): string {
+  return SITE + caminho;
+}
+
 /** Cores da linguagem visual do documento oficial da BNCC, por etapa. */
 export const ETAPAS = {
   EI: { nome: 'Educação Infantil', cor: '#2e7d4f', rota: 'infantil' },
@@ -55,13 +62,21 @@ export function metaDescricao(reg: AprendizagemResolvida): string {
 
 /** JSON-LD schema.org para a página da aprendizagem. */
 export function jsonLd(reg: AprendizagemResolvida, url: string) {
+  const educationalLevel = reg.etapa === 'EI'
+    ? `Educação Infantil · ${GRUPOS_EI_ROTULOS[reg.grupoEtario!]}`
+    : reg.etapa === 'EF'
+      ? reg.anos!.map((a) => `${a}º ano do Ensino Fundamental`)
+      : 'Ensino Médio (1ª a 3ª série)';
   return {
     '@context': 'https://schema.org',
     '@type': 'LearningResource',
     name: `${reg.codigo} · BNCC`,
+    identifier: reg.codigo,
     description: reg.texto,
     url,
     inLanguage: 'pt-BR',
+    educationalLevel,
+    version: versao().data_version,
     educationalAlignment: {
       '@type': 'AlignmentObject',
       alignmentType: 'educationalSubject',
@@ -69,9 +84,96 @@ export function jsonLd(reg: AprendizagemResolvida, url: string) {
       targetName: reg.codigo,
       targetDescription: reg.texto,
     },
+    isPartOf: { '@id': `${SITE}/#dataset` },
+    sameAs: `https://api.bncc.dev/v1/aprendizagens/${reg.codigo}`,
     isBasedOn: 'https://github.com/bncc-dev/bncc-dados',
     license: 'https://creativecommons.org/licenses/by/4.0/deed.pt-br',
   };
+}
+
+/** JSON-LD da organização mantenedora (sem @context, para embutir em outros schemas). */
+export function organizacaoJsonLd() {
+  return {
+    '@type': 'Organization',
+    '@id': 'https://profy.com.br/#organization',
+    name: 'Profy',
+    url: 'https://profy.com.br',
+    sameAs: ['https://github.com/bncc-dev'],
+  };
+}
+
+/** JSON-LD Dataset (Google Dataset Search): o projeto declarado como o que é. */
+export function datasetJsonLd() {
+  const s = estatisticas();
+  const v = versao();
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    '@id': `${SITE}/#dataset`,
+    name: 'BNCC em dados abertos · bncc.dev',
+    description: `As ${s.total} aprendizagens da Base Nacional Comum Curricular brasileira (Educação Infantil, Ensino Fundamental e Ensino Médio) como dados estruturados e verificados: cada registro rastreável à fonte oficial do MEC, com texto conferido contra o documento homologado.`,
+    url: SITE,
+    sameAs: 'https://github.com/bncc-dev/bncc-dados',
+    identifier: v.data_version,
+    version: v.data_version,
+    inLanguage: 'pt-BR',
+    license: 'https://creativecommons.org/licenses/by/4.0/deed.pt-br',
+    isAccessibleForFree: true,
+    creator: organizacaoJsonLd(),
+    keywords: ['BNCC', 'Base Nacional Comum Curricular', 'educação básica', 'currículo', 'habilidades', 'dados abertos', 'MEC', 'Brasil'],
+    measurementTechnique: 'Extração reprodutível das planilhas oficiais do MEC, verificação caractere a caractere contra o documento homologado e validação contínua em CI; decisões de interpretação documentadas em público.',
+    distribution: [
+      { '@type': 'DataDownload', encodingFormat: 'text/csv', contentUrl: `${SITE}/csv/infantil.csv` },
+      { '@type': 'DataDownload', encodingFormat: 'text/csv', contentUrl: `${SITE}/csv/fundamental.csv` },
+      { '@type': 'DataDownload', encodingFormat: 'text/csv', contentUrl: `${SITE}/csv/medio.csv` },
+      { '@type': 'DataDownload', encodingFormat: 'text/plain', contentUrl: `${SITE}/llms-full.txt` },
+      { '@type': 'DataDownload', encodingFormat: 'application/json', contentUrl: 'https://api.bncc.dev/v1/habilidades' },
+    ],
+  };
+}
+
+/** JSON-LD WebSite com SearchAction (sitelinks searchbox). */
+export function websiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${SITE}/#website`,
+    name: 'bncc.dev',
+    url: SITE,
+    inLanguage: 'pt-BR',
+    description: 'A BNCC como dados abertos, estruturados e verificados.',
+    publisher: organizacaoJsonLd(),
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: `${SITE}/buscar/?q={search_term_string}` },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+}
+
+/** JSON-LD BreadcrumbList a partir de itens { nome, url? } (url relativa ao site); a home entra sozinha. */
+export function breadcrumbJsonLd(itens: Array<{ nome: string; url?: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ nome: 'bncc.dev', url: '/' }, ...itens].map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.nome,
+      ...(it.url ? { item: urlAbsoluta(it.url) } : {}),
+    })),
+  };
+}
+
+/** Trilha da página de aprendizagem, espelhando o breadcrumb visual. */
+export function breadcrumbAprendizagem(reg: AprendizagemResolvida): Array<{ nome: string; url?: string }> {
+  const etapa = ETAPAS[reg.etapa];
+  const itens: Array<{ nome: string; url?: string }> = [{ nome: etapa.nome, url: `/${etapa.rota}/` }];
+  if (reg.etapa === 'EF') itens.push({ nome: reg.componente!.nome, url: `/fundamental/${reg.componente!.id.replace('ef-comp-', '')}/` });
+  if (reg.etapa === 'EM') itens.push({ nome: reg.area!.nome, url: `/medio/${reg.area!.id.replace('em-area-', '')}/` });
+  if (reg.etapa === 'EI') itens.push({ nome: reg.campoExperiencias!.nome, url: `/infantil/${reg.campoExperiencias!.id.replace('ei-campo-', '')}/` });
+  itens.push({ nome: reg.codigo });
+  return itens;
 }
 
 /** Segmentos do código para o decodificador visual, com explicações. */

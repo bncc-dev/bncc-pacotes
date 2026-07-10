@@ -1,6 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import { estrutura, habilidadesEF } from '../../../lib/dados';
+import { breadcrumbJsonLd, estrutura, habilidadesEF } from '../../../lib/dados';
 
 export function getStaticPaths() {
   return estrutura().componentes_curriculares
@@ -13,8 +13,9 @@ const comp = estrutura().componentes_curriculares.find((c) => c.id === id)!;
 const habs = habilidadesEF({ componente: id });
 const anos = [...new Set(habs.flatMap((h) => h.anos!))].sort((a, b) => a - b);
 ---
-<Base titulo={`${comp.nome} · Ensino Fundamental · BNCC · bncc.dev`} etapa="EF"
-      descricao={`As ${habs.length} habilidades de ${comp.nome} no Ensino Fundamental, por ano, com texto oficial verificado.`}>
+<Base titulo={`${comp.nome} · Ensino Fundamental · ${habs.length} habilidades da BNCC · bncc.dev`} etapa="EF"
+      descricao={`As ${habs.length} habilidades de ${comp.nome} no Ensino Fundamental, por ano, com texto oficial verificado.`}
+      jsonLd={breadcrumbJsonLd([{ nome: 'Ensino Fundamental', url: '/fundamental/' }, { nome: comp.nome }])}>
   <nav class="trilha">
     <li><a href="/">bncc.dev</a></li>
     <li><a href="/fundamental/">Ensino Fundamental</a></li>

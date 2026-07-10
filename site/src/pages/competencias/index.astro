@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { competenciasEspecificas, estrutura } from '../../lib/dados';
+import { breadcrumbJsonLd, competenciasEspecificas, estrutura } from '../../lib/dados';
 
 const gerais = estrutura().competencias_gerais;
 const especificas = competenciasEspecificas();
@@ -12,7 +12,8 @@ for (const ce of especificas) {
 }
 ---
 <Base titulo="Competências da BNCC: as 10 gerais e as 105 específicas · bncc.dev"
-      descricao="As 10 competências gerais da Educação Básica e as 105 competências específicas de área e de componente da BNCC, com as habilidades vinculadas.">
+      descricao="As 10 competências gerais da Educação Básica e as 105 competências específicas de área e de componente da BNCC, com as habilidades vinculadas."
+      jsonLd={breadcrumbJsonLd([{ nome: 'Competências' }])}>
   <nav class="trilha">
     <li><a href="/">bncc.dev</a></li>
     <li>Competências</li>
