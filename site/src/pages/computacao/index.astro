@@ -124,4 +124,22 @@ const descricao = `As ${s.total} aprendizagens de Computação do complemento à
   .grupo-listagem { margin: 10px 0; }
   .grupo-listagem summary { cursor: pointer; padding: 8px 0; }
   .lista-competencias { padding-left: 22px; display: grid; gap: 10px; }
+
 </style>
+
+<script is:inline>
+  // Quem chega por âncora de grupo (ex.: /computacao/#ef-2-ano, vindo do bloco
+  // "este ano também tem") encontra o recorte já aberto, no lugar certo.
+  const abrirGrupoDoHash = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (!id) return;
+    const alvo = document.getElementById(id);
+    if (!alvo) return;
+    const det = alvo.closest('details');
+    if (det && !det.open) det.open = true;
+    // reancora o scroll depois de abrir (a altura da página muda)
+    requestAnimationFrame(() => alvo.scrollIntoView({ block: 'start' }));
+  };
+  abrirGrupoDoHash();
+  addEventListener('hashchange', abrirGrupoDoHash);
+</script>

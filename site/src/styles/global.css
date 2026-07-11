@@ -265,6 +265,11 @@ h1.titulo-secao { font-size: 26px; font-weight: 600; margin: 4px 0 6px; letter-s
 .subtitulo { color: var(--ink-muted); font-size: 14px; max-width: 60ch; margin-top: 0; }
 .bloco { margin-top: 28px; }
 .bloco h2 { font-size: 14px; font-weight: 600; margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+/* Título de seção gruda no topo enquanto a própria seção rola (listas longas
+   mantêm contexto; em seções curtas o efeito é imperceptível, pois o sticky é
+   confinado à seção). Âncoras ganham margem para não sumir sob o título. */
+section.bloco > h2 { position: sticky; top: 0; z-index: 5; background: var(--bg); padding-top: 12px; }
+section[id], .grupo-listagem { scroll-margin-top: 56px; }
 
 /* ---------- landing (home) · portado do mock landing-futura ---------- */
 .opening { padding: 56px 0 44px; text-align: center; }
