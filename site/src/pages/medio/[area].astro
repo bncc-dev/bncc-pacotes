@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { breadcrumbJsonLd, estrutura, habilidadesEM, rotaDe } from '../../lib/dados';
+import { estatisticasCO } from '../../lib/computacao';
 
 export function getStaticPaths() {
   return estrutura().areas_conhecimento
@@ -30,4 +31,13 @@ const habs = habilidadesEM({ area: id });
       </a></li>
     ))}
   </ul>
+  <section class="bloco" aria-labelledby="h-co-em">
+    <h2 id="h-co-em">O Ensino Médio também tem</h2>
+    <ul class="lista">
+      <li><a href="/computacao/#medio">
+        <span class="cod">CO</span>Complemento de Computação
+        <span class="resumo"> · {estatisticasCO().em} habilidades por competência específica (Parecer CNE/CEB 2/2022)</span>
+      </a></li>
+    </ul>
+  </section>
 </Base>

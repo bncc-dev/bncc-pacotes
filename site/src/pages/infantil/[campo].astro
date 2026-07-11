@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { GRUPOS_EI_ROTULOS, breadcrumbJsonLd, estrutura, objetivosEI, rotaDe } from '../../lib/dados';
+import { estatisticasCO } from '../../lib/computacao';
 
 export function getStaticPaths() {
   return estrutura().campos_experiencias.map((c) => ({ params: { campo: c.id.replace('ei-campo-', '') } }));
@@ -34,4 +35,13 @@ const total = objetivosEI({ campo: id }).length;
       </ul>
     </section>
   ))}
+  <section class="bloco" aria-labelledby="h-co-ei">
+    <h2 id="h-co-ei">A Educação Infantil também tem</h2>
+    <ul class="lista">
+      <li><a href="/computacao/#infantil">
+        <span class="cod">CO</span>Complemento de Computação
+        <span class="resumo"> · {estatisticasCO().ei} objetivos para a pré-escola (Parecer CNE/CEB 2/2022)</span>
+      </a></li>
+    </ul>
+  </section>
 </Base>

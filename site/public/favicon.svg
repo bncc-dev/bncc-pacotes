@@ -9,5 +9,5 @@
     }
   </style>
   <path class="b" d="M18,4 L18,18 L32,18 L32,32 L18,32 L18,46 L32,46 L32,32 L46,32 L46,60 L4,60 L4,4 Z"/>
-  <path class="dot" d="M59,46 L59,56 L49,56 L49,46 Z"/>
+  <path class="dot" d="M59,50 L59,60 L49,60 L49,50 Z"/>
 </svg>

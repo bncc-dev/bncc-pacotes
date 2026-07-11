@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import { breadcrumbJsonLd, estrutura, habilidadesEF, rotaDe } from '../../../lib/dados';
+import { aprendizagensCO } from '../../../lib/computacao';
 
 export function getStaticPaths() {
   const caminhos: Array<{ params: { componente: string; ano: string } }> = [];
@@ -16,6 +17,8 @@ const id = `ef-comp-${Astro.params.componente}`;
 const ano = Number(Astro.params.ano);
 const comp = estrutura().componentes_curriculares.find((c) => c.id === id)!;
 const habs = habilidadesEF({ componente: id, ano });
+const coDoAno = aprendizagensCO().filter((a) => a.etapa === 'EF' && a.anos!.length === 1 && a.anos![0] === ano).length;
+const coDoBloco = aprendizagensCO().filter((a) => a.codigo.startsWith(ano <= 5 ? 'EF15' : 'EF69')).length;
 ---
 <Base titulo={`${comp.nome} · ${ano}º ano · ${habs.length} habilidades da BNCC · bncc.dev`} etapa="EF"
       descricao={`As ${habs.length} habilidades de ${comp.nome} do ${ano}º ano do Ensino Fundamental na BNCC.`}
@@ -40,4 +43,13 @@ const habs = habilidadesEF({ componente: id, ano });
       </a></li>
     ))}
   </ul>
+  <section class="bloco" aria-labelledby="h-co-ano">
+    <h2 id="h-co-ano">Este ano também tem</h2>
+    <ul class="lista">
+      <li><a href={`/computacao/#ef-${ano}-ano`}>
+        <span class="cod">CO</span>Complemento de Computação
+        <span class="resumo"> · {coDoAno} habilidades do {ano}º ano e {coDoBloco} do bloco {ano <= 5 ? '1º ao 5º' : '6º ao 9º'} (Parecer CNE/CEB 2/2022)</span>
+      </a></li>
+    </ul>
+  </section>
 </Base>
