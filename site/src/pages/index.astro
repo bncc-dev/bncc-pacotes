@@ -54,7 +54,7 @@ const snippetMcp = `{ "mcpServers": { "bncc":
     { "command": "npx", "args": ["-y", "@bncc/mcp"] } } }`;
 ---
 <Base titulo="bncc.dev · a BNCC em dados abertos, auditáveis e acessíveis"
-      descricao={`As ${s.total.toLocaleString('pt-BR')} aprendizagens da Base Nacional Comum Curricular com fonte oficial: consulte no site, use via pacotes npm/PyPI ou conecte agentes de IA pelo servidor MCP.`}
+      descricao={`As 1.721 aprendizagens da Base Nacional Comum Curricular e do complemento de Computação, com fonte oficial: consulte no site, use via pacotes npm/PyPI ou conecte agentes de IA pelo servidor MCP.`}
       jsonLd={[websiteJsonLd(), datasetJsonLd()]}>
 
   <div class="opening">
@@ -79,7 +79,7 @@ const snippetMcp = `{ "mcpServers": { "bncc":
             <input type="search" placeholder="Código ou tema… ex.: EF67LP08, frações" aria-label="Buscar na BNCC por código ou tema" />
             <button class="btn-buscar" type="submit">Buscar</button>
           </form>
-          <p class="search-hints">por exemplo: <a href="/habilidade/EF67LP08/">EF67LP08</a> · <a href="/objetivo/EI02TS01/">EI02TS01</a> · <a href="/buscar/?q=fake%20news">fake news</a> · <a href="/competencias/">competências</a></p>
+          <p class="search-hints">por exemplo: <a href="/habilidade/EF67LP08/">EF67LP08</a> · <a href="/objetivo/EI02TS01/">EI02TS01</a> · <a href="/habilidade/EF06CO02/">EF06CO02</a> · <a href="/buscar/?q=fake%20news">fake news</a> · <a href="/computacao/">computação</a></p>
           <div class="ou" aria-hidden="true"><span>ou</span></div>
           <div class="navegador" id="nav-turma" data-nav={JSON.stringify(navegador)}>
             <span class="nav-titulo">Encontre as habilidades do seu ano e componente</span>
@@ -103,7 +103,7 @@ const snippetMcp = `{ "mcpServers": { "bncc":
           <span class="pub-label">Para quem desenvolve</span>
           <h2 class="pub-frase" id="h-dev">Importe, conecte e integre os dados verificados da BNCC. Sem montar infra, sem key.</h2>
           <ul class="mescla">
-            <li><strong>Importe as 1.580 habilidades sem montar infraestrutura.</strong> <span class="caso"><code>npm install @bncc/dados</code> ou <code>pip install bncc</code>: os dados vêm dentro do pacote, tipados e offline. Nada de banco, scraping ou API de terceiros.</span></li>
+            <li><strong>Importe as 1.721 aprendizagens (BNCC 2018 + Computação) sem montar infraestrutura.</strong> <span class="caso"><code>npm install @bncc/dados</code> ou <code>pip install bncc</code>: os dados vêm dentro do pacote, tipados e offline. Nada de banco, scraping ou API de terceiros.</span></li>
             <li><strong>Conecte seu assistente de IA e acabe com código inventado.</strong> <span class="caso">O servidor MCP só responde o que existe: EF67LP99 vira erro que explica, não alucinação.</span></li>
             <li><strong>Integre por REST sem cadastro.</strong> <span class="caso"><a href="/api/">api.bncc.dev</a> com OpenAPI 3.1 e erros que ensinam.</span></li>
             <li><strong>Audite tudo na fonte.</strong> <span class="caso">O dataset bruto (JSON, SQLite, CSV) com cada registro rastreável à planilha do MEC e à página do PDF homologado.</span></li>

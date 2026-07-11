@@ -1,6 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- monograma do wordmark bncc·dev: b + ponto verde, no escuro da marca -->
-  <rect width="64" height="64" rx="14" fill="#0d1117"/>
-  <text x="27" y="47" font-family="ui-monospace,'SF Mono',Menlo,Consolas,monospace" font-size="46" font-weight="700" fill="#e6edf3" text-anchor="middle">b</text>
-  <circle cx="48" cy="41" r="6.5" fill="#46c07a"/>
+  <!-- monograma do wordmark bncc·dev: b + ponto vermelho, contorno da fonte Bytesized, sem fundo, adaptado ao tema do navegador -->
+  <style>
+    .b { fill: #1f2328; }
+    .dot { fill: #e5484d; }
+    @media (prefers-color-scheme: dark) {
+      .b { fill: #e6edf3; }
+      .dot { fill: #ff6b63; }
+    }
+  </style>
+  <path class="b" d="M18,4 L18,18 L32,18 L32,32 L18,32 L18,46 L32,46 L32,32 L46,32 L46,60 L4,60 L4,4 Z"/>
+  <path class="dot" d="M59,46 L59,56 L49,56 L49,46 Z"/>
 </svg>

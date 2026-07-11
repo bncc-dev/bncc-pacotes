@@ -1,0 +1,182 @@
+---
+/** Página de aprendizagem do complemento de Computação, no layout aprovado
+ *  das páginas da BNCC 2018, com a identidade do documento (badge + cor). */
+import { GRUPOS_EI_ROTULOS, rotaDe, urlReportarErro, versao } from '../lib/dados';
+import {
+  COMPUTACAO, mesmaCompetenciaCO, mesmasDoObjetoCO, mesmoEixoOutrosAnosCO,
+  segmentosDecoderCO, vizinhancaCO,
+} from '../lib/computacao';
+import type { AprendizagemCO } from '../lib/computacao';
+
+interface Props { reg: AprendizagemCO }
+const { reg } = Astro.props;
+const v = versao();
+const segs = segmentosDecoderCO(reg);
+const viz = vizinhancaCO(reg);
+const doObjeto = mesmasDoObjetoCO(reg);
+const outrosAnos = mesmoEixoOutrosAnosCO(reg);
+const daCompetencia = mesmaCompetenciaCO(reg);
+const paginaPdf = reg.fonte.localizador_pdf?.match(/página PDF (\d+)/)?.[1];
+const anosTxt = reg.anos ? reg.anos.map((a) => `${a}º`).join('–') + ' ano' + (reg.anos.length > 1 ? 's' : '') : null;
+const etapaNome = { EI: 'Educação Infantil', EF: 'Ensino Fundamental', EM: 'Ensino Médio' }[reg.etapa];
+const decoderResumo = segs.map((s) => s.parte).join(' · ');
+const jsonRegistro = JSON.stringify(reg, null, 2);
+const cortar = (t: string, n = 96) => (t.length > n ? t.slice(0, n - 1) + '…' : t);
+const snippetJson = `// os dados brutos do complemento viajam no pacote (subpath export);
+// a API tipada (porCodigo etc.) passa a cobrir Computação na 1.0
+import computacao from '@bncc/dados/dados/computacao.json';
+
+const h = [...computacao.objetivos_ei, ...computacao.habilidades_ef,
+           ...computacao.habilidades_em].find(a => a.codigo === '${reg.codigo}');
+h.texto; // "${cortar(reg.texto, 44)}"`;
+---
+<nav class="breadcrumb" aria-label="Trilha">
+  <a href="/computacao/">Computação</a>
+  {reg.eixo && <><span class="sep">/</span><a href={`/computacao/#${reg.eixo.id.replace('co-eixo-', '')}`}>{reg.eixo.nome}</a></>}
+  {reg.objetoPai && <><span class="sep">/</span><span>{reg.objetoPai.nome}</span></>}
+  {!reg.objetoPai && reg.objetos && <><span class="sep">/</span><span>{reg.objetos[0].nome}</span></>}
+  {reg.competencia && <><span class="sep">/</span><span>Competência {reg.competencia.numero}</span></>}
+</nav>
+
+<div class="title-row">
+  <h1 class="codigo">{reg.codigo}</h1>
+  <button class="btn" type="button" onclick={`copiarTexto('${reg.codigo}', this)`}>
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
+    copiar
+  </button>
+  <div class="chips">
+    <span class="chip" style={`background:${COMPUTACAO.cor};color:#fff;border-color:${COMPUTACAO.cor}`}>{COMPUTACAO.badge}</span>
+    <span class="chip">{etapaNome}</span>
+    {anosTxt && <span class="chip">{anosTxt}</span>}
+    {reg.etapa === 'EM' && <span class="chip">1ª–3ª série</span>}
+    {reg.grupoEtario && <span class="chip">{GRUPOS_EI_ROTULOS[reg.grupoEtario].split(' (')[0]}</span>}
+  </div>
+</div>
+
+<p class="enunciado">{reg.texto}</p>
+{paginaPdf && <span class="selo">Texto conferido contra o anexo oficial do {COMPUTACAO.parecer}, p. {paginaPdf} do PDF</span>}
+
+<div class="grid">
+  <div>
+    <section aria-labelledby="h-decoder">
+      <h2 id="h-decoder">Como ler este código</h2>
+      <p class="h2-hint">Todo código da BNCC é decomponível. Passe o cursor sobre cada parte.</p>
+      <div class="decoder" role="group" aria-label={`Decodificação do código ${reg.codigo}`}>
+        {segs.map((s) => (
+          <div class="decoder-seg" tabindex="0" data-exp={s.explica}>
+            <span class="part">{s.parte}</span><span class="label">{s.rotulo}</span>
+          </div>
+        ))}
+      </div>
+      <p class="decoder-out" id="decoder-out" aria-live="polite">{decoderResumo}</p>
+    </section>
+
+    {doObjeto.length > 0 && (
+      <section aria-labelledby="h-objeto">
+        <h2 id="h-objeto">No mesmo objeto de conhecimento</h2>
+        <p class="h2-hint">{reg.objetos!.map((o) => o.nome).join(' · ')}{reg.objetoPai ? ` (dentro de ${reg.objetoPai.nome})` : ''}</p>
+        <div class="rows">
+          {doObjeto.map((h) => (
+            <a class="row" href={rotaDe(h.codigo)}>
+              <span class="cod">{h.codigo}</span>
+              <span class="rel">{h.anos ? h.anos.map((a) => `${a}º`).join('–') : h.etapa}</span>
+              <span class="txt">{cortar(h.texto)}</span>
+            </a>
+          ))}
+          <span class="row current" aria-current="page">
+            <span class="cod">{reg.codigo}</span><span class="rel">esta página</span>
+            <span class="txt">{cortar(reg.texto)}</span>
+          </span>
+        </div>
+      </section>
+    )}
+
+    {outrosAnos.length > 0 && (
+      <section aria-labelledby="h-outros-anos">
+        <h2 id="h-outros-anos">Em outros anos, no mesmo eixo</h2>
+        <p class="h2-hint">Aproximação estrutural: o complemento não define progressão formal; estas compartilham o eixo {reg.eixo!.nome}.</p>
+        <div class="rows">
+          {outrosAnos.map((h) => (
+            <a class="row" href={rotaDe(h.codigo)}>
+              <span class="cod">{h.codigo}</span>
+              <span class="rel">{h.anos!.map((a) => `${a}º`).join('–')}</span>
+              <span class="txt">{cortar(h.texto)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {daCompetencia.length > 0 && (
+      <section aria-labelledby="h-competencia">
+        <h2 id="h-competencia">Vinculadas à mesma competência específica</h2>
+        <p class="h2-hint">Competência {reg.competencia!.numero} de Computação no Ensino Médio: {cortar(reg.competencia!.texto, 140)}</p>
+        <div class="rows">
+          {daCompetencia.map((h) => (
+            <a class="row" href={rotaDe(h.codigo)}>
+              <span class="cod">{h.codigo}</span>
+              <span class="rel">EM</span>
+              <span class="txt">{cortar(h.texto)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section aria-labelledby="h-maquina">
+      <h2 id="h-maquina">Para máquinas</h2>
+      <p class="h2-hint">O mesmo registro, consumível sem API key e sem cadastro. API tipada e MCP cobrem o complemento a partir da 1.0.</p>
+      <div class="tabs" role="tablist" aria-label="Formatos de consumo">
+        <button class="tab" role="tab" aria-selected="true" data-panel="p-json" type="button">JSON</button>
+        <button class="tab" role="tab" aria-selected="false" data-panel="p-npm" type="button">npm</button>
+      </div>
+      <div class="codeblock" id="p-json" role="tabpanel">
+        <button class="btn copy-mini" type="button" onclick="copiarBloco(this)">copiar</button>
+        <pre set:text={jsonRegistro} />
+      </div>
+      <div class="codeblock" id="p-npm" role="tabpanel" hidden>
+        <button class="btn copy-mini" type="button" onclick="copiarBloco(this)">copiar</button>
+        <pre set:text={snippetJson} />
+      </div>
+    </section>
+
+    <nav class="rows" aria-label="Sequência" style="display:flex; justify-content:space-between; border:0; margin-top:24px;">
+      <span>{viz.anterior && <a class="cod" href={rotaDe(viz.anterior.codigo)}>← {viz.anterior.codigo}</a>}</span>
+      <span>{viz.proxima && <a class="cod" href={rotaDe(viz.proxima.codigo)}>{viz.proxima.codigo} →</a>}</span>
+    </nav>
+  </div>
+
+  <aside aria-label="Metadados">
+    <div class="aside-block">
+      <h2>Sobre</h2>
+      <dl class="meta">
+        <div><dt>Documento</dt><dd>Computação (complemento à BNCC)</dd></div>
+        <div><dt>Etapa</dt><dd>{etapaNome}</dd></div>
+        {anosTxt && <div><dt>Anos</dt><dd>{reg.anos!.map((a) => `${a}º`).join(' e ')}</dd></div>}
+        {reg.etapa === 'EM' && <div><dt>Séries</dt><dd>1ª a 3ª (sem seriação)</dd></div>}
+        {reg.grupoEtario && <div><dt>Grupo etário</dt><dd>{GRUPOS_EI_ROTULOS[reg.grupoEtario]}</dd></div>}
+        {reg.eixo && <div><dt>Eixo</dt><dd>{reg.eixo.nome}</dd></div>}
+        {reg.objetoPai && <div><dt>Objeto de conhecimento</dt><dd>{reg.objetoPai.nome} › {reg.objetos!.map((o) => o.nome).join(' · ')}</dd></div>}
+        {!reg.objetoPai && reg.objetos && <div><dt>Objeto de conhecimento</dt><dd>{reg.objetos.map((o) => o.nome).join(' · ')}</dd></div>}
+        {reg.competencia && <div><dt>Competência específica</dt><dd>{reg.competencia.numero}. {cortar(reg.competencia.texto, 120)}</dd></div>}
+      </dl>
+    </div>
+    <div class="aside-block">
+      <h2>Proveniência</h2>
+      <p>Extraído do anexo oficial ao {COMPUTACAO.parecer}, instituído pela {COMPUTACAO.resolucao}; processo reprodutível, validado em CI.</p>
+      {paginaPdf && <p><a href={COMPUTACAO.urlAnexo} rel="noopener">Anexo oficial, p. {paginaPdf} do PDF ↗</a></p>}
+      <p><a href="https://github.com/bncc-dev/bncc-dados/blob/main/DECISOES.md" rel="noopener">Decisões de interpretação (DECISOES.md)</a></p>
+    </div>
+    <div class="aside-block">
+      <h2>Versão e licença</h2>
+      <p><span class="mono">{v.data_version}</span> · vigência: {reg.vigencia.status}</p>
+      <p>Dados <a href="https://creativecommons.org/licenses/by/4.0/deed.pt-br" rel="noopener">CC BY 4.0</a> · código <a href="https://github.com/bncc-dev/bncc-pacotes/blob/main/LICENSE" rel="noopener">MIT</a>: livres, sem cadastro.</p>
+      <p><a href="https://github.com/bncc-dev/bncc-dados/blob/main/CHANGELOG.md" rel="noopener">Changelog</a> · <a href={urlReportarErro(reg.codigo)} rel="noopener">Reportar erro neste registro</a></p>
+    </div>
+    <div class="aside-block">
+      <h2>Citar esta página</h2>
+      <p>URL permanente:</p>
+      <p><a class="mono" href={rotaDe(reg.codigo)}>bncc.dev{rotaDe(reg.codigo)}</a></p>
+    </div>
+  </aside>
+</div>

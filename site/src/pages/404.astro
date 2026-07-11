@@ -25,6 +25,7 @@ const s = estatisticas();
       <li><a href="/infantil/"><span class="cod">Infantil</span><span class="resumo">{s.educacaoInfantil} objetivos por campo de experiências</span></a></li>
       <li><a href="/fundamental/"><span class="cod">Fundamental</span><span class="resumo">{s.ensinoFundamental.toLocaleString('pt-BR')} habilidades por componente e ano</span></a></li>
       <li><a href="/medio/"><span class="cod">Médio</span><span class="resumo">{s.ensinoMedio} habilidades por área do conhecimento</span></a></li>
+      <li><a href="/computacao/"><span class="cod">Computação</span><span class="resumo">o complemento à BNCC (Parecer CNE/CEB 2/2022), com 141 aprendizagens</span></a></li>
       <li><a href="/competencias/"><span class="cod">Competências</span><span class="resumo">as 10 gerais e as {s.competenciasEspecificas} específicas</span></a></li>
     </ul>
   </section>
@@ -36,7 +37,7 @@ const s = estatisticas();
   const m = location.pathname.match(/\/(?:habilidade|objetivo)\/([A-Z0-9]+)\/?$/i);
   if (m) {
     const codigo = m[1].toUpperCase();
-    const eCodigo = /^(EI0[123](EO|CG|TS|EF|ET)\d{2}|EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(codigo);
+    const eCodigo = /^(EI0[123](EO|CG|TS|EF|ET|CO)\d{2}|EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(codigo);
     document.getElementById('codigo-tentado').textContent = codigo + (eCodigo ? '' : ' (nem sequer é um código válido no formato da BNCC)');
     document.getElementById('nao-existe-codigo').hidden = false;
     document.getElementById('nao-existe-generico').hidden = true;

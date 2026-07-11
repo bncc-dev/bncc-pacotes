@@ -8,6 +8,7 @@
  */
 import type { APIRoute } from 'astro';
 import { GRUPOS_EI_ROTULOS, todasAprendizagens } from '../lib/dados';
+import { aprendizagensCO } from '../lib/computacao';
 
 export const GET: APIRoute = () => {
   const itens = todasAprendizagens().map((reg) => {
@@ -33,7 +34,13 @@ export const GET: APIRoute = () => {
       p: reg.componente ? 'Língua Portuguesa' : null,
     };
   });
-  return new Response(JSON.stringify(itens), {
+  const itensCO = aprendizagensCO().map((reg) => ({
+    c: reg.codigo, t: reg.texto, e: reg.etapa,
+    g: 'Computação',
+    ...(reg.anos ? { a: reg.anos } : {}),
+    p: reg.eixo?.nome ?? (reg.competencia ? `Competência ${reg.competencia.numero} do EM` : null),
+  }));
+  return new Response(JSON.stringify([...itens, ...itensCO]), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
   });
 };

@@ -1,20 +1,40 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PaginaAprendizagem from '../../components/PaginaAprendizagem.astro';
+import PaginaAprendizagemComputacao from '../../components/PaginaAprendizagemComputacao.astro';
 import {
   GRUPOS_EI_ROTULOS, breadcrumbAprendizagem, breadcrumbJsonLd, jsonLd,
   metaDescricao, objetivosEI, porCodigo,
 } from '../../lib/dados';
+import {
+  aprendizagensCO, breadcrumbCO, ehComputacao, jsonLdCO, metaDescricaoCO, porCodigoCO,
+} from '../../lib/computacao';
 
 export function getStaticPaths() {
-  return objetivosEI().map((o) => ({ params: { codigo: o.codigo } }));
+  return [
+    ...objetivosEI().map((o) => ({ params: { codigo: o.codigo } })),
+    ...aprendizagensCO().filter((a) => a.etapa === 'EI').map((a) => ({ params: { codigo: a.codigo } })),
+  ];
 }
 
-const reg = porCodigo(Astro.params.codigo!);
-const grupo = GRUPOS_EI_ROTULOS[reg.grupoEtario!].split(' (')[0];
-const titulo = `${reg.codigo} · ${reg.campoExperiencias!.nome} · ${grupo} · objetivo da BNCC`;
+const codigo = Astro.params.codigo!;
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const co = ehComputacao(codigo);
+
+let titulo: string, descricao: string, schemas: object[];
+if (co) {
+  const reg = porCodigoCO(codigo)!;
+  titulo = `${codigo} · Computação · Crianças pequenas · objetivo do complemento à BNCC`;
+  descricao = metaDescricaoCO(reg);
+  schemas = [jsonLdCO(reg, url), breadcrumbJsonLd(breadcrumbCO(reg))];
+} else {
+  const reg = porCodigo(codigo);
+  const grupo = GRUPOS_EI_ROTULOS[reg.grupoEtario!].split(' (')[0];
+  titulo = `${reg.codigo} · ${reg.campoExperiencias!.nome} · ${grupo} · objetivo da BNCC`;
+  descricao = metaDescricao(reg);
+  schemas = [jsonLd(reg, url), breadcrumbJsonLd(breadcrumbAprendizagem(reg))];
+}
 ---
-<Base titulo={titulo} descricao={metaDescricao(reg)} etapa="EI" ogType="article"
-      jsonLd={[jsonLd(reg, new URL(Astro.url.pathname, Astro.site).href), breadcrumbJsonLd(breadcrumbAprendizagem(reg))]}>
-  <PaginaAprendizagem reg={reg} />
+<Base titulo={titulo} descricao={descricao} etapa={co ? undefined : 'EI'} ogType="article" jsonLd={schemas}>
+  {co ? <PaginaAprendizagemComputacao reg={porCodigoCO(codigo)!} /> : <PaginaAprendizagem reg={porCodigo(codigo)} />}
 </Base>

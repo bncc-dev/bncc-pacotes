@@ -9,6 +9,24 @@ import {
   objetivosEI, rotaDe, versao,
 } from '../lib/dados';
 import type { AprendizagemResolvida } from '../lib/dados';
+import { COMPUTACAO, aprendizagensCO, eixosCO } from '../lib/computacao';
+import type { AprendizagemCO } from '../lib/computacao';
+
+function blocoCO(reg: AprendizagemCO): string {
+  const pagina = reg.fonte.localizador_pdf?.match(/página PDF (\d+)/)?.[1];
+  const contexto: string[] = [];
+  if (reg.etapa === 'EI') contexto.push('pré-escola (4 anos a 5 anos e 11 meses)');
+  if (reg.etapa === 'EF') contexto.push(reg.anos!.map((a) => `${a}º`).join(' ao ') + ' ano');
+  if (reg.etapa === 'EM') contexto.push('1ª a 3ª série');
+  if (reg.objetos?.length) contexto.push(reg.objetos.map((o) => o.nome).join(' · '));
+  if (reg.competencia) contexto.push(`competência ${reg.competencia.numero} do EM`);
+  return [
+    `#### ${reg.codigo}`,
+    `- contexto: ${contexto.join(' · ')}`,
+    `- fonte: anexo ao Parecer CNE/CEB 2/2022${pagina ? `, p. ${pagina} do PDF` : ''} · url: ${SITE}${rotaDe(reg.codigo)}`,
+    reg.texto,
+  ].join('\n');
+}
 
 function fonteDe(reg: AprendizagemResolvida): string {
   const pagina = reg.fonte.localizador_pdf?.match(/página PDF (\d+)/)?.[1];
@@ -55,6 +73,18 @@ Regras: nunca invente códigos ou textos; se um código não está neste arquivo
     partes.push(`\n### Área: ${area.nome}\n`);
     partes.push(habilidadesEM({ area: area.id }).map(bloco).join('\n\n'));
   }
+
+  partes.push(`\n\n## Computação (complemento à BNCC · ${COMPUTACAO.parecer})\n`);
+  partes.push('Aprendizagens próprias do complemento, com códigos CO, atravessando as três etapas. Instituído pela ' + COMPUTACAO.resolucao + '.');
+  for (const eixo of eixosCO()) {
+    const doEixo = aprendizagensCO().filter((a) => a.eixo?.id === eixo.id);
+    if (!doEixo.length) continue;
+    partes.push(`\n### Eixo: ${eixo.nome}\n`);
+    partes.push(doEixo.map(blocoCO).join('\n\n'));
+  }
+  const emCO = aprendizagensCO().filter((a) => a.etapa === 'EM');
+  partes.push(`\n### Ensino Médio (por competência específica do complemento)\n`);
+  partes.push(emCO.map(blocoCO).join('\n\n'));
 
   return new Response(partes.join('\n'), { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

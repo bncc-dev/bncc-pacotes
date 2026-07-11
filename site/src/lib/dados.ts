@@ -102,16 +102,19 @@ export function organizacaoJsonLd() {
   };
 }
 
+import computacaoBruto from '@bncc/dados/dados/computacao.json';
+
 /** JSON-LD Dataset (Google Dataset Search): o projeto declarado como o que é. */
 export function datasetJsonLd() {
   const s = estatisticas();
+  const totalCO = computacaoBruto.objetivos_ei.length + computacaoBruto.habilidades_ef.length + computacaoBruto.habilidades_em.length;
   const v = versao();
   return {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
     '@id': `${SITE}/#dataset`,
     name: 'BNCC em dados abertos · bncc.dev',
-    description: `As ${s.total} aprendizagens da Base Nacional Comum Curricular brasileira (Educação Infantil, Ensino Fundamental e Ensino Médio) como dados estruturados e verificados: cada registro rastreável à fonte oficial do MEC, com texto conferido contra o documento homologado.`,
+    description: `As ${s.total + totalCO} aprendizagens da Base Nacional Comum Curricular brasileira e do complemento de Computação (Parecer CNE/CEB 2/2022) como dados estruturados e verificados: cada registro rastreável à fonte oficial, com texto conferido contra o documento homologado ou o anexo do parecer.`,
     url: SITE,
     sameAs: 'https://github.com/bncc-dev/bncc-dados',
     identifier: v.data_version,
@@ -120,7 +123,7 @@ export function datasetJsonLd() {
     license: 'https://creativecommons.org/licenses/by/4.0/deed.pt-br',
     isAccessibleForFree: true,
     creator: organizacaoJsonLd(),
-    keywords: ['BNCC', 'Base Nacional Comum Curricular', 'educação básica', 'currículo', 'habilidades', 'dados abertos', 'MEC', 'Brasil'],
+    keywords: ['BNCC', 'Base Nacional Comum Curricular', 'educação básica', 'currículo', 'habilidades', 'dados abertos', 'MEC', 'Brasil', 'BNCC Computação', 'pensamento computacional'],
     measurementTechnique: 'Extração reprodutível das planilhas oficiais do MEC, verificação caractere a caractere contra o documento homologado e validação contínua em CI; decisões de interpretação documentadas em público.',
     distribution: [
       { '@type': 'DataDownload', encodingFormat: 'text/csv', contentUrl: `${SITE}/csv/infantil.csv` },

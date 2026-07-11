@@ -1,12 +1,15 @@
 import type { APIRoute } from 'astro';
 import { SITE, estatisticas, versao } from '../lib/dados';
+import { estatisticasCO } from '../lib/computacao';
 
 export const GET: APIRoute = () => {
   const s = estatisticas();
+  const sCO = estatisticasCO();
+  const total = s.total + sCO.total;
   const v = versao();
   const corpo = `# bncc.dev
 
-> A BNCC (Base Nacional Comum Curricular brasileira) em dados abertos, auditáveis e acessíveis: ${s.total.toLocaleString('pt-BR')} aprendizagens com fonte oficial (página do documento homologado do MEC). Versão dos dados: ${v.data_version}. Licença dos dados: CC BY 4.0; código: MIT. Tudo aberto, sem API key e sem cadastro.
+> A BNCC (Base Nacional Comum Curricular brasileira) em dados abertos, auditáveis e acessíveis: ${total.toLocaleString('pt-BR')} aprendizagens com fonte oficial (${s.total.toLocaleString('pt-BR')} da BNCC 2018 + ${sCO.total} do complemento de Computação, Parecer CNE/CEB 2/2022). Versão dos dados: ${v.data_version}. Licença dos dados: CC BY 4.0; código: MIT. Tudo aberto, sem API key e sem cadastro.
 
 Regras para agentes:
 - Nunca invente códigos ou textos de habilidade. Se uma página não existe em bncc.dev, o código não existe na BNCC (a numeração oficial tem lacunas legítimas).
@@ -17,7 +20,7 @@ Regras para agentes:
 
 ## Dados completos
 
-- [llms-full.txt](${SITE}/llms-full.txt): as ${s.total.toLocaleString('pt-BR')} aprendizagens em um único arquivo de texto (código, contexto, enunciado oficial, fonte), para ingestão direta em contexto
+- [llms-full.txt](${SITE}/llms-full.txt): as ${total.toLocaleString('pt-BR')} aprendizagens em um único arquivo de texto (código, contexto, enunciado oficial, fonte), para ingestão direta em contexto
 - [CSV da Educação Infantil](${SITE}/csv/infantil.csv): ${s.educacaoInfantil} objetivos
 - [CSV do Ensino Fundamental](${SITE}/csv/fundamental.csv): ${s.ensinoFundamental.toLocaleString('pt-BR')} habilidades
 - [CSV do Ensino Médio](${SITE}/csv/medio.csv): ${s.ensinoMedio} habilidades
@@ -28,6 +31,7 @@ Regras para agentes:
 - [Educação Infantil](${SITE}/infantil/): ${s.educacaoInfantil} objetivos por campo de experiências
 - [Ensino Fundamental](${SITE}/fundamental/): ${s.ensinoFundamental} habilidades por componente e ano
 - [Ensino Médio](${SITE}/medio/): ${s.ensinoMedio} habilidades por área
+- [Computação](${SITE}/computacao/): as ${sCO.total} aprendizagens do complemento à BNCC (códigos CO), por eixo e objeto de conhecimento
 - [Competências](${SITE}/competencias/): as 10 competências gerais e as ${s.competenciasEspecificas} específicas (páginas em ${SITE}/competencia/{id}/)
 - [Buscar](${SITE}/buscar/): busca textual com filtros por etapa, componente, ano e prática
 - [Sobre](${SITE}/sobre/): metodologia e mantenedores

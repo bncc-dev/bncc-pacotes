@@ -14,7 +14,16 @@ import { join, resolve } from 'node:path';
 
 const ORIGEM = resolve(process.argv[2] ?? '../bncc-dados');
 const DESTINOS = ['packages/bncc/dados', 'python/bncc/dados'];
-const ARQUIVOS = ['estrutura.json', 'educacao-infantil.json', 'ensino-fundamental.json', 'ensino-medio.json'];
+// [origem relativa a dados/, nome no pacote]
+const ARQUIVOS = [
+  ['bncc-2018/estrutura.json', 'estrutura.json'],
+  ['bncc-2018/educacao-infantil.json', 'educacao-infantil.json'],
+  ['bncc-2018/ensino-fundamental.json', 'ensino-fundamental.json'],
+  ['bncc-2018/ensino-medio.json', 'ensino-medio.json'],
+  ['bncc-2018/marcos-legais.json', 'marcos-legais.json'],
+  ['bncc-2018/perfis.json', 'perfis.json'],
+  ['computacao-2022/computacao.json', 'computacao.json'],
+];
 
 const git = (cmd) => execSync(`git -C ${ORIGEM} ${cmd}`, { encoding: 'utf8' }).trim();
 
@@ -25,13 +34,13 @@ if (sujo) {
 }
 const commit = git('rev-parse HEAD');
 
-const dadosDir = join(ORIGEM, 'dados', 'bncc-2018');
+const dadosDir = join(ORIGEM, 'dados');
 const checksums = {};
-for (const arq of ARQUIVOS) {
-  const conteudo = readFileSync(join(dadosDir, arq));
-  checksums[arq] = createHash('sha256').update(conteudo).digest('hex');
+for (const [origem, nome] of ARQUIVOS) {
+  const conteudo = readFileSync(join(dadosDir, origem));
+  checksums[nome] = createHash('sha256').update(conteudo).digest('hex');
 }
-const ef = JSON.parse(readFileSync(join(dadosDir, 'ensino-fundamental.json'), 'utf8'));
+const ef = JSON.parse(readFileSync(join(dadosDir, 'bncc-2018', 'ensino-fundamental.json'), 'utf8'));
 const dataVersion = ef.habilidades[0].vigencia.desde;
 
 const versao = {
@@ -44,7 +53,7 @@ const versao = {
 
 for (const destino of DESTINOS) {
   mkdirSync(destino, { recursive: true });
-  for (const arq of ARQUIVOS) copyFileSync(join(dadosDir, arq), join(destino, arq));
+  for (const [origem, nome] of ARQUIVOS) copyFileSync(join(dadosDir, origem), join(destino, nome));
   writeFileSync(join(destino, 'VERSAO.json'), JSON.stringify(versao, null, 2) + '\n');
 }
 

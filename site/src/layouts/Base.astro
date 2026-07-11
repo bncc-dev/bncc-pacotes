@@ -64,6 +64,7 @@ const v = versao();
         <a href="/infantil/">Infantil</a>
         <a href="/fundamental/">Fundamental</a>
         <a href="/medio/">Médio</a>
+        <a href="/computacao/">Computação</a>
         <a href="/competencias/">Competências</a>
         <a href="/buscar/">Buscar</a>
         <a href="/api/">API</a>
@@ -118,7 +119,7 @@ const v = versao();
       // Usa o mesmo índice da página /buscar/ (carregado só no primeiro toque).
       window.bnccSugestoes = (form, input) => {
         const rotaDe = (c) => (c.startsWith('EI') ? `/objetivo/${c}/` : `/habilidade/${c}/`);
-        const eCodigo = (q) => /^(EI0[123](EO|CG|TS|EF|ET)\d{2}|EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(q);
+        const eCodigo = (q) => /^(EI0[123](EO|CG|TS|EF|ET|CO)\d{2}|EF\d{2}[A-Z]{2}\d{2}|EM13[A-Z]{2,3}\d{2,3})$/.test(q);
         const norm = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
         const MAX = 6;
 
