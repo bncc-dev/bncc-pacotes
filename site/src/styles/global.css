@@ -265,11 +265,30 @@ h1.titulo-secao { font-size: 26px; font-weight: 600; margin: 4px 0 6px; letter-s
 .subtitulo { color: var(--ink-muted); font-size: 14px; max-width: 60ch; margin-top: 0; }
 .bloco { margin-top: 28px; }
 .bloco h2 { font-size: 14px; font-weight: 600; margin: 0 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-/* Título de seção gruda no topo enquanto a própria seção rola (listas longas
-   mantêm contexto; em seções curtas o efeito é imperceptível, pois o sticky é
-   confinado à seção). Âncoras ganham margem para não sumir sob o título. */
-section.bloco > h2 { position: sticky; top: 0; z-index: 5; background: var(--bg); padding-top: 12px; }
-section[id], .grupo-listagem { scroll-margin-top: 56px; }
+/* Cabeçalhos que grudam no topo durante o scroll (contexto em listas longas):
+   o H1 da página fixa primeiro; títulos de seção empilham logo abaixo dele.
+   Confinado a cada seção; em páginas/seções curtas o efeito é imperceptível.
+   Âncoras ganham margem para não sumir sob os cabeçalhos fixos. */
+:root { --altura-h1-fixo: 48px; }
+h1.titulo-secao {
+  position: sticky; top: 0; z-index: 6;
+  background: var(--bg);
+  padding: 8px 0;
+}
+/* Cabeçalho de listagem: título + ação (ex.: baixar CSV) na mesma barra fixa */
+.cabecalho-listagem {
+  position: sticky; top: 0; z-index: 6;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  background: var(--bg);
+  padding: 8px 0;
+}
+.cabecalho-listagem h1.titulo-secao { position: static; border-bottom: 0; padding: 0; margin: 0; }
+.cabecalho-listagem .acoes-listagem { margin: 0; flex-shrink: 0; }
+section.bloco > h2 {
+  position: sticky; top: var(--altura-h1-fixo); z-index: 5;
+  background: var(--bg); padding-top: 12px;
+}
+section[id], .grupo-listagem { scroll-margin-top: 110px; }
 
 /* ---------- landing (home) · portado do mock landing-futura ---------- */
 .opening { padding: 56px 0 44px; text-align: center; }

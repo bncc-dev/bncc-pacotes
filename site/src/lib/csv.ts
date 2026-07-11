@@ -1,8 +1,8 @@
 /**
- * Geração dos CSVs de listagem no build, com as MESMAS colunas e convenções
- * dos derivados do bncc-dados (derivados/csv/): ids crus, listas com ' | ',
- * fonte em duas colunas. Consistência entre canais: quem baixa aqui e quem
- * baixa lá recebe o mesmo formato.
+ * Geração dos CSVs de listagem no build. Este canal é para gente (professor
+ * no Excel/Sheets): as colunas de referência vêm resolvidas por extenso
+ * (área, componente, competências, unidades, campos, objetos). Quem precisa
+ * dos ids crus normalizados usa os derivados do bncc-dados (derivados/csv/).
  *
  * Os dados crus vêm dos JSONs do próprio pacote (subpath ./dados), não de
  * arquivos locais: continua valendo a regra de que todo dado passa pelo
@@ -21,11 +21,33 @@ interface RegistroCru {
   [k: string]: unknown;
 }
 
-const ef = require_('@bncc/dados/dados/ensino-fundamental.json') as { habilidades: RegistroCru[] };
-const em = require_('@bncc/dados/dados/ensino-medio.json') as { habilidades: RegistroCru[] };
+const ef = require_('@bncc/dados/dados/ensino-fundamental.json') as { habilidades: RegistroCru[]; contextos_organizacao: Array<{ id: string; nome: string }> };
+const em = require_('@bncc/dados/dados/ensino-medio.json') as { habilidades: RegistroCru[]; contextos_organizacao: Array<{ id: string; nome: string }> };
 const ei = require_('@bncc/dados/dados/educacao-infantil.json') as { objetivos: RegistroCru[] };
+const est = require_('@bncc/dados/dados/estrutura.json') as Record<string, Array<Record<string, unknown>>>;
 
 const SEP = ' | ';
+
+// id → texto por extenso, para todas as entidades referenciadas nas colunas
+const NOMES = new Map<string, string>();
+for (const grupo of ['areas_conhecimento', 'componentes_curriculares', 'campos_experiencias']) {
+  for (const item of est[grupo]) NOMES.set(item.id as string, item.nome as string);
+}
+for (const r of est.recortes_temporais) {
+  if (r.nome) NOMES.set(r.id as string, `${r.nome}${r.faixa ? ` (${r.faixa})` : ''}`);
+}
+for (const c of est.competencias_especificas) {
+  NOMES.set(c.id as string, `${c.numero}. ${c.texto}`);
+}
+for (const ctx of [...ef.contextos_organizacao, ...em.contextos_organizacao]) {
+  NOMES.set(ctx.id, ctx.nome);
+}
+
+function porExtenso(valor: unknown): unknown {
+  if (Array.isArray(valor)) return valor.map((v) => NOMES.get(v as string) ?? v);
+  if (typeof valor === 'string') return NOMES.get(valor) ?? valor;
+  return valor;
+}
 
 function celula(valor: unknown): string {
   if (valor === undefined || valor === null) return '';
@@ -43,9 +65,13 @@ const COLUNAS_EF = ['codigo', 'componente', 'anos', 'organizacao_tipo', 'unidade
 const COLUNAS_EM = ['codigo', 'area', 'componente', 'competencias_especificas', 'campos_atuacao_social', 'texto', 'vigencia_status', 'fonte_localizador', 'fonte_localizador_pdf'];
 const COLUNAS_EI = ['codigo', 'campo_experiencias', 'grupo_etario', 'alinhamento', 'texto', 'vigencia_status', 'fonte_localizador'];
 
+const COLUNAS_POR_EXTENSO = new Set(['componente', 'area', 'campo_experiencias', 'grupo_etario',
+  'competencias_especificas', 'unidade_tematica', 'campos_atuacao', 'campos_atuacao_social',
+  'pratica_linguagem', 'eixo', 'objetos_conhecimento']);
+
 function achatar(r: RegistroCru): Record<string, unknown> {
   const org = (r.organizacao ?? {}) as Record<string, unknown>;
-  return {
+  const plano: Record<string, unknown> = {
     ...r,
     organizacao_tipo: org.tipo,
     unidade_tematica: org.unidade_tematica,
@@ -56,6 +82,10 @@ function achatar(r: RegistroCru): Record<string, unknown> {
     fonte_localizador: r.fonte.localizador,
     fonte_localizador_pdf: r.fonte.localizador_pdf,
   };
+  for (const coluna of COLUNAS_POR_EXTENSO) {
+    if (coluna in plano) plano[coluna] = porExtenso(plano[coluna]);
+  }
+  return plano;
 }
 
 export function csvEF(filtro: { componente?: string; ano?: number } = {}): string {

@@ -9,8 +9,10 @@ const total = habilidadesEF().length;
       descricao={`As ${total.toLocaleString('pt-BR')} habilidades do Ensino Fundamental na BNCC, por componente curricular e ano, com texto oficial verificado.`}
       jsonLd={breadcrumbJsonLd([{ nome: 'Ensino Fundamental' }])}>
   <nav class="trilha"><li><a href="/">bncc.dev</a></li><li>Ensino Fundamental</li></nav>
-  <h1 class="titulo-secao">Ensino Fundamental</h1>
-  <p class="acoes-listagem"><a class="btn" href="/csv/fundamental.csv" download>baixar CSV da etapa completa</a></p>
+  <div class="cabecalho-listagem">
+    <h1 class="titulo-secao">Ensino Fundamental</h1>
+    <p class="acoes-listagem"><a class="btn" href="/csv/fundamental.csv" download><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.75 14A1.75 1.75 0 0 1 1 12.25v-2.5a.75.75 0 0 1 1.5 0v2.5c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25v-2.5a.75.75 0 0 1 1.5 0v2.5A1.75 1.75 0 0 1 13.25 14Z"/><path d="M7.25 7.689V2a.75.75 0 0 1 1.5 0v5.689l1.97-1.969a.749.749 0 1 1 1.06 1.06l-3.25 3.25a.749.749 0 0 1-1.06 0L4.22 6.78a.749.749 0 1 1 1.06-1.06l1.97 1.969Z"/></svg>Download CSV da etapa completa</a></p>
+  </div>
   <p class="subtitulo">9 componentes curriculares, do 1º ao 9º ano. Escolha um componente:</p>
   <ul class="lista">
     {comps.map((c) => (
