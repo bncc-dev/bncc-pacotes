@@ -510,6 +510,8 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
 .term-dots i:nth-child(1) { background: #ff5f57; }
 .term-dots i:nth-child(2) { background: #febc2e; }
 .term-dots i:nth-child(3) { background: #28c840; }
+.term-titulo { font-family: var(--mono); font-size: 11.5px; font-weight: 600; color: #8b949e; padding-bottom: 6px; }
+.testador-solo { max-width: 720px; margin-top: 14px; }
 .term-tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
 .term-tabs .tab {
   font-family: var(--mono); font-size: 11.5px; color: #8b949e;
@@ -518,7 +520,7 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
 }
 .term-tabs .tab:hover { color: #c9d1d9; }
 .term-tabs .tab[aria-selected="true"] { background: #0d1117; color: #e6edf3; }
-.term-painel { position: relative; min-height: 240px; }
+.term-painel { position: relative; min-height: 270px; }
 .term-painel pre {
   margin: 0; padding: 14px 16px; padding-right: 76px;
   font-family: var(--mono); font-size: 12px; line-height: 1.65; color: #e6edf3;
@@ -549,15 +551,15 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
 .api-status { font-family: var(--mono); font-size: 11px; color: #8b949e; }
 .api-status .ok { color: #5bd58e; font-weight: 700; }
 .api-status .err { color: #ff7b72; font-weight: 700; }
-.term-api pre#api-resp {
-  height: 118px; max-height: 118px; overflow: auto; padding: 10px 12px;
+.term-api pre.api-resp {
+  height: 148px; max-height: 148px; overflow: auto; padding: 10px 12px;
   background: #010409; border: 1px solid #21262d; border-radius: 6px; color: #c9d1d9;
   scrollbar-color: #30363d transparent;
 }
-.term-api pre#api-resp::-webkit-scrollbar { width: 8px; }
-.term-api pre#api-resp::-webkit-scrollbar-track { background: transparent; }
-.term-api pre#api-resp::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
-.term-api pre#api-resp::-webkit-scrollbar-thumb:hover { background: #484f58; }
+.term-api pre.api-resp::-webkit-scrollbar { width: 8px; }
+.term-api pre.api-resp::-webkit-scrollbar-track { background: transparent; }
+.term-api pre.api-resp::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+.term-api pre.api-resp::-webkit-scrollbar-thumb:hover { background: #484f58; }
 
 /* ---- janela de arquivo (seção máquinas e IAs) ----
    clara de propósito, como um bloco de notas: é um documento, não um

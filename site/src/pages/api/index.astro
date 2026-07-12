@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import TestadorApi from '../../components/TestadorApi.astro';
 import { estatisticas, versao } from '../../lib/dados';
 
 const s = estatisticas();
@@ -37,6 +38,18 @@ const exemploResposta = `{
     <p class="h2-hint">Resposta (resumida):</p>
     <div class="codeblock">
       <pre set:text={exemploResposta} />
+    </div>
+  </section>
+
+  <section aria-labelledby="h-testar">
+    <h2 id="h-testar">Teste no navegador</h2>
+    <p class="h2-hint">Requests reais contra <code>api.bncc.dev</code>, sem key e sem cadastro. Edite o caminho ou use os exemplos prontos.</p>
+    <div class="terminal testador-solo">
+      <div class="term-bar">
+        <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="term-titulo">api.bncc.dev</span>
+      </div>
+      <TestadorApi />
     </div>
   </section>
 

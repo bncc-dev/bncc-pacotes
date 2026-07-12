@@ -1,0 +1,64 @@
+---
+/**
+ * Mini testador da api.bncc.dev: requests reais, sem key.
+ * Usado como aba do terminal da home (aba=true) e como bloco da página /api/.
+ */
+interface Props {
+  /** id do painel; a home usa "hero-api" para casar com o botão da aba */
+  id?: string;
+  /** true quando o painel é uma aba do terminal (role=tabpanel, começa oculto) */
+  aba?: boolean;
+}
+const { id = 'testador-api', aba = false } = Astro.props;
+---
+<div class="term-painel term-api" id={id} role={aba ? 'tabpanel' : undefined} hidden={aba}>
+  <div class="api-req">
+    <span class="metodo">GET</span>
+    <input class="api-caminho" value="/v1/aprendizagens/EF67LP08" spellcheck="false" aria-label="Caminho do request na api.bncc.dev" />
+    <button class="api-exec" type="button">Executar</button>
+  </div>
+  <div class="api-atalhos" aria-label="Exemplos de request">
+    <button type="button" data-caminho="/v1/aprendizagens/EF67LP08">lookup</button>
+    <button type="button" data-caminho="/v1/busca?q=frações&limite=3">busca</button>
+    <button type="button" data-caminho="/v1/estatisticas">estatísticas</button>
+    <button type="button" data-caminho="/v1/aprendizagens/EF67LP99">404 pedagógico</button>
+  </div>
+  <div class="api-status">api.bncc.dev · request real, sem key: aperte Executar</div>
+  <pre class="api-resp">// a resposta da API aparece aqui</pre>
+</div>
+
+<script>
+  document.querySelectorAll('.term-api').forEach((raiz) => {
+    const $caminho = raiz.querySelector('.api-caminho') as HTMLInputElement;
+    const $exec = raiz.querySelector('.api-exec') as HTMLButtonElement;
+    const $resp = raiz.querySelector('.api-resp') as HTMLPreElement;
+    const $status = raiz.querySelector('.api-status') as HTMLElement;
+    const BASE = 'https://api.bncc.dev';
+    const rodar = async () => {
+      const caminho = $caminho.value.trim();
+      if (!caminho.startsWith('/')) { $status.textContent = 'o caminho começa com /'; return; }
+      $status.textContent = 'GET ' + caminho + ' …';
+      $resp.textContent = '';
+      const t0 = performance.now();
+      try {
+        const r = await fetch(BASE + encodeURI(caminho));
+        const ms = Math.round(performance.now() - t0);
+        const corpo = await r.json();
+        const versao = r.headers.get('x-bncc-data-version');
+        $status.innerHTML = `<span class="${r.ok ? 'ok' : 'err'}">${r.status}</span> · ${ms} ms${versao ? ' · ' + versao : ''}`;
+        let texto = JSON.stringify(corpo, null, 2);
+        if (texto.length > 4000) texto = texto.slice(0, 4000) + '\n…';
+        $resp.textContent = texto;
+      } catch (e) {
+        $status.innerHTML = '<span class="err">falhou</span> · sem resposta da API';
+        $resp.textContent = String(e);
+      }
+    };
+    $exec.addEventListener('click', rodar);
+    $caminho.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') rodar(); });
+    raiz.querySelectorAll('.api-atalhos button').forEach((b) => b.addEventListener('click', () => {
+      $caminho.value = (b as HTMLElement).dataset.caminho!;
+      rodar();
+    }));
+  });
+</script>

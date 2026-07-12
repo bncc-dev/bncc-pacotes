@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import TestadorApi from '../components/TestadorApi.astro';
 import { datasetJsonLd, estatisticas, estrutura, porCodigo, websiteJsonLd } from '../lib/dados';
 
 const s = estatisticas();
@@ -97,21 +98,7 @@ const snippetMcp = `{ "mcpServers": { "bncc":
               <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
               <pre set:text={snippetMcp} />
             </div>
-            <div class="term-painel term-api" id="hero-api" role="tabpanel" hidden>
-              <div class="api-req">
-                <span class="metodo">GET</span>
-                <input id="api-caminho" value="/v1/aprendizagens/EF67LP08" spellcheck="false" aria-label="Caminho do request na api.bncc.dev" />
-                <button id="api-exec" type="button">Executar</button>
-              </div>
-              <div class="api-atalhos" aria-label="Exemplos de request">
-                <button type="button" data-caminho="/v1/aprendizagens/EF67LP08">lookup</button>
-                <button type="button" data-caminho="/v1/busca?q=frações&limite=3">busca</button>
-                <button type="button" data-caminho="/v1/estatisticas">estatísticas</button>
-                <button type="button" data-caminho="/v1/aprendizagens/EF67LP99">404 pedagógico</button>
-              </div>
-              <div class="api-status" id="api-status">api.bncc.dev · request real, sem key: aperte Executar</div>
-              <pre id="api-resp">// a resposta da API aparece aqui</pre>
-            </div>
+            <TestadorApi id="hero-api" aba />
           </div>
           <p class="pane-foot"><strong>Use agora:</strong> <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">npm</a> · <a href="https://pypi.org/project/bncc/" target="_blank" rel="noopener">PyPI</a> · <a href="/api/">API</a> · <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">dados brutos</a></p>
         </div>
@@ -195,37 +182,5 @@ const snippetMcp = `{ "mcpServers": { "bncc":
   const bh = document.getElementById('busca-home');
   if (bh) window.bnccSugestoes(bh, bh.querySelector('input'));
 
-  // mini testador da API (aba "api" do terminal): requests reais, sem key
-  (() => {
-    const exec = document.getElementById('api-exec');
-    if (!exec) return;
-    const $caminho = document.getElementById('api-caminho');
-    const $resp = document.getElementById('api-resp');
-    const $status = document.getElementById('api-status');
-    const BASE = 'https://api.bncc.dev';
-    const rodar = async () => {
-      const caminho = $caminho.value.trim();
-      if (!caminho.startsWith('/')) { $status.textContent = 'o caminho começa com /'; return; }
-      $status.textContent = 'GET ' + caminho + ' …';
-      $resp.textContent = '';
-      const t0 = performance.now();
-      try {
-        const r = await fetch(BASE + encodeURI(caminho));
-        const ms = Math.round(performance.now() - t0);
-        const corpo = await r.json();
-        const versao = r.headers.get('x-bncc-data-version');
-        $status.innerHTML = `<span class="${r.ok ? 'ok' : 'err'}">${r.status}</span> · ${ms} ms${versao ? ' · ' + versao : ''}`;
-        let texto = JSON.stringify(corpo, null, 2);
-        if (texto.length > 4000) texto = texto.slice(0, 4000) + '\n…';
-        $resp.textContent = texto;
-      } catch (e) {
-        $status.innerHTML = '<span class="err">falhou</span> · sem resposta da API';
-        $resp.textContent = String(e);
-      }
-    };
-    exec.addEventListener('click', rodar);
-    $caminho.addEventListener('keydown', (e) => { if (e.key === 'Enter') rodar(); });
-    document.querySelectorAll('.api-atalhos button').forEach((b) => b.addEventListener('click', () => { $caminho.value = b.dataset.caminho; rodar(); }));
-  })();
 
 </script>
