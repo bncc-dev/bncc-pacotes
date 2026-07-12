@@ -37,7 +37,10 @@ import bncc
 h = bncc.por_codigo('${reg.codigo}')
 h['texto']
 bncc.para_dataframe('${reg.etapa}')`;
-const snippetMcp = `// Claude Code, Cursor etc. (servidor local via stdio)
+const snippetMcp = `// remoto: cole a URL no Claude, ChatGPT ou Cursor
+https://mcp.bncc.dev/mcp
+
+// local, offline (Claude Code, Cursor etc.):
 {
   "mcpServers": {
     "bncc": { "command": "npx", "args": ["-y", "@bncc/mcp"] }
