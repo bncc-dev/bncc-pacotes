@@ -10,8 +10,10 @@ interface Props {
   etapa?: 'EI' | 'EF' | 'EM';
   /** og:type: 'website' (padrão) ou 'article' nas páginas de detalhe. */
   ogType?: 'website' | 'article';
+  /** Esconde a busca do topo (home: a busca do hero é a única entrada; "/" foca nela). */
+  buscaNoTopo?: boolean;
 }
-const { titulo, descricao, jsonLd, etapa, ogType = 'website' } = Astro.props;
+const { titulo, descricao, jsonLd, etapa, ogType = 'website', buscaNoTopo = true } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/og/bncc-dev.png', Astro.site).href;
 const temaCor = etapa ? ETAPAS[etapa].cor : '#1a6e42';
@@ -55,21 +57,36 @@ const v = versao();
   <body>
     <header class="topbar">
       <a class="wordmark" href="/">{/* <img class="maca" src="/maca.svg" alt="" width="12" height="13" aria-hidden="true" /> */}bncc<span class="dot">.</span>dev</a>
-      <form class="search" role="search" id="busca-codigo">
-        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
-        <input type="search" name="q" placeholder="Código ou tema… ex.: EF67LP08" aria-label="Buscar na BNCC por código ou tema" />
-        <kbd>/</kbd>
-      </form>
+      {buscaNoTopo && (
+        <form class="search" role="search" id="busca-codigo">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+          <input type="search" name="q" placeholder="Código ou tema… ex.: EF67LP08" aria-label="Buscar na BNCC por código ou tema" />
+          <kbd>/</kbd>
+        </form>
+      )}
       <nav class="topbar-links" aria-label="Navegação principal">
-        <a href="/infantil/">Infantil</a>
-        <a href="/fundamental/">Fundamental</a>
-        <a href="/medio/">Médio</a>
-        <a href="/computacao/">Computação</a>
-        <a href="/competencias/">Competências</a>
-        <a href="/buscar/">Buscar</a>
+        <details class="nav-drop">
+          <summary>Toda BNCC</summary>
+          <div class="drop-menu">
+            <a href="/infantil/">Educação Infantil</a>
+            <a href="/fundamental/">Ensino Fundamental</a>
+            <a href="/medio/">Ensino Médio</a>
+            <a href="/competencias/">Competências</a>
+            <a href="/buscar/">Buscar</a>
+          </div>
+        </details>
+        <a href="/computacao/">BNCC Computação</a>
+        <details class="nav-drop">
+          <summary>Pacotes Programação</summary>
+          <div class="drop-menu">
+            <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">npm · @bncc/dados</a>
+            <a href="https://pypi.org/project/bncc/" target="_blank" rel="noopener">PyPI · bncc</a>
+            <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">dados brutos · GitHub</a>
+          </div>
+        </details>
+        <a href="https://www.npmjs.com/package/@bncc/mcp" target="_blank" rel="noopener">MCP</a>
         <a href="/api/">API</a>
         <a href="/sobre/">Sobre</a>
-        <a href="https://github.com/bncc-dev" rel="noopener">GitHub</a>
         <button class="theme-btn" type="button" id="alternar-tema" aria-label="Alternar entre tema claro e escuro" title="Tema claro/escuro">
           <svg id="icone-sol" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true" style="display:none"><path d="M8 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-11a.75.75 0 0 1 .75.75v1a.75.75 0 0 1-1.5 0v-1A.75.75 0 0 1 8 1Zm0 12a.75.75 0 0 1 .75.75v1a.75.75 0 0 1-1.5 0v-1A.75.75 0 0 1 8 13Zm7-5a.75.75 0 0 1-.75.75h-1a.75.75 0 0 1 0-1.5h1A.75.75 0 0 1 15 8ZM3.5 8a.75.75 0 0 1-.75.75h-1a.75.75 0 0 1 0-1.5h1A.75.75 0 0 1 3.5 8Zm8.8-4.95a.75.75 0 0 1 0 1.06l-.7.7a.75.75 0 1 1-1.07-1.06l.71-.7a.75.75 0 0 1 1.06 0ZM5.46 10.54a.75.75 0 0 1 0 1.06l-.7.7a.75.75 0 0 1-1.07-1.06l.71-.7a.75.75 0 0 1 1.06 0Zm7.9 1.76a.75.75 0 0 1-1.06 0l-.7-.7a.75.75 0 1 1 1.06-1.07l.7.71a.75.75 0 0 1 0 1.06ZM5.46 5.46a.75.75 0 0 1-1.06 0l-.7-.7a.75.75 0 0 1 1.06-1.07l.7.71a.75.75 0 0 1 0 1.06Z"/></svg>
           <svg id="icone-lua" viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true" style="display:none"><path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
@@ -80,7 +97,7 @@ const v = versao();
 
     <div class="notice" role="note">
       <strong>Pré-release.</strong>
-      <span>Dados completos e verificados contra o documento homologado; a release dados-v1.0.0 sai após o registro da revisão pedagógica.</span>
+      <span>Dados completos e verificados contra o documento homologado; versão 1.0 em breve.</span>
     </div>
 
     <main class="shell">
@@ -89,10 +106,10 @@ const v = versao();
 
     <footer class="rodape">
       <span>bncc.dev · a BNCC em dados abertos, auditáveis e acessíveis</span>
-      <a href="https://profy.com.br" rel="noopener">mantido pela Profy</a>
-      <a href="https://github.com/bncc-dev/bncc-dados" rel="noopener">dados (CC BY 4.0)</a>
-      <a href="https://github.com/bncc-dev/bncc-pacotes" rel="noopener">pacotes e MCP (MIT)</a>
-      <a href="/llms.txt">para agentes de IA (llms.txt)</a>
+      <a href="https://profy.com.br" target="_blank" rel="noopener">mantido pela Profy</a>
+      <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">dados no GitHub (CC BY 4.0)</a>
+      <a href="https://github.com/bncc-dev/bncc-pacotes" target="_blank" rel="noopener">pacotes e MCP no GitHub (MIT)</a>
+      <a href="/llms.txt">llms.txt para agentes de IA</a>
     </footer>
 
     <script is:inline>
@@ -236,13 +253,26 @@ const v = versao();
         });
       };
 
+      // dropdowns do topo: um aberto por vez; fecham com clique fora ou Esc
+      const drops = [...document.querySelectorAll('.nav-drop')];
+      drops.forEach((d) => d.addEventListener('toggle', () => {
+        if (d.open) drops.forEach((o) => { if (o !== d) o.open = false; });
+      }));
+      document.addEventListener('click', (e) => {
+        drops.forEach((d) => { if (!d.contains(e.target)) d.open = false; });
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') drops.forEach((d) => (d.open = false));
+      });
+
       const form = document.getElementById('busca-codigo');
-      if (form) {
-        const input = form.querySelector('input');
+      if (form) window.bnccSugestoes(form, form.querySelector('input'));
+      // atalho "/": foca a busca do topo ou, na home (sem busca no topo), a do hero
+      const alvoBusca = form ? form.querySelector('input') : document.querySelector('#busca-home input');
+      if (alvoBusca) {
         document.addEventListener('keydown', (e) => {
-          if (e.key === '/' && document.activeElement !== input) { e.preventDefault(); input.focus(); }
+          if (e.key === '/' && document.activeElement !== alvoBusca) { e.preventDefault(); alvoBusca.focus(); }
         });
-        window.bnccSugestoes(form, input);
       }
 
       // decoder: hover/focus/tap

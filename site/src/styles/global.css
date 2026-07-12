@@ -92,6 +92,28 @@ code, .mono { font-family: var(--mono); }
 }
 .topbar-links { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
 .topbar-links a { color: var(--ink); }
+/* dropdowns do topo (details/summary: funcionam sem JS; o JS só fecha por fora/Esc) */
+.nav-drop { position: relative; }
+.nav-drop summary {
+  list-style: none; cursor: pointer; color: var(--ink); white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.nav-drop summary::-webkit-details-marker { display: none; }
+.nav-drop summary::after {
+  content: ""; width: 0; height: 0; margin-top: 1px;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--ink-muted);
+  transition: transform .15s ease;
+}
+.nav-drop[open] summary::after { transform: rotate(180deg); }
+.drop-menu {
+  position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+  z-index: 30; display: grid; gap: 2px; min-width: 190px; padding: 6px;
+  background: var(--bg); border: 1px solid var(--border-strong); border-radius: 10px;
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, .35);
+}
+.drop-menu a { padding: 7px 11px; border-radius: 7px; white-space: nowrap; }
+.drop-menu a:hover { background: var(--bg-subtle); text-decoration: none; }
 .badge-version {
   font-family: var(--mono); font-size: 11px; color: var(--accent-ink);
   background: var(--accent-bg); border: 1px solid var(--accent);
@@ -227,7 +249,7 @@ footer.rodape a:hover { color: var(--accent); }
   .grid { grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: 24px; }
   .topbar { flex-wrap: wrap; gap: 10px; padding: 10px 16px; }
   .topbar-links { margin-left: auto; gap: 12px; }
-  .topbar-links a { display: none; }
+  .topbar-links > a, .topbar-links .nav-drop { display: none; }
   .search { order: 3; max-width: none; width: 100%; }
   .search kbd { display: none; }
   .shell { padding: 16px; }
@@ -294,10 +316,6 @@ section[id], .grupo-listagem { scroll-margin-top: 110px; }
 .opening { padding: 56px 0 44px; text-align: center; }
 h1.thesis { font-size: 38px; font-weight: 700; letter-spacing: -.02em; line-height: 1.18; margin: 0; text-wrap: balance; }
 h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight: 500; letter-spacing: -.01em; color: var(--accent-ink); }
-.lede { font-size: 17px; color: var(--ink-muted); max-width: 58ch; margin: 18px auto 0; text-wrap: pretty; }
-.feito-para { margin: 18px auto 0; font-size: 13px; color: var(--ink-muted); text-wrap: balance; }
-.feito-para strong { font-weight: 600; color: var(--ink); }
-.feito-para a { font-weight: 500; }
 
 /* hero por público (composição A1): seções empilhadas, lados alternados */
 .publicos { max-width: 940px; margin: 22px auto 0; text-align: left; }
@@ -316,8 +334,6 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
 .mescla li .caso { color: var(--ink-muted); }
 .mescla li .caso code { font-size: 12px; color: var(--accent-ink); background: transparent; padding: 0; }
 .pub-acao { display: grid; gap: 10px; align-content: start; min-width: 0; }
-.ou { display: flex; align-items: center; gap: 12px; margin: 10px 0; font-size: 12px; font-weight: 650; letter-spacing: .04em; color: var(--ink-muted); }
-.ou::before, .ou::after { content: ""; flex: 1; height: 1px; background: var(--border); }
 .pub-acao .search-hints { margin: 0; }
 .cta { display: block; padding: 14px 17px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: inherit; }
 .cta:hover { border-color: var(--accent); text-decoration: none; background: var(--bg-subtle); }
@@ -327,6 +343,9 @@ h1.thesis .quem { display: block; margin-top: 10px; font-size: 26px; font-weight
 .pane-foot { margin: 2px 0 0; font-size: 12.5px; }
 .pane-foot strong { font-weight: 650; color: var(--ink); }
 .pane-foot a { font-weight: 500; }
+/* faixa fina da seção máquinas e IAs: só rótulo + frase ao lado do llms.txt */
+.publico-slim .pub-frase { margin-bottom: 0; }
+.nav-etapas a { font-weight: 500; }
 .big-search {
   display: flex; align-items: center; gap: 10px; margin: 0;
   padding: 11px 14px; background: var(--bg-subtle);
@@ -407,7 +426,6 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
   .opening { padding: 40px 0 32px; }
   h1.thesis { font-size: 30px; }
   h1.thesis .quem { font-size: 20px; }
-  .lede { font-size: 15.5px; }
   .publico { grid-template-columns: 1fr; }
   .etapas { grid-template-columns: 1fr; }
   .numbers { flex-wrap: wrap; }
@@ -417,6 +435,7 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
 }
 
 /* ---- Fase 4: busca, competências, CSV ---- */
+.competencia-ref { display: block; margin-bottom: 6px; }
 .acoes-listagem { margin: 4px 0 0; }
 .acoes-listagem .btn { text-decoration: none; }
 
@@ -479,48 +498,6 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
 .sugestoes .ver-todos a { justify-content: center; font-size: 12.5px; color: var(--accent-ink); font-weight: 600; }
 .sugestoes .nada { padding: 10px 12px; font-size: 13px; color: var(--ink-muted); }
 
-/* ---- navegador de turma (home, seção ensina) ---- */
-.navegador {
-  display: grid; gap: 10px; min-width: 0;
-  padding: 14px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg);
-}
-.nav-titulo { font-size: 13px; font-weight: 650; }
-/* cores oficiais das etapas (linguagem visual do documento da BNCC);
-   o dourado do EM é escurecido para garantir contraste com texto branco */
-.navegador { --cor-etapa: #1e5b8a; }
-.navegador[data-etapa="EI"] { --cor-etapa: #2e7d4f; }
-.navegador[data-etapa="EF"] { --cor-etapa: #1e5b8a; }
-.navegador[data-etapa="EM"] { --cor-etapa: #8a6400; }
-.seg {
-  position: relative; display: grid; grid-template-columns: repeat(3, 1fr);
-  border: 1px solid var(--border); border-radius: 9px; background: var(--bg-inset); padding: 3px;
-}
-.seg-thumb {
-  position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 3);
-  border-radius: 6px; background: var(--cor-etapa);
-  transition: transform .28s cubic-bezier(.2, .8, .2, 1), background-color .28s ease;
-}
-.seg button {
-  position: relative; z-index: 1; font: inherit; font-size: 13px; font-weight: 500;
-  color: var(--ink-muted); background: transparent; border: 0; border-radius: 6px;
-  padding: 7px 6px; cursor: pointer; white-space: nowrap; transition: color .2s ease;
-}
-.seg button[aria-pressed="true"] { color: #fff; font-weight: 650; }
-.nav-selects { display: flex; gap: 8px; min-width: 0; }
-.nav-selects select {
-  flex: 1; min-width: 0; width: 100%; padding: 7px 9px; font: inherit; font-size: 13px; color: var(--ink);
-  background: var(--bg-inset); border: 1px solid var(--border); border-radius: 8px;
-  text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
-}
-.nav-selects select#nav-ano { flex: 0 0 42%; }
-.nav-selects select[hidden] { display: none; }
-.btn-ir {
-  display: block; text-align: center; font-size: 13.5px; font-weight: 600;
-  color: #fff; background: var(--cor-etapa); border-radius: 8px; padding: 9px 14px;
-  transition: background-color .28s ease, filter .15s ease;
-}
-.btn-ir:hover { filter: brightness(.9); text-decoration: none; }
-
 /* ---- terminal do card dev (sempre escuro: terminal é terminal) ---- */
 .terminal {
   min-width: 0; border-radius: 10px; overflow: hidden;
@@ -541,7 +518,7 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
 }
 .term-tabs .tab:hover { color: #c9d1d9; }
 .term-tabs .tab[aria-selected="true"] { background: #0d1117; color: #e6edf3; }
-.term-painel { position: relative; min-height: 300px; }
+.term-painel { position: relative; min-height: 240px; }
 .term-painel pre {
   margin: 0; padding: 14px 16px; padding-right: 76px;
   font-family: var(--mono); font-size: 12px; line-height: 1.65; color: #e6edf3;
@@ -573,7 +550,7 @@ section.faixa-home .h2-hint { font-size: 14px; margin: 0 0 22px; max-width: 64ch
 .api-status .ok { color: #5bd58e; font-weight: 700; }
 .api-status .err { color: #ff7b72; font-weight: 700; }
 .term-api pre#api-resp {
-  height: 176px; max-height: 176px; overflow: auto; padding: 10px 12px;
+  height: 118px; max-height: 118px; overflow: auto; padding: 10px 12px;
   background: #010409; border: 1px solid #21262d; border-radius: 6px; color: #c9d1d9;
   scrollbar-color: #30363d transparent;
 }
