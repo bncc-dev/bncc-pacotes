@@ -1,0 +1,139 @@
+---
+import Base from '../layouts/Base.astro';
+import { breadcrumbJsonLd, estatisticas, porCodigo, urlAbsoluta, versao } from '../lib/dados';
+import { estatisticasCO } from '../lib/computacao';
+
+const s = estatisticas();
+const sCO = estatisticasCO();
+const total = (s.total + sCO.total).toLocaleString('pt-BR');
+const v = versao();
+
+const exemplo = porCodigo('EF67LP08');
+const paginaPdf = exemplo.fonte.localizador_pdf?.match(/página PDF (\d+)/)?.[1];
+const linkExemplo = urlAbsoluta('/habilidade/EF67LP08/');
+const contextoExemplo = `Ensino Fundamental · ${exemplo.anos!.map((a) => `${a}º`).join(' e ')} ano · ${exemplo.componente!.nome}`;
+
+const prompt = `Use os dados de bncc.dev como única fonte das habilidades da BNCC. Nunca invente códigos nem enunciados: consulte bncc.dev/habilidade/{codigo} ou o pacote npm @bncc/dados. Linke cada habilidade citada para a página correspondente em bncc.dev.`;
+---
+<Base titulo="Para quem ensina · bncc.dev"
+      descricao="Toda a BNCC sem folhear PDF: busque por tema, cite habilidades com link permanente, use IA sem código inventado e baixe recortes em CSV. Texto oficial, conferido com o documento homologado."
+      jsonLd={breadcrumbJsonLd([{ nome: 'para quem ensina', url: '/ensina/' }])}
+      buscaNoTopo={false}>
+
+  <div class="miolo-ensina">
+    <ol class="trilha">
+      <li><a href="/">bncc.dev</a></li>
+      <li>para quem ensina</li>
+    </ol>
+
+    <section aria-labelledby="h-abre">
+      <span class="pub-label">Para quem ensina</span>
+      <h1 class="abre" id="h-abre">Toda a BNCC, sem folhear PDF.</h1>
+      <p class="abre-sub">Busque por tema, cite com link permanente e use IA sem medo de habilidade inventada. Cada texto aqui é o oficial, conferido letra a letra com o documento homologado do MEC.</p>
+      <form class="big-search" role="search" id="busca-ensina">
+        <svg viewBox="0 0 16 16" width="17" height="17" fill="currentColor" aria-hidden="true"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" placeholder="Código ou tema… ex.: EF67LP08, frações" aria-label="Buscar na BNCC por código ou tema" />
+        <button class="btn-buscar" type="submit">Buscar</button>
+      </form>
+      <p class="search-hints">por exemplo: <a href="/habilidade/EF67LP08/">EF67LP08</a> · <a href="/buscar/?q=frações">frações</a> · <a href="/buscar/?q=fake%20news">fake news</a> · <a href="/computacao/">computação</a></p>
+    </section>
+
+    <section class="tarefa" aria-labelledby="h-t1">
+      <div class="tarefa-head"><span class="tarefa-num">01</span><h2 id="h-t1">Encontre sem saber o código</h2></div>
+      <p class="tarefa-hint">Ninguém decora EF05MA03. Pergunte como você perguntaria na sala dos professores; a busca entende tema, ano e etapa:</p>
+      <div class="perguntas">
+        <a class="pergunta" href="/habilidade/EF05MA03/">
+          <span class="q">O que a Base pede sobre frações no 5º ano?</span>
+          <span class="r">EF05MA03</span>
+          <span class="onde">Matemática · 5º ano · e mais 1 habilidade vizinha</span>
+        </a>
+        <a class="pergunta" href="/buscar/?q=fake%20news">
+          <span class="q">Tem alguma coisa sobre fake news?</span>
+          <span class="r">buscar “fake news”</span>
+          <span class="onde">Língua Portuguesa · campo jornalístico/midiático, anos finais</span>
+        </a>
+        <a class="pergunta" href="/objetivo/EI02TS01/">
+          <span class="q">O que crianças de 1 a 3 anos exploram com música?</span>
+          <span class="r">EI02TS01</span>
+          <span class="onde">Educação Infantil · traços, sons, cores e formas · crianças bem pequenas</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="tarefa" aria-labelledby="h-t2">
+      <div class="tarefa-head"><span class="tarefa-num">02</span><h2 id="h-t2">Cite com link permanente</h2></div>
+      <p class="tarefa-hint">Cada habilidade tem sua própria página. O link não muda, o texto é o oficial e a fonte está sempre indicada, com a página do documento homologado.</p>
+      <a class="verbete" href="/habilidade/EF67LP08/">
+        <span class="cod-row">
+          <span class="cod">{exemplo.codigo}</span>
+          <span class="contexto">{contextoExemplo}</span>
+        </span>
+        <p>{exemplo.texto.slice(0, 235)}…</p>
+        {paginaPdf && <span class="selo">Texto conferido contra o documento homologado, p. {paginaPdf} do PDF oficial</span>}
+      </a>
+      <div class="linha-link">
+        <code>bncc.dev/habilidade/EF67LP08</code>
+        <button class="btn" type="button" onclick={`copiarTexto('${linkExemplo}', this)`}>copiar link</button>
+      </div>
+      <ul class="usos">
+        <li><strong>No planejamento e no PEI:</strong> cole o link e o texto oficial, sem redigitar nada.</li>
+        <li><strong>No grupo da escola:</strong> mande o link; quem abre vê o texto certo, não um print cortado.</li>
+        <li><strong>Em material que você publica:</strong> a referência aponta para a fonte oficial, sempre.</li>
+      </ul>
+    </section>
+
+    <section class="tarefa" aria-labelledby="h-t3">
+      <div class="tarefa-head"><span class="tarefa-num">03</span><h2 id="h-t3">Use com IA, sem habilidade inventada</h2></div>
+      <p class="tarefa-hint">Assistentes de IA inventam códigos e textos de habilidade com toda a confiança do mundo. A solução é simples: <strong>mande a IA consultar o bncc.dev antes de responder.</strong></p>
+      <div class="passos">
+        <div class="passo"><span class="n">passo 1</span><span class="t"><strong>Copie</strong> o texto abaixo (um clique no botão).</span></div>
+        <div class="passo"><span class="n">passo 2</span><span class="t"><strong>Cole no início da conversa</strong> no ChatGPT, Claude ou Gemini.</span></div>
+        <div class="passo"><span class="n">passo 3</span><span class="t"><strong>Peça o que precisar:</strong> planos de aula, atividades, adaptações. As habilidades citadas serão reais.</span></div>
+      </div>
+      <div class="arquivo">
+        <div class="arquivo-bar"><span class="arquivo-nome">prompt.txt</span><button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button></div>
+        <q>{prompt}</q>
+      </div>
+    </section>
+
+    <section class="tarefa" aria-labelledby="h-t4">
+      <div class="tarefa-head"><span class="tarefa-num">04</span><h2 id="h-t4">Leve para a planilha</h2></div>
+      <p class="tarefa-hint">Prefere Excel ou Google Sheets? Todo recorte do site tem um CSV: uma etapa inteira, um componente, um único ano. Abre direto na planilha, sem conversão.</p>
+      <div class="csvs">
+        <a class="csv-row" href="/csv/fundamental-ma-5ano.csv"><span class="arq">fundamental-ma-5ano.csv</span><span class="desc">Matemática · 5º ano · habilidades com unidade temática e objeto de conhecimento</span><span class="baixar">baixar ↓</span></a>
+        <a class="csv-row" href="/csv/fundamental-lp.csv"><span class="arq">fundamental-lp.csv</span><span class="desc">Língua Portuguesa · 1º ao 9º ano · componente completo</span><span class="baixar">baixar ↓</span></a>
+        <a class="csv-row" href="/csv/infantil.csv"><span class="arq">infantil.csv</span><span class="desc">Educação Infantil · {s.educacaoInfantil} objetivos por campo de experiências e grupo etário</span><span class="baixar">baixar ↓</span></a>
+      </div>
+      <p class="ver-todos">Esses são três exemplos. Cada listagem do site tem seu botão de download: escolha o recorte na <a href="/infantil/">Educação Infantil</a>, no <a href="/fundamental/">Fundamental</a> ou no <a href="/medio/">Médio</a>.</p>
+    </section>
+
+    <section class="tarefa" aria-labelledby="h-t5">
+      <div class="tarefa-head"><span class="tarefa-num">05</span><h2 id="h-t5">Por que dá para confiar</h2></div>
+      <p class="tarefa-hint">Não é uma cópia da BNCC que alguém digitou: é uma extração auditada dos documentos oficiais, com verificação que roda a cada mudança.</p>
+      <div class="numbers">
+        <div class="num"><span class="v">{total}</span><span class="k">aprendizagens</span></div>
+        <div class="num"><span class="v">100%</span><span class="k">com fonte oficial citável</span></div>
+        <div class="num"><span class="v">R$ 0</span><span class="k">sem cadastro, sem anúncio</span></div>
+        <div class="num"><span class="v">{v.data_version.replace('dados-', '')}</span><span class="k">versão dos dados</span></div>
+      </div>
+      <p class="trust-line">Cada aprendizagem indica <strong>o arquivo e a página</strong> do documento oficial de onde veio, e a extração é conferida automaticamente contra o PDF homologado a cada mudança. A revisão pedagógica é da <strong>Equipe Pedagógica da Profy</strong>, que mantém o projeto. <a href="/sobre/">Saiba mais em /sobre/ →</a></p>
+      <p class="pledge"><strong>Compromisso:</strong> o site, os dados e as ferramentas são abertos e gratuitos, sem cadastro. O que é aberto nunca deixa de ser: <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">a regra está por escrito</a>.</p>
+    </section>
+
+    <section class="tarefa" aria-labelledby="h-t6">
+      <div class="tarefa-head"><span class="tarefa-num">·</span><h2 id="h-t6">Comece por onde você ensina</h2></div>
+      <div class="grade-etapas etapas-ensina">
+        <a class="cartao-etapa" href="/infantil/"><strong>Educação Infantil</strong><span>0 a 5 anos · 5 campos de experiências</span><span class="qtd">{s.educacaoInfantil} objetivos</span></a>
+        <a class="cartao-etapa" href="/fundamental/"><strong>Ensino Fundamental</strong><span>1º ao 9º ano · 9 componentes</span><span class="qtd">{s.ensinoFundamental.toLocaleString('pt-BR')} habilidades</span></a>
+        <a class="cartao-etapa" href="/medio/"><strong>Ensino Médio</strong><span>1ª a 3ª série · 4 áreas</span><span class="qtd">{s.ensinoMedio} habilidades</span></a>
+        <a class="cartao-etapa" href="/computacao/"><strong>Computação</strong><span>complemento de 2022 · EI ao EM</span><span class="qtd">{sCO.total} aprendizagens</span></a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script is:inline>
+  // mesma busca com sugestões da home (função definida no Base.astro)
+  const be = document.getElementById('busca-ensina');
+  if (be) window.bnccSugestoes(be, be.querySelector('input'));
+</script>

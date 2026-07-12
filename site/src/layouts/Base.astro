@@ -106,6 +106,9 @@ const v = versao();
 
     <footer class="rodape">
       <span>bncc.dev · a BNCC em dados abertos, auditáveis e acessíveis</span>
+      <a href="/ensina/">para quem ensina</a>
+      <a href="/desenvolve/">para quem desenvolve</a>
+      <a href="/contato/">contato</a>
       <a href="https://profy.com.br" target="_blank" rel="noopener">mantido pela Profy</a>
       <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">dados no GitHub (CC BY 4.0)</a>
       <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">npm · @bncc/dados</a>
@@ -269,8 +272,8 @@ const v = versao();
 
       const form = document.getElementById('busca-codigo');
       if (form) window.bnccSugestoes(form, form.querySelector('input'));
-      // atalho "/": foca a busca do topo ou, na home (sem busca no topo), a do hero
-      const alvoBusca = form ? form.querySelector('input') : document.querySelector('#busca-home input');
+      // atalho "/": foca a busca do topo ou, nas páginas sem busca no topo (home, /ensina/), a do hero
+      const alvoBusca = form ? form.querySelector('input') : document.querySelector('#busca-home input, #busca-ensina input');
       if (alvoBusca) {
         document.addEventListener('keydown', (e) => {
           if (e.key === '/' && document.activeElement !== alvoBusca) { e.preventDefault(); alvoBusca.focus(); }

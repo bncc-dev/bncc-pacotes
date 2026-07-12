@@ -34,7 +34,10 @@ Regras para agentes:
 - [Computação](${SITE}/computacao/): as ${sCO.total} aprendizagens do complemento à BNCC (códigos CO), por eixo e objeto de conhecimento
 - [Competências](${SITE}/competencias/): as 10 competências gerais e as ${s.competenciasEspecificas} específicas (páginas em ${SITE}/competencia/{id}/)
 - [Buscar](${SITE}/buscar/): busca textual com filtros por etapa, componente, ano e prática
+- [Para quem ensina](${SITE}/ensina/): guia para professores; busca por tema, citação com link permanente, prompts para IA e CSVs
+- [Para quem desenvolve](${SITE}/desenvolve/): quickstart de npm, PyPI, MCP e API REST, modelo de dados e garantias de engenharia
 - [Sobre](${SITE}/sobre/): metodologia e mantenedores
+- [Contato](${SITE}/contato/): formulário e contato@bncc.dev; correções de dados vão por issue no GitHub, com fonte oficial
 
 ## API e pacotes
 
