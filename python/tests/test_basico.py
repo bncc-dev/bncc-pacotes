@@ -6,7 +6,12 @@ import bncc
 def test_versao():
     v = bncc.versao()
     assert v['data_version'].startswith('dados-')
-    assert len(v['checksums_sha256']) == 4
+    # O dataset pode ganhar arquivos (marcos legais, perfis, computação);
+    # o que o pacote garante é o núcleo das três etapas + estrutura
+    # (espelho do basico.test.ts do npm).
+    nucleo = {'estrutura.json', 'educacao-infantil.json',
+              'ensino-fundamental.json', 'ensino-medio.json'}
+    assert nucleo <= set(v['checksums_sha256'])
 
 
 def test_case_insensitive_e_nomes_resolvidos():
