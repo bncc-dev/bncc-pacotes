@@ -240,8 +240,9 @@ footer.rodape {
   font-size: 13px; color: var(--ink-muted); background: var(--bg-subtle);
 }
 .rodape-grade {
-  max-width: 1080px; margin: 0 auto;
-  display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 32px;
+  max-width: 1032px; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 300px) auto auto auto;
+  justify-content: space-between; gap: 32px;
 }
 .rodape-marca { display: grid; gap: 8px; align-content: start; justify-items: start; }
 .rodape-wordmark { font-size: 24px; }
