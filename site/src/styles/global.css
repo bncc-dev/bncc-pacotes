@@ -740,3 +740,63 @@ a.rota:hover { border-color: var(--accent); background: var(--bg-subtle); text-d
 .arquivo pre::-webkit-scrollbar { height: 8px; }
 .arquivo pre::-webkit-scrollbar-track { background: transparent; }
 .arquivo pre::-webkit-scrollbar-thumb { background: #c1c7cd; border-radius: 4px; }
+
+/* ---- página /mcp/ ----
+   Temperatura "ponte": começa no gesto universal (colar a URL, ver o chat
+   funcionando) e desce ao técnico. A demo é um chat, não um terminal:
+   mostra o produto em uso em vez de explicar. */
+.url-conexao { display: flex; align-items: stretch; border: 1.5px solid var(--accent); border-radius: 10px; overflow: hidden; margin-bottom: 12px; max-width: 460px; background: var(--bg); }
+.url-conexao code { flex: 1; display: flex; align-items: center; padding: 11px 16px; font-size: 14.5px; font-weight: 600; color: var(--accent-ink); background: var(--accent-bg); white-space: nowrap; overflow-x: auto; }
+.url-conexao button { font: inherit; font-size: 13px; font-weight: 600; color: #fff; background: var(--accent); border: 0; padding: 0 18px; cursor: pointer; white-space: nowrap; }
+.url-conexao button:hover { filter: brightness(1.08); }
+.url-hint { font-size: 12.5px; color: var(--ink-muted); margin: 0 0 16px; }
+
+/* chat demo (sempre escuro, como o terminal: terminal é terminal) */
+.chat { min-width: 0; border-radius: 10px; overflow: hidden; border: 1px solid #30363d; background: #0d1117; box-shadow: 0 10px 32px -14px rgba(1, 4, 9, .55); }
+.chat-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #161b22; border-bottom: 1px solid #21262d; }
+.chat-dots { display: inline-flex; gap: 5px; flex-shrink: 0; }
+.chat-dots i { width: 8px; height: 8px; border-radius: 50%; }
+.chat-dots i:nth-child(1) { background: #ff5f57; }
+.chat-dots i:nth-child(2) { background: #febc2e; }
+.chat-dots i:nth-child(3) { background: #28c840; }
+.chat-titulo { font-family: var(--mono); font-size: 11.5px; color: #8b949e; }
+.chat-corpo { padding: 16px 16px 18px; display: grid; gap: 12px; }
+.msg { max-width: 92%; font-size: 13px; line-height: 1.6; }
+.msg.user { justify-self: end; background: #1f6feb26; border: 1px solid #1f6feb55; color: #e6edf3; border-radius: 12px 12px 3px 12px; padding: 9px 13px; }
+.msg.assistant { justify-self: start; color: #e6edf3; }
+.msg.assistant p { margin: 0 0 8px; }
+.msg.assistant p:last-child { margin: 0; }
+.tool-call { justify-self: start; display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; color: #5bd58e; background: #12261a; border: 1px solid #1a6e4266; border-radius: 999px; padding: 4px 12px; }
+.tool-call .spin { color: #8b949e; }
+.cartao-hab { border: 1px solid #30363d; border-left: 3px solid #46c07a; background: #161b22; border-radius: 8px; padding: 10px 13px; margin: 8px 0; }
+.cartao-hab .cod { font-family: var(--mono); font-size: 12px; font-weight: 700; color: #5bd58e; }
+.cartao-hab .ctx { font-size: 11px; color: #8b949e; margin-left: 8px; }
+.cartao-hab .txt { display: block; font-size: 12.3px; color: #c9d1d9; margin-top: 5px; line-height: 1.55; }
+.cartao-hab .fonte { display: block; font-family: var(--mono); font-size: 10.5px; color: #8b949e; margin-top: 6px; }
+.cartao-hab .fonte a { color: #46c07a; }
+
+/* conectar: cards por cliente, passos numerados */
+.clientes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.cliente { border: 1px solid var(--border); border-radius: 10px; padding: 15px 17px; background: var(--bg); }
+.cliente h3 { display: flex; align-items: baseline; gap: 8px; font-size: 14.5px; font-weight: 700; margin: 0 0 10px; }
+.cliente h3 .quem { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-muted); }
+.cliente ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; counter-reset: passo-mcp; }
+.cliente ol li { position: relative; padding-left: 26px; font-size: 13px; line-height: 1.5; color: var(--ink-muted); counter-increment: passo-mcp; }
+.cliente ol li::before { content: counter(passo-mcp); position: absolute; left: 0; top: 1px; width: 17px; height: 17px; display: grid; place-items: center; font-family: var(--mono); font-size: 10.5px; font-weight: 700; color: var(--accent-ink); background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 50%; }
+.cliente ol li strong { color: var(--ink); font-weight: 600; }
+.cliente ol li code { font-size: 11.5px; color: var(--accent-ink); background: var(--accent-bg); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+.cliente .nota-plano { display: block; margin-top: 10px; font-size: 11.5px; color: var(--ink-muted); }
+
+/* consultas em linguagem natural → tools */
+.consultas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.consulta { border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; background: var(--bg); }
+.consulta .q { display: block; font-size: 13.5px; font-weight: 600; line-height: 1.5; }
+.consulta .q::before { content: "“"; color: var(--accent); }
+.consulta .q::after { content: "”"; color: var(--accent); }
+.consulta .t { display: block; margin-top: 6px; font-family: var(--mono); font-size: 11px; color: var(--ink-muted); }
+.consulta .t code { color: var(--accent-ink); font-size: 11px; }
+
+@media (max-width: 840px) {
+  .clientes, .consultas { grid-template-columns: 1fr; }
+  .url-conexao { max-width: none; }
+}

@@ -46,7 +46,7 @@ Regras para agentes:
 - [Apresentação da API](${SITE}/api/): rotas, exemplos e limites
 - [@bncc/dados (npm)](https://www.npmjs.com/package/@bncc/dados): dados embutidos, tipados, offline
 - [bncc (PyPI)](https://pypi.org/project/bncc/): o mesmo dataset em Python, com integração pandas
-- [Servidor MCP remoto](https://mcp.bncc.dev): a BNCC como tools para agentes de IA, sem instalar (URL de conexão: https://mcp.bncc.dev/mcp); local via npx -y @bncc/mcp
+- [Servidor MCP](${SITE}/mcp/): conectar Claude, ChatGPT ou Cursor à BNCC (URL de conexão: https://mcp.bncc.dev/mcp); local via npx -y @bncc/mcp
 
 ## Confiança e proveniência
 

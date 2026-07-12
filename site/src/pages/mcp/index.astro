@@ -1,0 +1,184 @@
+---
+import Base from '../../layouts/Base.astro';
+import { breadcrumbJsonLd, estatisticas, porCodigo } from '../../lib/dados';
+import { estatisticasCO } from '../../lib/computacao';
+
+const s = estatisticas();
+const sCO = estatisticasCO();
+const total = (s.total + sCO.total).toLocaleString('pt-BR');
+
+// A demo do chat usa dados reais do pacote: nada de texto inventado.
+const fake = porCodigo('EF09LP01');
+const textoFake = `${fake.texto.slice(0, 218).trimEnd()}…`;
+
+const cursorCfg = '{ "mcpServers": { "bncc": { "url": "https://mcp.bncc.dev/mcp" } } }';
+const inspectorCmd = `$ npx @modelcontextprotocol/inspector --cli \\
+    https://mcp.bncc.dev/mcp --transport http \\
+    --method tools/call --tool-name bncc_lookup \\
+    --tool-arg codigo=EF67LP08`;
+---
+<Base titulo="Conecte sua IA à BNCC · bncc.dev"
+      descricao="Servidor MCP da BNCC: cole uma URL no Claude, ChatGPT ou Cursor e seu assistente consulta as aprendizagens verificadas em vez de inventar códigos. Sem instalar, sem cadastro, sem chave."
+      jsonLd={breadcrumbJsonLd([{ nome: 'conecte sua IA', url: '/mcp/' }])}
+      buscaNoTopo={false}>
+
+  <ol class="trilha">
+    <li><a href="/">bncc.dev</a></li>
+    <li>conecte sua IA</li>
+  </ol>
+
+  <section class="hero-dev" aria-labelledby="h-abre">
+    <div>
+      <span class="pub-label">Conector MCP</span>
+      <h1 class="abre" id="h-abre">Sua IA, com a BNCC de verdade</h1>
+      <p class="abre-sub">Conecte esta URL ao Claude, ao ChatGPT ou ao seu editor e o assistente passa a <strong>consultar as {total} aprendizagens verificadas</strong> antes de responder: códigos reais, texto oficial e a fonte junto. Sem instalar nada, sem cadastro, sem chave.</p>
+      <div class="url-conexao">
+        <code>https://mcp.bncc.dev/mcp</code>
+        <button type="button" onclick="copiarUrlMcp(this)">copiar</button>
+      </div>
+      <p class="url-hint">Cole em Configurações › Conectores do seu assistente. Instruções abaixo, cliente por cliente.</p>
+      <div class="badges-hero">
+        <span class="badge-fato"><b>0</b> instalação</span>
+        <span class="badge-fato"><b>0</b> API keys</span>
+        <span class="badge-fato"><b>7</b> ferramentas de consulta</span>
+        <span class="badge-fato">fonte oficial <b>em cada resposta</b></span>
+      </div>
+    </div>
+
+    <div class="chat" role="img" aria-label="Exemplo de conversa: o assistente consulta a BNCC pelo conector antes de responder">
+      <div class="chat-bar">
+        <span class="chat-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="chat-titulo">seu assistente · conectado a bncc.dev</span>
+      </div>
+      <div class="chat-corpo">
+        <div class="msg user">Preciso trabalhar notícias falsas com o 9º ano. Quais habilidades da BNCC se aplicam?</div>
+        <div class="tool-call"><span class="spin">⚙</span> bncc_buscar("notícias falsas")</div>
+        <div class="msg assistant">
+          <p>Na BNCC, a habilidade central para isso no 9º ano é:</p>
+          <div class="cartao-hab">
+            <span class="cod">{fake.codigo}</span><span class="ctx">{fake.componente!.nome} · 9º ano</span>
+            <span class="txt">{textoFake}</span>
+            <span class="fonte">fonte: PDF homologado, via <a href={`/habilidade/${fake.codigo}/`}>bncc.dev/habilidade/{fake.codigo}</a></span>
+          </div>
+          <p>Quer que eu monte uma sequência de 3 aulas a partir dela?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faixa-home" aria-labelledby="h-conectar" style="margin-top: 44px;">
+    <h2 id="h-conectar">Conecte em 30 segundos</h2>
+    <p class="h2-hint">A mesma URL funciona em qualquer cliente MCP. Nos quatro mais comuns:</p>
+    <div class="clientes">
+      <div class="cliente">
+        <h3>Claude <span class="quem">claude.ai e app</span></h3>
+        <ol>
+          <li><strong>Configurações › Conectores</strong> (Settings › Connectors)</li>
+          <li><strong>Adicionar conector personalizado</strong> e cole <code>https://mcp.bncc.dev/mcp</code></li>
+          <li>Pronto: pergunte sobre qualquer habilidade e ele consulta sozinho</li>
+        </ol>
+        <span class="nota-plano">Conectores personalizados estão nos planos pagos do Claude.</span>
+      </div>
+      <div class="cliente">
+        <h3>ChatGPT <span class="quem">chatgpt.com</span></h3>
+        <ol>
+          <li><strong>Configurações › Conectores</strong> e ative o <strong>modo desenvolvedor</strong></li>
+          <li><strong>Criar</strong> um conector com a URL <code>https://mcp.bncc.dev/mcp</code> (sem autenticação)</li>
+          <li>Ative o conector na conversa e pergunte normalmente</li>
+        </ol>
+        <span class="nota-plano">Exige plano pago; o modo desenvolvedor fica em Settings › Connectors › Advanced.</span>
+      </div>
+      <div class="cliente">
+        <h3>Cursor <span class="quem">editor</span></h3>
+        <ol>
+          <li>Crie (ou edite) o arquivo <code>.cursor/mcp.json</code> do projeto</li>
+          <li>Adicione <code>{cursorCfg}</code></li>
+          <li>O agente ganha as 7 ferramentas em qualquer conversa</li>
+        </ol>
+      </div>
+      <div class="cliente">
+        <h3>Claude Code <span class="quem">terminal</span></h3>
+        <ol>
+          <li>Um comando: <code>claude mcp add --transport http bncc https://mcp.bncc.dev/mcp</code></li>
+          <li>Confira com <code>claude mcp list</code> (deve aparecer ✔ Connected)</li>
+        </ol>
+        <span class="nota-plano">Prefere offline e sem limite? Rode local: <code>npx -y @bncc/mcp</code>.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="faixa-home" aria-labelledby="h-consultas">
+    <h2 id="h-consultas">Pergunte com suas palavras</h2>
+    <p class="h2-hint">Você não precisa aprender comando nenhum: o assistente escolhe a ferramenta certa sozinho. Sete consultas cobrem a Base inteira, e vale a regra de ouro do projeto: <strong>se um código não está nos dados, ele não existe na BNCC</strong>.</p>
+    <div class="consultas">
+      <div class="consulta">
+        <span class="q">O que diz exatamente a EF67LP08?</span>
+        <span class="t">→ <code>bncc_lookup</code> · registro completo, com fonte e página do PDF</span>
+      </div>
+      <div class="consulta">
+        <span class="q">Quais habilidades falam de frações no 5º ano?</span>
+        <span class="t">→ <code>bncc_buscar</code> · busca no texto oficial (EF05MA03, EF05MA04)</span>
+      </div>
+      <div class="consulta">
+        <span class="q">Liste todas as habilidades de Matemática do 4º ano</span>
+        <span class="t">→ <code>bncc_listar</code> · cobertura curricular por etapa, componente e ano</span>
+      </div>
+      <div class="consulta">
+        <span class="q">O que significa cada parte do código EM13LGG103?</span>
+        <span class="t">→ <code>bncc_decodificar</code> · a anatomia do código, parte por parte</span>
+      </div>
+      <div class="consulta">
+        <span class="q">Como esse objetivo da creche evolui até a pré-escola?</span>
+        <span class="t">→ <code>bncc_progressao_ei</code> · alinhamento oficial entre as três faixas etárias</span>
+      </div>
+      <div class="consulta">
+        <span class="q">Quais são os campos de experiências? E as competências gerais?</span>
+        <span class="t">→ <code>bncc_estrutura</code> · etapas, áreas, componentes e competências</span>
+      </div>
+      <div class="consulta">
+        <span class="q">Que versão dos dados você está consultando?</span>
+        <span class="t">→ <code>bncc_estatisticas</code> · contagens e data-version, para citar direito</span>
+      </div>
+      <div class="consulta">
+        <span class="q">Monte um plano de aula sobre leitura de memes para o 7º ano</span>
+        <span class="t">→ o assistente combina as ferramentas e cita habilidades reais</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="faixa-home" aria-labelledby="h-confianca">
+    <h2 id="h-confianca">O que você pode esperar</h2>
+    <ul class="garantias" style="margin-top: 18px;">
+      <li><strong>Dados verificados, não opinião:</strong> cada aprendizagem foi conferida com o documento homologado do MEC e carrega a fonte (arquivo + página do PDF).</li>
+      <li><strong>Sua conversa não passa por aqui:</strong> o servidor recebe apenas as consultas (um código, um termo de busca) e devolve dados públicos. Nada é registrado sobre você, não há cadastro nem cookie.</li>
+      <li><strong>Aberto e gratuito, por escrito:</strong> dados CC BY 4.0, código MIT, sem API key. A regra de ouro do projeto: nada sai da coluna aberta para uma comercial.</li>
+      <li><strong>Limite educado:</strong> 60 consultas por minuto por IP, o bastante para qualquer conversa. Para uso intensivo, o mesmo servidor roda na sua máquina: <code>npx -y @bncc/mcp</code>.</li>
+    </ul>
+  </section>
+
+  <section class="faixa-home" aria-labelledby="h-dev">
+    <h2 id="h-dev">Para quem desenvolve</h2>
+    <p class="h2-hint">O remoto e o local expõem as mesmas 7 tools, sobre o mesmo dado do <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">@bncc/dados</a>. Detalhes no <a href="https://github.com/bncc-dev/bncc-pacotes" target="_blank" rel="noopener">repositório</a>; mais interfaces em <a href="/desenvolve/">/desenvolve/</a>.</p>
+    <div class="ia-grid">
+      <ul class="ia-lista">
+        <li><strong>Transporte:</strong> streamable HTTP, stateless, sem sessão. <code>POST https://mcp.bncc.dev/mcp</code> (a raiz também responde).</li>
+        <li><strong>Local via stdio:</strong> <code>npx -y @bncc/mcp</code>. Mesmos dados embutidos, zero rede, sem limite: ideal para CI e agentes de alto volume.</li>
+        <li><strong>Sem key e com CORS aberto:</strong> funciona inclusive de clientes MCP no navegador.</li>
+      </ul>
+      <div class="codeblock">
+        <button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button>
+        <pre><span set:text={inspectorCmd} />
+<span class="cm"># → registro completo, com fonte:
+#   "Base-Nacional-Comum-Curricular-BNCC.pdf, página PDF 167"</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    function copiarUrlMcp(btn) {
+      navigator.clipboard.writeText('https://mcp.bncc.dev/mcp');
+      const t = btn.textContent; btn.textContent = 'copiado ✓';
+      setTimeout(() => { btn.textContent = t; }, 1600);
+    }
+  </script>
+</Base>
