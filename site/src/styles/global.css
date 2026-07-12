@@ -236,12 +236,30 @@ aside h2 { border-bottom: 0; padding-bottom: 0; margin-bottom: 12px; }
 
 /* ---------- rodapé ---------- */
 footer.rodape {
-  margin-top: 48px; padding: 20px 24px; border-top: 1px solid var(--border);
-  font-size: 12.5px; color: var(--ink-muted);
-  display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;
+  margin-top: 48px; padding: 32px 24px 36px; border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--ink-muted); background: var(--bg-subtle);
 }
+.rodape-grade {
+  max-width: 1080px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 32px;
+}
+.rodape-marca { display: grid; gap: 8px; align-content: start; justify-items: start; }
+.rodape-wordmark { font-size: 24px; }
+.rodape-tese { margin: 0; max-width: 26ch; line-height: 1.55; text-wrap: pretty; }
+.rodape-fino { margin: 0; font-size: 12px; line-height: 1.7; }
+.rodape-fino .mono { font-size: 11px; color: var(--accent-ink); }
+.rodape-col { display: grid; gap: 7px; align-content: start; justify-items: start; }
+.rodape-col h2 {
+  margin: 0 0 4px; padding: 0; border: 0;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--ink-muted);
+}
+.rodape-col h2 a { color: inherit; }
+.rodape-col h2 a:hover { color: var(--accent); text-decoration: none; }
+.rodape-col h2 a::after { content: ' →'; }
 footer.rodape a { color: var(--ink-muted); }
 footer.rodape a:hover { color: var(--accent); }
+.rodape-col a { color: var(--ink); font-size: 13px; }
 
 /* ---------- responsivo ---------- */
 @media (max-width: 800px) {
@@ -267,7 +285,11 @@ footer.rodape a:hover { color: var(--accent); }
   .tabs { overflow-x: auto; }
   .tab { padding: 10px 14px; white-space: nowrap; }
   .btn { padding: 6px 12px; }
-  footer.rodape { flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+  .rodape-grade { grid-template-columns: 1fr 1fr; gap: 26px; }
+  .rodape-marca { grid-column: 1 / -1; }
+}
+@media (max-width: 480px) {
+  .rodape-grade { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: no-preference) {

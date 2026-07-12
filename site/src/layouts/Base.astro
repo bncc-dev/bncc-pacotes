@@ -105,16 +105,37 @@ const v = versao();
     </main>
 
     <footer class="rodape">
-      <span>bncc.dev · a BNCC em dados abertos, auditáveis e acessíveis</span>
-      <a href="/ensina/">para quem ensina</a>
-      <a href="/desenvolve/">para quem desenvolve</a>
-      <a href="/contato/">contato</a>
-      <a href="https://profy.com.br" target="_blank" rel="noopener">mantido pela Profy</a>
-      <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">dados no GitHub (CC BY 4.0)</a>
-      <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">npm · @bncc/dados</a>
-      <a href="https://pypi.org/project/bncc/" target="_blank" rel="noopener">PyPI · bncc</a>
-      <a href="https://www.npmjs.com/package/@bncc/mcp" target="_blank" rel="noopener">MCP · @bncc/mcp</a>
-      <a href="/llms.txt">llms.txt para agentes de IA</a>
+      <div class="rodape-grade">
+        <div class="rodape-marca">
+          <a class="wordmark rodape-wordmark" href="/">bncc<span class="dot">.</span>dev</a>
+          <p class="rodape-tese">A BNCC em dados abertos, auditáveis e acessíveis.</p>
+          <p class="rodape-fino"><a href="/sobre/">Sobre</a> · <a href="/contato/">Contato</a></p>
+          <p class="rodape-fino">Mantido pela <a href="https://profy.com.br" target="_blank" rel="noopener">Profy</a><br />Dados CC BY 4.0 · Código MIT · <span class="mono">{v.data_version}</span></p>
+        </div>
+        <nav class="rodape-col" aria-label="Para quem ensina">
+          <h2><a href="/ensina/">Para quem ensina</a></h2>
+          <a href="/infantil/">Educação Infantil</a>
+          <a href="/fundamental/">Ensino Fundamental</a>
+          <a href="/medio/">Ensino Médio</a>
+          <a href="/computacao/">BNCC Computação</a>
+          <a href="/competencias/">Competências</a>
+          <a href="/buscar/">Buscar</a>
+        </nav>
+        <nav class="rodape-col" aria-label="Para quem desenvolve">
+          <h2><a href="/desenvolve/">Para quem desenvolve</a></h2>
+          <a href="/api/">API REST</a>
+          <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">npm · @bncc/dados</a>
+          <a href="https://pypi.org/project/bncc/" target="_blank" rel="noopener">PyPI · bncc</a>
+          <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">Dados brutos · GitHub</a>
+        </nav>
+        <nav class="rodape-col" aria-label="Para máquinas">
+          <h2>Para máquinas</h2>
+          <a href="https://www.npmjs.com/package/@bncc/mcp" target="_blank" rel="noopener">MCP · @bncc/mcp</a>
+          <a href="/llms.txt">llms.txt</a>
+          <a href="/llms-full.txt">llms-full.txt</a>
+          <a href="https://api.bncc.dev/v1/openapi.json" target="_blank" rel="noopener">OpenAPI 3.1</a>
+        </nav>
+      </div>
     </footer>
 
     <script is:inline>
