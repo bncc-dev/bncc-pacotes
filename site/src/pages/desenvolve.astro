@@ -35,11 +35,14 @@ bncc.buscar('frações', etapa='EF', ano=5)
 bncc.para_dataframe()
 <span class="cm"># tudo num DataFrame pandas, pronto para análise</span>`;
 
-const painelMcp = `&lcub; "mcpServers": &lcub; "bncc":
+const painelMcp = `<span class="cm"># remoto: cole a URL no Claude, ChatGPT ou Cursor</span>
+https://mcp.bncc.dev/mcp
+
+<span class="cm"># local, offline e sem limite de requisições:</span>
+&lcub; "mcpServers": &lcub; "bncc":
     &lcub; "command": "npx", "args": ["-y", "@bncc/mcp"] &rcub; &rcub; &rcub;
 
-<span class="cm"># Claude, Cursor ou qualquer cliente MCP.
-# Seu agente passa a consultar a BNCC real
+<span class="cm"># Seu agente passa a consultar a BNCC real
 # em vez de alucinar códigos.</span>`;
 
 const painelHttp = `$ curl https://api.bncc.dev/v1/aprendizagens/EF67LP08
@@ -137,9 +140,9 @@ const jsonExemplo = `<span class="cm">// GET api.bncc.dev/v1/aprendizagens/${co.
         <span class="nome">bncc</span><span class="via">PyPI · Python</span>
         <span class="caso"><strong>Notebooks e pipelines:</strong> dicionários Python e para_dataframe() para quem vive no pandas.</span>
       </a>
-      <a class="iface" href="https://www.npmjs.com/package/@bncc/mcp" target="_blank" rel="noopener">
-        <span class="nome">@bncc/mcp</span><span class="via">MCP · agentes de IA</span>
-        <span class="caso"><strong>Claude, Cursor e afins:</strong> sete ferramentas de consulta; o agente responde com dados reais em vez de inventar códigos.</span>
+      <a class="iface" href="https://mcp.bncc.dev" target="_blank" rel="noopener">
+        <span class="nome">mcp.bncc.dev</span><span class="via">MCP · agentes de IA</span>
+        <span class="caso"><strong>Claude, ChatGPT, Cursor e afins:</strong> sete ferramentas de consulta, remoto (cole a URL) ou local (npx); o agente responde com dados reais em vez de inventar códigos.</span>
       </a>
       <a class="iface" href="/api/">
         <span class="nome">api.bncc.dev</span><span class="via">REST · qualquer stack</span>
@@ -201,7 +204,7 @@ const jsonExemplo = `<span class="cm">// GET api.bncc.dev/v1/aprendizagens/${co.
       <ul class="ia-lista">
         <li><strong>llms.txt e llms-full.txt:</strong> índice e conteúdo completo na spec que os modelos já conhecem: <a href="/llms.txt"><code>bncc.dev/llms.txt</code></a></li>
         <li><strong>Toda página de aprendizagem tem versão .md:</strong> troque a barra final por .md e receba markdown limpo: <code>bncc.dev/habilidade/EF67LP08.md</code></li>
-        <li><strong>MCP como cidadão de primeira classe:</strong> <code>npx -y @bncc/mcp</code> e seu agente consulta em vez de alucinar.</li>
+        <li><strong>MCP como cidadão de primeira classe:</strong> cole <code>mcp.bncc.dev/mcp</code> no seu cliente (ou rode local com <code>npx -y @bncc/mcp</code>) e seu agente consulta em vez de alucinar.</li>
       </ul>
       <div class="arquivo">
         <div class="arquivo-bar"><span class="arquivo-nome">prompt-para-seu-builder.txt</span><button class="btn-copiar" type="button" onclick="copiarBloco(this)">copiar</button></div>

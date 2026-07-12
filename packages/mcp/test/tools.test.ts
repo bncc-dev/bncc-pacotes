@@ -7,7 +7,17 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { registrarTools } from '../src/tools.js';
+import {
+  buscar, estatisticas, estrutura, habilidadesEF, habilidadesEM,
+  objetivosEI, porCodigo, progressaoEI, versao,
+} from '@bncc/dados';
+import type { Consultas } from '@bncc/dados/nucleo';
+import { instrucoesServidor, registrarTools } from '../src/tools.js';
+
+const bncc: Consultas = {
+  porCodigo, habilidadesEF, habilidadesEM, objetivosEI,
+  buscar, progressaoEI, estrutura, estatisticas,
+};
 
 let cliente: Client;
 
@@ -18,7 +28,7 @@ function conteudo(r: Awaited<ReturnType<Client['callTool']>>): any {
 
 beforeAll(async () => {
   const servidor = new McpServer({ name: 'bncc-teste', version: '0.0.1' });
-  registrarTools(servidor);
+  registrarTools(servidor, bncc, versao());
   const [t1, t2] = InMemoryTransport.createLinkedPair();
   cliente = new Client({ name: 'teste', version: '0.0.1' });
   await Promise.all([servidor.connect(t1), cliente.connect(t2)]);
@@ -82,5 +92,11 @@ describe('@bncc/mcp', () => {
     const r = conteudo(await cliente.callTool({ name: 'bncc_estatisticas', arguments: {} }));
     expect(r.total).toBe(1580);
     expect(r.versao.data_version).toMatch(/^dados-/);
+  });
+
+  it('instrucoesServidor traz contagem dinâmica e a versão dos dados', () => {
+    const texto = instrucoesServidor(bncc, versao().data_version);
+    expect(texto).toContain(estatisticas().total.toLocaleString('pt-BR'));
+    expect(texto).toContain(`Versão dos dados: ${versao().data_version}.`);
   });
 });

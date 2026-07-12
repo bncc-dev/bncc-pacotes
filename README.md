@@ -17,7 +17,7 @@ Pré-releases `0.1.x` publicadas em 09/07/2026 (npm e PyPI). O marco `1.0.0` con
 
 | Documento | Para quê |
 |---|---|
-| [docs/arquitetura.md](docs/arquitetura.md) | O desenho do monorepo: fluxo de dados pinado, os três pacotes, decisões e fluxo de versão |
+| [docs/arquitetura.md](docs/arquitetura.md) | O desenho do monorepo: por que um repo só, fluxo de dados pinado, os três pacotes, decisões e fluxo de versão |
 | [docs/manutencao.md](docs/manutencao.md) | Runbook: atualizar dados, mudar API (nos dois pacotes), tools do MCP, publicar, troubleshooting |
 | [docs/paridade.md](docs/paridade.md) | O contrato das consultas douradas que impede npm e PyPI de divergirem |
 | [AGENTS.md](AGENTS.md) | Regras para agentes de IA trabalhando neste repo |

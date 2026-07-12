@@ -1,13 +1,16 @@
 /**
  * As 7 tools do servidor MCP da BNCC — casca fina sobre @bncc/dados.
  * As descrições são produto: escritas para o agente decidir quando e como usar.
+ *
+ * Runtime-agnóstico: recebe as consultas injetadas (tipo Consultas do núcleo),
+ * então roda tanto no stdio (casca fs do @bncc/dados) quanto em Workers
+ * (criarConsultas + JSONs importados como módulos).
  */
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import {
-  buscar, decodificar, estatisticas, estrutura, habilidadesEF, habilidadesEM,
-  objetivosEI, porCodigo, progressaoEI, versao,
-} from '@bncc/dados';
+import { decodificar } from '@bncc/dados/nucleo';
+import type { Consultas } from '@bncc/dados/nucleo';
+import type { Versao } from '@bncc/dados';
 
 const json = (dados: unknown) => ({ content: [{ type: 'text' as const, text: JSON.stringify(dados, null, 1) }] });
 const erro = (e: unknown) => ({
@@ -16,7 +19,7 @@ const erro = (e: unknown) => ({
 });
 
 /** Versão compacta de um registro para listagens (não inunda o contexto do agente). */
-function compacto(r: ReturnType<typeof porCodigo>) {
+function compacto(r: ReturnType<Consultas['porCodigo']>) {
   return {
     codigo: r.codigo,
     etapa: r.etapa,
@@ -32,17 +35,22 @@ function limitar<T>(itens: T[], limite: number) {
   return { total: itens.length, exibindo: Math.min(itens.length, limite), resultados: itens.slice(0, limite) };
 }
 
-export const INSTRUCOES_SERVIDOR = `Dados oficiais e verificados da BNCC (Base Nacional Comum Curricular brasileira): 1.580 aprendizagens das três etapas, cada uma com fonte oficial (página do PDF homologado).
+/** Instruções do servidor, com contagem dinâmica do dataset e a versão dos dados. */
+export function instrucoesServidor(bncc: Consultas, dataVersion: string): string {
+  const total = bncc.estatisticas().total.toLocaleString('pt-BR');
+  return `Dados oficiais e verificados da BNCC (Base Nacional Comum Curricular brasileira): ${total} aprendizagens das três etapas, cada uma com fonte oficial (página do PDF homologado).
 Regras: (1) nunca invente códigos ou textos de habilidade; se um código não está nos dados, ele não existe na BNCC; (2) a numeração tem lacunas legítimas; (3) ao citar uma aprendizagem para o usuário, inclua o código e, quando relevante, a fonte.
-Etapas: EI (objetivos por campo de experiências e grupo etário), EF (habilidades por componente e ano), EM (habilidades por área, sem seriação). Códigos: EI02TS01, EF67LP08, EM13LGG103.`;
+Etapas: EI (objetivos por campo de experiências e grupo etário), EF (habilidades por componente e ano), EM (habilidades por área, sem seriação). Códigos: EI02TS01, EF67LP08, EM13LGG103.
+Versão dos dados: ${dataVersion}.`;
+}
 
-export function registrarTools(servidor: McpServer): void {
+export function registrarTools(servidor: McpServer, bncc: Consultas, versao: Versao): void {
   servidor.registerTool('bncc_lookup', {
     title: 'Buscar aprendizagem por código',
     description: 'Retorna o registro completo e verificado de uma aprendizagem da BNCC pelo código (ex.: "EF67LP08", "EI02TS01", "EM13LGG103"; aceita minúsculas). Inclui texto oficial, contexto pedagógico resolvido (componente, unidade temática/prática, objetos de conhecimento, competências) e a fonte oficial com página do PDF homologado. Use sempre que o usuário mencionar um código ou quando precisar do enunciado exato: nunca cite de memória.',
     inputSchema: { codigo: z.string().describe('Código BNCC, ex.: EF67LP08') },
   }, async ({ codigo }) => {
-    try { return json(porCodigo(codigo)); } catch (e) { return erro(e); }
+    try { return json(bncc.porCodigo(codigo)); } catch (e) { return erro(e); }
   });
 
   servidor.registerTool('bncc_buscar', {
@@ -56,7 +64,7 @@ export function registrarTools(servidor: McpServer): void {
       limite: z.number().int().min(1).max(100).default(20),
     },
   }, async ({ texto, etapa, componente, ano, limite }) => {
-    try { return json(limitar(buscar(texto, { etapa, componente, ano }).map(compacto), limite)); }
+    try { return json(limitar(bncc.buscar(texto, { etapa, componente, ano }).map(compacto), limite)); }
     catch (e) { return erro(e); }
   });
 
@@ -76,9 +84,9 @@ export function registrarTools(servidor: McpServer): void {
     },
   }, async ({ etapa, componente, ano, area, competencia, apenas_lp, campo, grupo_etario, limite }) => {
     try {
-      const itens = etapa === 'EF' ? habilidadesEF({ componente, ano })
-        : etapa === 'EM' ? habilidadesEM({ area, competencia, apenasLP: apenas_lp })
-        : objetivosEI({ campo, grupoEtario: grupo_etario });
+      const itens = etapa === 'EF' ? bncc.habilidadesEF({ componente, ano })
+        : etapa === 'EM' ? bncc.habilidadesEM({ area, competencia, apenasLP: apenas_lp })
+        : bncc.objetivosEI({ campo, grupoEtario: grupo_etario });
       return json(limitar(itens.map(compacto), limite));
     } catch (e) { return erro(e); }
   });
@@ -96,7 +104,7 @@ export function registrarTools(servidor: McpServer): void {
     description: 'Dado um objetivo da Educação Infantil (ex.: EI02TS01), retorna os objetivos do MESMO aspecto nas três faixas etárias (bebês, crianças bem pequenas, crianças pequenas) — o alinhamento horizontal oficial da BNCC (p. 26). Use para planejar continuidade/adaptação entre faixas. Só existe para códigos EI.',
     inputSchema: { codigo: z.string().describe('Código EI, ex.: EI02TS01') },
   }, async ({ codigo }) => {
-    try { return json(progressaoEI(codigo)); } catch (e) { return erro(e); }
+    try { return json(bncc.progressaoEI(codigo)); } catch (e) { return erro(e); }
   });
 
   servidor.registerTool('bncc_estrutura', {
@@ -108,7 +116,7 @@ export function registrarTools(servidor: McpServer): void {
     },
   }, async ({ colecao }) => {
     try {
-      const e = estrutura();
+      const e = bncc.estrutura();
       if (!colecao) {
         return json(Object.fromEntries(Object.entries(e).map(([k, v]) => [k, Array.isArray(v) ? v.length : v])));
       }
@@ -121,6 +129,6 @@ export function registrarTools(servidor: McpServer): void {
     description: 'Contagens do dataset (total de aprendizagens por etapa, competências, alinhamentos) e a versão dos dados embutidos (data-version, commit de origem). Use para sanidade e para citar a versão do dado.',
     inputSchema: {},
   }, async () => {
-    try { return json({ ...estatisticas(), versao: versao() }); } catch (e) { return erro(e); }
+    try { return json({ ...bncc.estatisticas(), versao }); } catch (e) { return erro(e); }
   });
 }

@@ -1,6 +1,6 @@
 {
   "name": "@bncc/mcp",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Servidor MCP da BNCC: as 1.580 aprendizagens da Base Nacional Comum Curricular, verificadas e com fonte oficial, como tools para agentes de IA. Casca sobre @bncc/dados.",
   "keywords": [
     "bncc",
@@ -20,6 +20,12 @@
   "bin": {
     "bncc-mcp": "dist/servidor.js"
   },
+  "exports": {
+    "./tools": {
+      "types": "./dist/tools.d.ts",
+      "import": "./dist/tools.js"
+    }
+  },
   "files": [
     "dist",
     "README.md"
@@ -28,7 +34,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup src/servidor.ts src/tools.ts --format esm --dts --clean",
+    "build": "tsup",
     "test": "vitest run"
   },
   "dependencies": {

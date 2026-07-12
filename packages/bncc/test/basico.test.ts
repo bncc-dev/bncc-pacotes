@@ -6,7 +6,11 @@ describe('básico', () => {
     const v = versao();
     expect(v.data_version).toMatch(/^dados-\d{4}\.\d{2}/);
     expect(v.commit).toMatch(/^[0-9a-f]{40}$/);
-    expect(Object.keys(v.checksums_sha256)).toHaveLength(4);
+    // O dataset pode ganhar arquivos (marcos legais, perfis, computação);
+    // o que o pacote garante é o núcleo das três etapas + estrutura.
+    expect(Object.keys(v.checksums_sha256)).toEqual(expect.arrayContaining([
+      'estrutura.json', 'educacao-infantil.json', 'ensino-fundamental.json', 'ensino-medio.json',
+    ]));
   });
 
   it('porCodigo é case-insensitive e resolve nomes', () => {

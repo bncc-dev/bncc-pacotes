@@ -1,0 +1,22 @@
+# Servidor MCP remoto da BNCC (mcp.bncc.dev).
+# Cloudflare-native: sobrevive à migração do dia D (mesmo racional do contato-worker).
+name = "bncc-mcp"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+# Preventivo: módulos auxiliares do SDK MCP tocam node:crypto; custo zero.
+compatibility_flags = ["nodejs_compat"]
+
+routes = [{ pattern = "mcp.bncc.dev", custom_domain = true }]
+# A conta não tem subdomínio workers.dev registrado; o MCP atende só pelo domínio próprio.
+workers_dev = false
+
+[observability]
+enabled = true
+
+# Rate limit por IP (namespaces: 1001 = bncc-api, 1002 = contato, 1003 = mcp).
+# Ausente em `wrangler dev` e nos testes; o código tolera a ausência.
+[[unsafe.bindings]]
+name = "LIMITADOR"
+type = "ratelimit"
+namespace_id = "1003"
+simple = { limit = 60, period = 60 }

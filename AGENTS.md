@@ -1,13 +1,13 @@
 # AGENTS.md · guia para agentes de IA neste repositório
 
-Monorepo das interfaces para máquina do bncc.dev: pacote npm `@bncc/dados`, servidor MCP `@bncc/mcp` e pacote PyPI `bncc`. Leia `docs/arquitetura.md` para o desenho, `docs/manutencao.md` para procedimentos e `docs/manual-rapido.md` para a visão de consumidor dos pacotes.
+Monorepo das interfaces para máquina do bncc.dev: pacote npm `@bncc/dados`, servidor MCP `@bncc/mcp` (stdio local e remoto em `mcp-worker/` → mcp.bncc.dev) e pacote PyPI `bncc`. Leia `docs/arquitetura.md` para o desenho, `docs/manutencao.md` para procedimentos e `docs/manual-rapido.md` para a visão de consumidor dos pacotes.
 
 ## Regras que nunca se quebram
 
 1. **Nunca edite `packages/bncc/dados/` ou `python/bncc/dados/` à mão.** São sincronizados de um commit pinado do bncc-dados por `scripts/sincronizar-dados.mjs`. Dado errado se corrige lá, nunca aqui.
 2. **API muda nos dois pacotes ou em nenhum.** Toda alteração de consulta acontece em `packages/bncc/src/consultas.ts` E `python/bncc/_consultas.py`, com caso novo em `fixtures/consultas-douradas.json`. Um pacote na frente do outro = paridade quebrada = CI vermelho.
 3. **A fixture dourada não se ajusta "para passar".** Ela só muda com mudança documentada de dado ou de API (ver `docs/paridade.md`).
-4. **O MCP não reimplementa consultas.** Handlers importam o `@bncc/dados`; se uma tool precisa de lógica nova, a lógica vai para o pacote (nos dois!) e a tool a consome.
+4. **O MCP não reimplementa consultas.** As tools (`packages/mcp/src/tools.ts`) recebem o objeto `Consultas` injetado; se uma tool precisa de lógica nova, a lógica vai para o pacote (nos dois!) e a tool a consome. O worker remoto (`mcp-worker/`) também não reimplementa nada: consome `registrarTools` de `@bncc/mcp/tools` e os dados do núcleo injetável.
 5. **Nada de publicar nos registries.** Publicação é gateada (release `dados-v1.0.0` do bncc-dados) e exige credenciais interativas do mantenedor humano.
 6. **Zero dependências de runtime** nos pacotes de dados; MCP só SDK + zod v3 (não subir para zod 4 sem o SDK suportar).
 7. **No site (`site/`)**: todo dado passa por `src/lib/dados.ts` (nunca JSON cru nas páginas); copy pública sem travessão; JS além do inline do Base.astro precisa de justificativa; relações não-oficiais (ex.: progressão entre anos) sempre rotuladas como aproximação. Ver `site/README.md`.
@@ -26,6 +26,7 @@ pnpm install && pnpm -r build && pnpm -r test   # node (npm + MCP)
 cd python && uv sync && uv run pytest           # python
 node scripts/sincronizar-dados.mjs ~/Dev/bncc-dados   # atualizar dados (checkout limpo!)
 cd packages/mcp && node scripts/e2e.mjs         # e2e do MCP contra o binário real
+pnpm --filter bncc-mcp-worker test              # worker MCP remoto (mcp.bncc.dev)
 pnpm --filter site build && node site/scripts/verificar-links.mjs   # site (1.787 páginas + links)
 ```
 
