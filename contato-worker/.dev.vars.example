@@ -1,0 +1,4 @@
+# Copie para .dev.vars (não commitar) para rodar `wrangler dev`.
+# Chave de TESTE da Cloudflare: o siteverify sempre passa. Em produção o
+# secret real entra via `wrangler secret put TURNSTILE_SECRET`.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA

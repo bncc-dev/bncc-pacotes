@@ -1,0 +1,41 @@
+# Configuração do Worker do formulário de contato (bncc.dev/contato/).
+# Worker dedicado: a bncc-api permanece somente leitura.
+# Setup completo (Email Routing, Turnstile, domínio): ver README.md.
+
+name = "bncc-contato"
+main = "src/index.ts"
+compatibility_date = "2026-07-01"
+# mimetext (montagem do MIME) usa módulos node: embutidos; o flag os habilita.
+compatibility_flags = ["nodejs_compat"]
+
+# Custom domain na zona bncc.dev (o wrangler cria o DNS). Sem URL workers.dev:
+# a conta não tem subdomínio registrado e o form só usa o domínio próprio.
+routes = [{ pattern = "contato.bncc.dev", custom_domain = true }]
+workers_dev = false
+
+# Envio via Email Routing (binding send_email). Precisa ficar ANTES de [vars]:
+# no TOML, tudo abaixo de um cabeçalho de seção pertence à seção.
+send_email = [
+  { name = "CORREIO", destination_address = "marcos@profy.com.br" }
+]
+
+# Secret (não vai no toml): TURNSTILE_SECRET via `wrangler secret put TURNSTILE_SECRET`.
+# Em dev, use .dev.vars (ver .dev.vars.example, com a chave de teste da Cloudflare).
+
+[vars]
+# Destino das mensagens: endereço verificado no Email Routing da zona bncc.dev
+# (contato@bncc.dev encaminha para ele; ver README).
+DESTINO = "marcos@profy.com.br"
+# Remetente: endereço da própria zona (não precisa existir como caixa).
+REMETENTE = "formulario@bncc.dev"
+
+[observability]
+enabled = true
+
+# Rate limit por IP (mesmo binding nativo da bncc-api; ausente em `wrangler dev`
+# e nos testes, e o código tolera a ausência). 5 envios/min bastam para contato.
+[[unsafe.bindings]]
+name = "LIMITADOR"
+type = "ratelimit"
+namespace_id = "1002"
+simple = { limit = 5, period = 60 }
