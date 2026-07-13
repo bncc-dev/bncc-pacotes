@@ -1,0 +1,96 @@
+---
+/**
+ * A marca da casa como componente tipográfico puro (Roboto Condensed 700).
+ * Escala inteira por font-size (tamanho); valores calibrados no mock
+ * iaebb/docs/mockups/logo-mcp.html.
+ *
+ * Variantes:
+ *  - codigo: </> sobre o livro aberto (um } rotacionado 90°). Herda a cor.
+ *  - brasil: <°> emoldurado por dois colchetes, nas cores da bandeira
+ *    (colchetes verdes, sinais amarelos, círculo azul).
+ *
+ * Fonte: por ora via CDN do Google; trocar por subset self-hosted
+ * (glifos < > / } °, ~1 KB) antes do dia D.
+ */
+interface Props {
+  tamanho?: string;
+  rotulo?: string;
+  variante?: 'codigo' | 'brasil';
+}
+const { tamanho = '72px', rotulo = 'bncc.dev', variante = 'codigo' } = Astro.props;
+---
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap" />
+{variante === 'codigo' ? (
+  <span class="logo-cod" style={`font-size: ${tamanho}`} role="img" aria-label={rotulo}>
+    <span class="cima">&lt;<span class="barra">/</span>&gt;</span>
+    <span class="baixo"><span>&rbrace;</span></span>
+  </span>
+) : (
+  <span class="logo-cod moldura br" style={`font-size: ${tamanho}`} role="img" aria-label={rotulo}>
+    <span class="topo"><span>&rbrace;</span></span>
+    <span class="cima">&lt;<span class="circulo">&deg;</span>&gt;</span>
+    <span class="baixo"><span>&rbrace;</span></span>
+  </span>
+)}
+
+{/* is:global porque o markup vive dentro de expressão condicional, que o
+    compilador do Astro não consegue escopar; as classes são específicas */}
+<style is:global>
+  .logo-cod {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+    font-weight: 700;
+    line-height: 1;
+    color: currentColor;
+    user-select: none;
+  }
+  .logo-cod .cima { font-size: 1em; letter-spacing: .04em; }
+  /* a barra / menor que os sinais < >, centrada verticalmente entre eles */
+  .logo-cod .cima .barra { display: inline-block; font-size: .78em; vertical-align: .06em; }
+  /* círculo no centro (símbolo de grau °): line-height 0 impede o glifo
+     maior de inflar a caixa de linha; a posição vem do transform (não
+     afeta layout) e o centro fica no eixo óptico dos sinais (medido
+     pela tinta dos glifos); margens negativas removem a folga embutida */
+  .logo-cod .cima .circulo {
+    display: inline-block;
+    font-size: 1.8em;
+    line-height: 0;
+    transform: translateY(.42em);
+    letter-spacing: 0;
+    margin: 0 -.05em;
+  }
+  /* colchete de cima (moldura): } deitado com o bico para cima */
+  .logo-cod .topo {
+    height: .40em;
+    margin-bottom: 0;
+    align-self: stretch;
+    display: grid;
+    place-items: center;
+  }
+  .logo-cod .topo span {
+    display: block;
+    transform: translateX(-.068em) rotate(-90deg) scaleY(1.5) scaleX(.95);
+  }
+  /* a base: caixa baixa; o glifo rotacionado transborda sem afetar o layout */
+  .logo-cod .baixo {
+    height: .40em;
+    margin-top: -.45em; /* o em-box dos glifos <> tem folga embaixo; encosta a chave */
+    align-self: stretch;
+    display: grid;
+    place-items: center;
+  }
+  .logo-cod .baixo span {
+    display: block;
+    /* scaleY estica o }, rotate deita a chave, translateX corrige o
+       descentro dos side bearings do glifo */
+    transform: translateX(.048em) rotate(90deg) scaleY(1.5) scaleX(.95);
+  }
+  /* na moldura os vãos acima e abaixo dos sinais são simétricos */
+  .logo-cod.moldura .baixo { margin-top: -.53em; }
+  /* versão Brasil: colchetes verdes, sinais amarelos, círculo azul */
+  .logo-cod.br .topo, .logo-cod.br .baixo { color: #009c3b; }
+  .logo-cod.br .cima { color: #ffdf00; }
+  .logo-cod.br .circulo { color: #002776; }
+</style>

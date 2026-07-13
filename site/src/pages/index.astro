@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
 import TestadorApi from '../components/TestadorApi.astro';
 import { datasetJsonLd, estatisticas, estrutura, porCodigo, websiteJsonLd } from '../lib/dados';
 
@@ -38,6 +39,7 @@ https://mcp.bncc.dev/mcp
       buscaNoTopo={false}>
 
   <div class="opening">
+    <div class="logo-hero">{/* <Logo tamanho="72px" /> */}<Logo tamanho="72px" variante="brasil" /></div>
     <h1 class="thesis">A BNCC em dados abertos, auditáveis e acessíveis. <span class="quem">Para quem ensina, para quem desenvolve e para IAs.</span></h1>
 
     <div class="publicos">

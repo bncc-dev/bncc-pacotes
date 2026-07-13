@@ -800,3 +800,6 @@ a.rota:hover { border-color: var(--accent); background: var(--bg-subtle); text-d
   .clientes, .consultas { grid-template-columns: 1fr; }
   .url-conexao { max-width: none; }
 }
+
+/* ---- logo da marca no hero da landing ---- */
+.logo-hero { display: flex; justify-content: center; margin: -48px 0 34px; }
