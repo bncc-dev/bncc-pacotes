@@ -668,7 +668,7 @@ h1.abre { font-size: 34px; font-weight: 700; letter-spacing: -.02em; line-height
 .ia-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 24px; align-items: start; }
 .ia-lista { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
 .ia-lista li { border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; background: var(--bg); font-size: 13.5px; line-height: 1.55; }
-.ia-lista li code { font-size: 12px; color: var(--accent-ink); }
+.ia-lista li code { font-size: 12px; color: var(--accent-ink); overflow-wrap: anywhere; }
 .ia-lista li strong { font-weight: 650; }
 .atrib { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; }
 .atrib pre { margin: 0; padding: 16px 18px; padding-right: 78px; overflow-x: auto; font-family: var(--mono); font-size: 12.3px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -723,7 +723,7 @@ a.rota:hover { border-color: var(--accent); background: var(--bg-subtle); text-d
   .mono-h { font-size: 24px; }
   .interfaces { grid-template-columns: 1fr; }
   .formatos { grid-template-columns: 1fr 1fr; }
-  .ia-grid { grid-template-columns: 1fr; }
+  .ia-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---- janela de arquivo (seção máquinas e IAs) ----
