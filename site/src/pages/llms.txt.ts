@@ -36,6 +36,7 @@ Regras para agentes:
 - [Buscar](${SITE}/buscar/): busca textual com filtros por etapa, componente, ano e prática
 - [Para quem ensina](${SITE}/ensina/): guia para professores; busca por tema, citação com link permanente, prompts para IA e CSVs
 - [Para quem desenvolve](${SITE}/desenvolve/): quickstart de npm, PyPI, MCP e API REST, modelo de dados e garantias de engenharia
+- [Benchmark de alucinação](${SITE}/benchmark/): medição de quanto os modelos de IA inventam a BNCC sem fonte de consulta; leaderboard completo em ${SITE}/benchmark/leaderboard/
 - [Sobre](${SITE}/sobre/): metodologia e mantenedores
 - [Contato](${SITE}/contato/): formulário e contato@bncc.dev; correções de dados vão por issue no GitHub, com fonte oficial
 

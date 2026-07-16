@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
 import TestadorApi from '../components/TestadorApi.astro';
 import { datasetJsonLd, estatisticas, estrutura, porCodigo, websiteJsonLd } from '../lib/dados';
+import { BENCHMARK, nota } from '../lib/benchmark';
 
 const s = estatisticas();
 const exemplo = porCodigo('EF67LP08');
@@ -125,6 +126,36 @@ https://mcp.bncc.dev/mcp
     </div>
   </div>
 
+  <section class="problema" aria-labelledby="h-problema">
+    <h2 id="h-problema">O tamanho do problema</h2>
+    <p class="ponte">É por isso que construímos o MCP, a API e os pacotes: sem uma fonte estruturada, isso é o que acontece quando você pergunta sobre a BNCC pra uma IA. Testamos {BENCHMARK.meta.total_modelos} modelos com {BENCHMARK.meta.total_respostas.toLocaleString('pt-BR')} perguntas: <a href="/benchmark/">veja a metodologia completa</a>.</p>
+
+    <div class="numeros-problema">
+      <div class="num-item">
+        <span class="v mono">59%</span>
+        <span class="k">das vezes em que pedimos o texto oficial de uma habilidade, a IA respondeu com <strong>texto inventado ou de outra habilidade</strong>.</span>
+      </div>
+      <div class="num-item">
+        <span class="v mono">34%</span>
+        <span class="k">dos códigos reais da BNCC foram <strong>negados</strong>: perguntada "esse código existe?", a IA disse que não.</span>
+      </div>
+    </div>
+
+    <details class="leaderboard-resumo">
+      <summary>Ver os 5 primeiros modelos <span class="seta">▸</span></summary>
+      <div class="lb-linhas">
+        {BENCHMARK.modelos.slice(0, 5).map((mod) => (
+          <div class="lb-linha">
+            <span class="lb-nome">{mod.nome}<small>{mod.empresa}</small></span>
+            <div class="lb-trilho"><div class="lb-barra" style={`width:${Math.round(mod.nota)}%`}></div></div>
+            <span class="lb-nota mono">{nota(mod.nota)}</span>
+          </div>
+        ))}
+        <a class="ver-completo" href="/benchmark/leaderboard/">Ver o benchmark completo →</a>
+      </div>
+    </details>
+  </section>
+
   {/* Faixas abaixo do hero desativadas por hora (10/jul/2026); remover o comentário para reativar.
   <section class="faixa-home" aria-labelledby="h-explorar">
     <h2 id="h-explorar">Explore por etapa, do berçário ao terceiro ano do médio</h2>
@@ -180,6 +211,42 @@ https://mcp.bncc.dev/mcp
   </section>
   */}
 </Base>
+
+<style>
+  section.problema { padding-top: 44px; margin-top: 8px; border-top: 1px solid var(--border); }
+  section.problema h2 { font-size: 23px; font-weight: 700; letter-spacing: -.01em; margin: 0 0 10px; }
+  section.problema .ponte { font-size: 15px; color: var(--ink-muted); max-width: 62ch; margin: 0 0 32px; line-height: 1.65; }
+  section.problema .ponte a { color: var(--accent-ink); font-weight: 600; }
+
+  .numeros-problema { display: flex; margin: 0 0 36px; }
+  .num-item { flex: 1; max-width: 340px; padding-right: 32px; }
+  .num-item + .num-item { padding-left: 32px; border-left: 1px solid var(--border); }
+  .num-item .v { display: block; font-family: var(--mono); font-size: 54px; font-weight: 700; color: var(--erro-ink); line-height: 1; letter-spacing: -.02em; margin-bottom: 10px; }
+  .num-item .k { font-size: 13.5px; color: var(--ink-muted); line-height: 1.5; }
+  .num-item .k strong { color: var(--ink); }
+
+  details.leaderboard-resumo summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 650; color: var(--accent-ink); padding: 2px 0; }
+  details.leaderboard-resumo summary::-webkit-details-marker { display: none; }
+  details.leaderboard-resumo summary:hover { text-decoration: underline; }
+  details.leaderboard-resumo summary .seta { font-size: 10px; transition: transform .15s; }
+  details.leaderboard-resumo[open] summary .seta { transform: rotate(90deg); }
+
+  .lb-linhas { margin: 18px 0 0; padding-left: 16px; border-left: 3px solid var(--accent); display: grid; gap: 2px; }
+  .lb-linha { display: grid; grid-template-columns: minmax(120px, 180px) 1fr 44px; gap: 12px; align-items: center; padding: 8px 0; }
+  .lb-linha + .lb-linha { border-top: 1px solid var(--border); }
+  .lb-nome { font-size: 12.5px; font-weight: 600; }
+  .lb-nome small { display: block; font-weight: 400; color: var(--ink-muted); font-size: 10.5px; }
+  .lb-trilho { background: var(--bg-inset); border-radius: 4px; height: 14px; position: relative; }
+  .lb-barra { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 4px; }
+  .lb-nota { text-align: right; font-family: var(--mono); font-size: 13px; font-weight: 700; }
+
+  .ver-completo { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 650; }
+
+  @media (max-width: 720px) {
+    .numeros-problema { flex-direction: column; gap: 24px; }
+    .num-item + .num-item { padding-left: 0; border-left: 0; }
+  }
+</style>
 
 <script is:inline>
   // mesma busca com sugestões do topbar (função definida no Base.astro)

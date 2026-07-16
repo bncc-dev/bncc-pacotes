@@ -1,0 +1,283 @@
+---
+import Base from '../../layouts/Base.astro';
+import { breadcrumbJsonLd } from '../../lib/dados';
+import { BENCHMARK, dataCurta, nota, pct, usd } from '../../lib/benchmark';
+
+const b = BENCHMARK;
+const m = b.meta;
+
+// Números-manchete calculados dos julgamentos oficiais (ver PROVENIENCIA.md).
+const aAlucGeral = 59; // % das transcrições (tarefa A) com texto inventado ou de outra habilidade, média dos 17
+const bNegadasGeral = 34; // % dos códigos reais negados ("não existe") na tarefa B
+const abaixoDe50 = b.modelos.filter((x) => x.nota < 50).length;
+
+const negadoresEf03co05 = 13; // modelos (de 17) que negaram a existência de EF03CO05 na tarefa B
+const maiorNota = b.modelos[0].nota;
+---
+<Base titulo="Benchmark de alucinação · o quanto as IAs inventam a BNCC · bncc.dev"
+      descricao={`Medimos ${m.total_modelos} modelos de IA com ${m.total_itens} itens sobre códigos e textos reais da BNCC: ${aAlucGeral}% das transcrições saem alucinadas e ${negadoresEf03co05} de ${m.total_modelos} modelos negaram a existência de uma habilidade oficial. Metodologia aberta, dados brutos auditáveis.`}
+      jsonLd={breadcrumbJsonLd([{ nome: 'benchmark', url: '/benchmark/' }])}>
+
+  <ol class="trilha">
+    <li><a href="/">bncc.dev</a></li>
+    <li>benchmark</li>
+  </ol>
+
+  <section aria-labelledby="h-abre">
+    <span class="pub-label selo-vermelho">Benchmark de alucinação</span><span class="versao-label">{m.versao}</span>
+    <h1 class="abre" id="h-abre">Avaliamos o quanto IAs podem alucinar quando o assunto é BNCC</h1>
+    <p class="abre-sub">E vimos que elas erram bastante. Fizemos {m.total_respostas.toLocaleString('pt-BR')} perguntas a {m.total_modelos} modelos sobre códigos e textos reais da BNCC, sem dar a eles nenhuma fonte de consulta.</p>
+    <p class="meta-hero mono">Medido em {dataCurta(m.medido_em)} · {m.total_modelos} modelos · gabarito: dataset bncc.dev {m.dataset_versao}, 1.721 aprendizagens verificadas</p>
+
+    <div class="manchetes-duplas">
+      <div class="manchete">
+        <span class="num-grande mono">{aAlucGeral}%</span>
+        <span class="num-legenda">das vezes em que pedimos o texto oficial de uma habilidade, o modelo respondeu com <strong>texto inventado ou de outra habilidade</strong>.</span>
+      </div>
+      <div class="manchete">
+        <span class="num-grande mono">{bNegadasGeral}%</span>
+        <span class="num-legenda">dos códigos reais da BNCC foram <strong>negados</strong>: perguntado "esse código existe?", o modelo disse que não.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="faixa" aria-labelledby="h-como">
+    <h2 id="h-como">Como avaliamos</h2>
+    <p class="h2-hint">Repetimos estas quatro perguntas para centenas de códigos e habilidades da BNCC, cada uma em 3 formulações diferentes.</p>
+
+    <div class="perguntas">
+      <div class="pergunta-card">
+        <span class="letra mono">A</span>
+        <h3>Transcrição</h3>
+        <p>Dado um código real, escrever o texto oficial da habilidade.</p>
+      </div>
+      <div class="pergunta-card">
+        <span class="letra mono">B</span>
+        <h3>Existência</h3>
+        <p>Perguntar se um código citado existe de verdade.</p>
+      </div>
+      <div class="pergunta-card">
+        <span class="letra mono">C</span>
+        <h3>Geração aberta</h3>
+        <p>Pedir uma lista de habilidades de um tema e conferir cada citação.</p>
+      </div>
+      <div class="pergunta-card">
+        <span class="letra mono">D</span>
+        <h3>Lookup inverso</h3>
+        <p>Dado o texto de uma habilidade, achar o código correspondente.</p>
+      </div>
+    </div>
+
+    <div class="manchete compacta">
+      <div class="num-bloco">
+        <span class="num-grande mono">{m.total_respostas.toLocaleString('pt-BR')}</span>
+        <span class="num-rotulo">respostas julgadas</span>
+      </div>
+      <span class="num-legenda">na rodada {m.versao} do benchmark: {m.total_itens} itens, cada um em 3 formulações, para {m.total_modelos} modelos, sem nenhuma ferramenta de consulta. Custo da medição: US$ {usd(m.custo_total_usd)}.</span>
+    </div>
+  </section>
+
+  <section class="faixa" aria-labelledby="h-exemplo">
+    <h2 id="h-exemplo">Um exemplo real</h2>
+    <div class="exemplo">
+      <p class="pergunta-ex"><strong>Pergunta:</strong> o código EF03CO05 existe na BNCC? <span class="certo">Existe.</span> É uma habilidade oficial de Computação do 3º ano, incluída pelo MEC em 2022 (<a href="/habilidade/EF03CO05/">veja a página dela</a>).</p>
+      <div class="fala"><span class="quem">{negadoresEf03co05} dos {m.total_modelos} modelos testados</span>"<span class="errado">Não</span>"</div>
+      <p class="h2-hint" style="margin-top:10px">Entre eles, modelos de ponta de cinco empresas diferentes. A maioria não hesitou nem disse "não tenho certeza". Para essas IAs, uma parte oficial e vigente do currículo brasileiro não existe.</p>
+    </div>
+  </section>
+
+  <section class="faixa" aria-labelledby="h-ranking">
+    <h2 id="h-ranking">Como cada modelo se saiu</h2>
+    <p class="h2-hint">Nota composta de 0 a 100, média das cinco dimensões medidas, sem fonte de consulta. <strong>Não é uma comparação de qual IA é melhor.</strong> É uma medida de quanto cada modelo inventa quando não tem onde consultar a resposta certa. Clique num modelo para ver um exemplo real; a tabela completa, coluna por coluna, está no <a href="/benchmark/leaderboard/">leaderboard</a>.</p>
+
+    <div class="ranking">
+      {b.modelos.map((mod) => (
+        <details class="linha-modelo">
+          <summary>
+            <div class="lm-row">
+              <span class="lm-nome">{mod.nome}<span class="lm-empresa">{mod.empresa} · {mod.tier}</span>
+                {(mod.invencao_pura >= 0.3 || mod.c_inventados >= 0.1) && (
+                  <span class="lm-tags">
+                    {mod.invencao_pura >= 0.3 && <span class="lm-tag inventou">confirmou {pct(mod.invencao_pura)} dos códigos falsos</span>}
+                    {mod.c_inventados >= 0.1 && <span class="lm-tag inventou">inventou {pct(mod.c_inventados)} dos códigos que citou</span>}
+                  </span>
+                )}
+              </span>
+              <div class="lm-trilho"><div class:list={['lm-barra', { economico: mod.tier === 'econômico' }]} style={`width:${(mod.nota / maiorNota) * 100}%`}></div></div>
+              <span class="lm-nota mono">{nota(mod.nota)}</span>
+              <span class="lm-seta">▾</span>
+            </div>
+          </summary>
+          <div class="lm-painel">
+            <div class="lm-prow"><span class="lm-plab">Confirmou códigos reais</span><span class="lm-pval mono">{pct(mod.b_reais)}</span></div>
+            <div class="lm-prow"><span class="lm-plab">Caiu em códigos falsos (invenção pura)</span><span class="lm-pval mono">{pct(mod.invencao_pura)}</span></div>
+            <div class="lm-prow"><span class="lm-plab">Transcreveu o texto oficial fielmente</span><span class="lm-pval mono">{pct(mod.a_fiel)}</span></div>
+            <div class="lm-prow"><span class="lm-plab">Achou o código a partir do texto</span><span class="lm-pval mono">{pct(mod.d_ok)}</span></div>
+            {mod.exemplos.map((ex) => (
+              <div class="lm-exemplo">
+                <span class="lm-ex-rotulo">{ex.rotulo === 'invencao' ? 'exemplo de invenção' : ex.rotulo === 'confusao' ? 'exemplo de confusão' : 'exemplo de abstenção'}</span>
+                <p class="lm-ex-pergunta">"{ex.pergunta}"</p>
+                <p class="lm-ex-resposta">"{ex.resposta}"</p>
+                <p class="lm-ex-explica">{ex.explicacao}</p>
+              </div>
+            ))}
+            <p class="lm-custo">Custo deste modelo na rodada: US$ {usd(mod.custo_usd)}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+
+    <div class="legenda-r">
+      <span><span class="chip-cor"></span>Topo de linha</span>
+      <span><span class="chip-cor f2"></span>Econômico</span>
+      <span>Preço não prevê nota: modelos econômicos superaram os mais caros em várias posições.</span>
+    </div>
+  </section>
+
+  <section class="faixa" aria-labelledby="h-recortes">
+    <h2 id="h-recortes">Onde a memória falha mais</h2>
+    <p class="h2-hint">Taxa de alucinação na tarefa de transcrição (texto inventado ou de outra habilidade), média dos {m.total_modelos} modelos. Computação (Parecer CNE/CEB 2/2022) é o grupo de controle: é rara nos dados de treino, o que separa quem conhece a BNCC de quem só reconhece os trechos mais famosos.</p>
+    <div class="recortes">
+      <div class="recorte">
+        <h3>Por etapa</h3>
+        {b.recortes.por_etapa.map((r) => (
+          <div class="rec-linha"><span>{r.rotulo}</span><div class="rec-trilho"><div class="rec-barra" style={`width:${Math.round(r.taxa * 100)}%`}></div></div><span class="rec-val mono">{pct(r.taxa)}</span></div>
+        ))}
+        <p class="nota">Taxa de alucinação. O Médio, com uma habilidade só por área e códigos longos, é o mais inventado.</p>
+      </div>
+      <div class="recorte">
+        <h3>BNCC 2018 × Computação 2022</h3>
+        {b.recortes.por_modulo.map((r) => (
+          <div class="rec-linha"><span>{r.rotulo}</span><div class="rec-trilho"><div class="rec-barra" style={`width:${Math.round(r.taxa * 100)}%`}></div></div><span class="rec-val mono">{pct(r.taxa)}</span></div>
+        ))}
+        <p class="nota">O módulo mais novo do currículo é o que os modelos menos conhecem, mesmo sendo vigente e oficial.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="faixa" aria-labelledby="h-confianca">
+    <h2 id="h-confianca">Como medimos</h2>
+    <div class="numbers" style="margin-bottom: 18px;">
+      <div class="num"><span class="v">{m.total_itens}</span><span class="k">itens no banco oficial</span></div>
+      <div class="num"><span class="v">{m.total_modelos}</span><span class="k">modelos testados</span></div>
+      <div class="num"><span class="v">3</span><span class="k">formulações por item</span></div>
+      <div class="num"><span class="v">{m.total_respostas.toLocaleString('pt-BR')}</span><span class="k">respostas julgadas</span></div>
+    </div>
+    <ul class="garantias">
+      <li><strong>Gabarito é o dataset verificado:</strong> as mesmas 1.721 aprendizagens conferidas contra os documentos homologados do MEC, com fonte em cada registro.</li>
+      <li><strong>Códigos falsos, checados um a um:</strong> nenhum "código inexistente" do teste existe por acaso em currículo estadual ou municipal. Cada armadilha foi verificada e classificada (protocolo anti-vexame), e a confusão com currículos derivados é medida à parte, não punida como invenção.</li>
+      <li><strong>Julgamento automático com trilha completa:</strong> respostas ambíguas vão a um juiz automático e cada julgamento fica registrado, item a item, para auditoria. A validação humana por amostra, pela Equipe Pedagógica, está no roteiro antes da publicação 1.0.</li>
+      <li><strong>Temperatura 0, versões pinadas:</strong> cada resposta registra o modelo exato, a rota que o serviu, os tokens e o custo.</li>
+      <li><strong>Auditável de ponta a ponta:</strong> prompts, respostas cruas e julgamentos ficam em arquivos por modelo; a publicação completa dos brutos e do harness acompanha a versão 1.0 do dataset.</li>
+    </ul>
+    <p class="pledge">Isto não mede se a IA é inteligente. Mede se ela tem onde consultar. Sem fonte estruturada, os modelos inventam a BNCC. A fonte existe e é aberta: essa é a <a href="https://github.com/bncc-dev/bncc-dados/blob/main/docs/divisao-aberto-comercial.md" target="_blank" rel="noopener">regra de ouro do projeto</a>.</p>
+  </section>
+
+  <section class="faixa" aria-labelledby="h-fonte">
+    <h2 id="h-fonte">A solução: dar fonte à IA</h2>
+    <p class="h2-hint">A próxima rodada do benchmark repete as mesmas perguntas com os modelos conectados ao dataset verificado, via servidor MCP. Enquanto ela não sai, a fonte já está disponível para qualquer assistente:</p>
+    <div class="cta-mcp">
+      <h3>Conecte sua IA à BNCC oficial</h3>
+      <p>Cole uma URL no Claude, no ChatGPT ou no seu editor e o assistente passa a consultar as aprendizagens verificadas em vez de responder de memória.</p>
+      <div class="url-conexao-bench">
+        <code>https://mcp.bncc.dev/mcp</code>
+        <a class="btn-ir" href="/mcp/">como conectar →</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .selo-vermelho { color: var(--erro-ink); background: var(--erro-bg); border-color: var(--erro); }
+  .versao-label { display: inline-block; font-family: var(--mono); font-size: 11.5px; color: var(--ink-muted); background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; margin: 0 0 14px 6px; }
+  h1.abre { font-size: 38px; font-weight: 700; letter-spacing: -.02em; line-height: 1.16; margin: 0 0 14px; text-wrap: balance; }
+  .meta-hero { font-size: 12.5px; color: var(--ink-muted); margin: 0 0 28px; }
+
+  .manchetes-duplas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
+  .manchete { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; background: var(--bg-subtle); }
+  .manchete .num-grande { font-family: var(--mono); font-size: 56px; font-weight: 700; color: var(--erro-ink); line-height: 1; letter-spacing: -.02em; }
+  .manchete .num-legenda { font-size: 13.5px; color: var(--ink-muted); line-height: 1.5; }
+  .manchete .num-legenda strong { color: var(--ink); }
+  .manchete.compacta { padding: 18px 22px; margin: 20px 0 0; }
+  .manchete.compacta .num-grande { font-size: 36px; line-height: 1; }
+  .num-bloco { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .num-rotulo { font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--erro-ink); }
+
+  .perguntas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 18px; }
+  .pergunta-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; background: var(--bg); }
+  .pergunta-card .letra { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--accent-bg); color: var(--accent-ink); font-family: var(--mono); font-weight: 700; font-size: 12px; margin-bottom: 8px; }
+  .pergunta-card h3 { font-size: 13px; font-weight: 700; margin: 0 0 4px; }
+  .pergunta-card p { font-size: 12px; color: var(--ink-muted); margin: 0; line-height: 1.5; }
+
+  section.faixa { padding: 40px 0 0; margin-top: 40px; border-top: 1px solid var(--border); }
+  section.faixa > h2 { font-size: 21px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 6px; }
+  section.faixa .h2-hint { font-size: 13.5px; margin: 0 0 20px; max-width: 68ch; line-height: 1.6; }
+
+  .exemplo { border: 1px solid var(--border); border-left: 4px solid var(--erro); border-radius: 8px; padding: 18px 20px; background: var(--bg); }
+  .exemplo .pergunta-ex { margin: 0 0 10px; font-size: 15px; }
+  .fala { margin: 8px 0; padding-left: 14px; border-left: 2px solid var(--border); font-size: 14px; }
+  .fala .quem { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-muted); font-weight: 700; display: block; margin-bottom: 2px; }
+  .certo { color: var(--accent-ink); font-weight: 700; }
+  .errado { color: var(--erro-ink); font-weight: 700; }
+
+  .ranking { display: grid; gap: 2px; }
+  details.linha-modelo { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; background: var(--bg); overflow: hidden; }
+  details.linha-modelo[open] { border-color: var(--border-strong); }
+  details.linha-modelo summary { list-style: none; cursor: pointer; padding: 10px 14px; }
+  details.linha-modelo summary::-webkit-details-marker { display: none; }
+  details.linha-modelo summary:hover { background: var(--bg-subtle); }
+  .lm-row { display: grid; grid-template-columns: minmax(150px, 260px) 1fr 52px 16px; gap: 12px; align-items: center; }
+  .lm-nome { font-size: 13.5px; font-weight: 650; line-height: 1.3; }
+  .lm-empresa { display: block; font-weight: 400; font-size: 11.5px; color: var(--ink-muted); }
+  .lm-trilho { background: var(--bg-inset); border-radius: 4px; height: 16px; position: relative; }
+  .lm-barra { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 3px 4px 4px 3px; min-width: 2px; }
+  .lm-barra.economico { opacity: .6; }
+  .lm-nota { text-align: right; font-family: var(--mono); font-size: 14px; font-weight: 700; }
+  .lm-seta { font-size: 10px; color: var(--ink-muted); transition: transform .15s; }
+  details.linha-modelo[open] .lm-seta { transform: rotate(180deg); }
+  .lm-tags { display: flex; gap: 5px; margin-top: 3px; flex-wrap: wrap; }
+  .lm-tag { font-size: 10.5px; padding: 1px 7px; border-radius: 10px; font-weight: 600; border: 1px solid; }
+  .lm-tag.inventou { color: var(--erro-ink); border-color: var(--erro); background: var(--erro-bg); }
+  .lm-painel { padding: 4px 14px 16px; display: grid; gap: 0; background: var(--bg-subtle); border-top: 1px solid var(--border); }
+  .lm-prow { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: baseline; padding: 7px 0; }
+  .lm-prow + .lm-prow { border-top: 1px solid var(--border); }
+  .lm-plab { font-size: 12px; color: var(--ink-muted); font-weight: 600; }
+  .lm-pval { font-size: 12.5px; font-weight: 700; }
+  .lm-exemplo { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid var(--erro); background: var(--bg); border-radius: 0 6px 6px 0; }
+  .lm-ex-rotulo { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--erro-ink); }
+  .lm-ex-pergunta { font-size: 12.5px; font-style: italic; color: var(--ink-muted); margin: 6px 0 4px; }
+  .lm-ex-resposta { font-size: 12.5px; margin: 0 0 6px; }
+  .lm-ex-explica { font-size: 12px; color: var(--ink-muted); margin: 0; }
+  .lm-custo { font-size: 11.5px; color: var(--ink-muted); margin: 10px 0 0; }
+  .legenda-r { display: flex; gap: 18px; margin: 14px 2px 0; font-size: 12.5px; color: var(--ink-muted); flex-wrap: wrap; }
+  .chip-cor { display: inline-block; width: 20px; height: 9px; border-radius: 3px; background: var(--accent); vertical-align: baseline; margin-right: 6px; }
+  .chip-cor.f2 { opacity: .6; }
+
+  .recortes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .recorte { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; background: var(--bg); }
+  .recorte h3 { font-size: 13.5px; font-weight: 700; margin: 0 0 10px; }
+  .rec-linha { display: grid; grid-template-columns: 110px 1fr 44px; gap: 8px; align-items: center; margin: 7px 0; font-size: 12.5px; }
+  .rec-trilho { background: var(--bg-inset); border-radius: 3px; height: 12px; position: relative; }
+  .rec-barra { position: absolute; inset: 0 auto 0 0; background: var(--erro); border-radius: 3px; }
+  .rec-val { text-align: right; font-family: var(--mono); font-weight: 700; }
+  .recorte p.nota { font-size: 12px; color: var(--ink-muted); margin: 10px 0 0; }
+
+  .cta-mcp { border: 1.5px solid var(--accent); border-radius: 12px; padding: 24px; background: var(--accent-bg); text-align: center; }
+  .cta-mcp h3 { font-size: 18px; margin: 0 0 8px; }
+  .cta-mcp p { font-size: 14px; color: var(--ink-muted); margin: 0 auto 16px; max-width: 52ch; }
+  .url-conexao-bench { display: inline-flex; align-items: stretch; border: 1.5px solid var(--accent); border-radius: 10px; overflow: hidden; background: var(--bg); }
+  .url-conexao-bench code { display: flex; align-items: center; padding: 10px 16px; font-size: 13.5px; font-weight: 600; color: var(--accent-ink); }
+  .url-conexao-bench a.btn-ir { font-size: 13px; font-weight: 600; color: #fff; background: var(--accent); padding: 0 18px; display: flex; align-items: center; }
+  .url-conexao-bench a.btn-ir:hover { text-decoration: none; filter: brightness(1.08); }
+
+  @media (max-width: 720px) {
+    h1.abre { font-size: 28px; }
+    .manchetes-duplas { grid-template-columns: 1fr; }
+    .manchete { grid-template-columns: 1fr; text-align: center; }
+    .num-bloco { align-items: center; }
+    .recortes { grid-template-columns: 1fr; }
+    .lm-row { grid-template-columns: 1fr 44px 14px; }
+    .lm-trilho { display: none; }
+    .perguntas { grid-template-columns: 1fr 1fr; }
+  }
+</style>
