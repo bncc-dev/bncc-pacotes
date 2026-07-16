@@ -144,7 +144,7 @@ export function websiteJsonLd() {
     name: 'bncc.dev',
     url: SITE,
     inLanguage: 'pt-BR',
-    description: 'A BNCC em dados abertos, auditáveis e acessíveis. Para quem ensina, para quem desenvolve e para IAs.',
+    description: 'A BNCC em dados abertos, rastreáveis e acessíveis. Para quem ensina, para quem desenvolve e para IAs.',
     publisher: organizacaoJsonLd(),
     potentialAction: {
       '@type': 'SearchAction',
