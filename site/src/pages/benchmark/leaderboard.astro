@@ -35,6 +35,7 @@ const LOGOS: Record<string, string> = {
     </div>
 
     <div class="metadados" aria-label="Metadados da rodada">
+      <div class="md-item"><span class="md-k">Condição</span><span class="md-v">sem ferramenta</span></div>
       <div class="md-item"><span class="md-k">Banco de itens</span><span class="md-v">{m.itens_versao} · {m.total_itens} itens</span></div>
       <div class="md-item"><span class="md-k">Gabarito (dataset)</span><span class="md-v">{m.dataset_versao}</span></div>
       <div class="md-item"><span class="md-k">Avaliador</span><span class="md-v">v{m.avaliador_versao} · rubrica-v1</span></div>
@@ -144,6 +145,7 @@ const LOGOS: Record<string, string> = {
   <section class="faixa" aria-labelledby="h-confianca">
     <h2 id="h-confianca">Como isso foi medido</h2>
     <ul class="garantias">
+      <li><strong>Rodada sem ferramenta:</strong> mede a memória dos modelos. As rodadas com busca e com fonte estruturada usam os mesmos itens e são publicadas em separado.</li>
       <li><strong>Gabarito é o dataset verificado:</strong> as mesmas 1.721 aprendizagens conferidas contra os documentos homologados do MEC.</li>
       <li><strong>Códigos falsos, checados um a um:</strong> protocolo anti-vexame com adjudicação humana registrada. Nenhuma "invenção pura" existe por acaso em currículo derivado; quando existe, vira a métrica separada de confusão-derivado.</li>
       <li><strong>Julgamento automático com trilha completa:</strong> juiz automático com registro de cada decisão, item a item. A validação humana por amostra, pela Equipe Pedagógica, está no roteiro antes da publicação 1.0.</li>

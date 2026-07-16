@@ -27,6 +27,7 @@ const maiorNota = b.modelos[0].nota;
     <span class="pub-label selo-vermelho">Benchmark de alucinação</span><span class="versao-label">{m.versao}</span>
     <h1 class="abre" id="h-abre">Avaliamos o quanto IAs podem alucinar quando o assunto é BNCC</h1>
     <p class="abre-sub">E vimos que elas erram bastante. Fizemos {m.total_respostas.toLocaleString('pt-BR')} perguntas a {m.total_modelos} modelos sobre códigos e textos reais da BNCC, sem dar a eles nenhuma fonte de consulta.</p>
+    <p class="abre-sub">Aplicativos consomem IA por API. A API não busca na web por padrão. Esta rodada mede o que o modelo responde nessa condição.</p>
     <p class="meta-hero mono">Medido em {dataCurta(m.medido_em)} · {m.total_modelos} modelos · gabarito: dataset bncc.dev {m.dataset_versao}, 1.721 aprendizagens verificadas</p>
 
     <div class="manchetes-duplas">
@@ -170,12 +171,30 @@ const maiorNota = b.modelos[0].nota;
       <li><strong>Temperatura 0, versões pinadas:</strong> cada resposta registra o modelo exato, a rota que o serviu, os tokens e o custo.</li>
       <li><strong>Auditável de ponta a ponta:</strong> prompts, respostas cruas e julgamentos ficam em arquivos por modelo; a publicação completa dos brutos e do harness acompanha a versão 1.0 do dataset.</li>
     </ul>
-    <p class="pledge">Isto não mede se a IA é inteligente. Mede se ela tem onde consultar. Sem fonte estruturada, os modelos inventam a BNCC. A fonte existe e é aberta: essa é a <a href="https://github.com/bncc-dev/bncc-dados/blob/main/docs/divisao-aberto-comercial.md" target="_blank" rel="noopener">regra de ouro do projeto</a>.</p>
+    <p class="pledge">Isto mede se a IA tem onde consultar. Sem fonte, os modelos inventam a BNCC. A fonte existe e é aberta: <a href="https://github.com/bncc-dev/bncc-dados/blob/main/docs/divisao-aberto-comercial.md" target="_blank" rel="noopener">a regra de ouro do projeto</a>.</p>
   </section>
 
-  <section class="faixa" aria-labelledby="h-fonte">
-    <h2 id="h-fonte">A solução: dar fonte à IA</h2>
-    <p class="h2-hint">A próxima rodada do benchmark repete as mesmas perguntas com os modelos conectados ao dataset verificado, via servidor MCP. Enquanto ela não sai, a fonte já está disponível para qualquer assistente:</p>
+  <section class="faixa" aria-labelledby="h-condicoes">
+    <h2 id="h-condicoes">As três condições</h2>
+    <p class="h2-hint">O benchmark repete os mesmos {m.total_itens} itens em três condições. Esta página publica a primeira.</p>
+    <div class="condicoes">
+      <div class="condicao medida">
+        <span class="cond-rotulo">1 · Memória</span>
+        <span class="cond-estado ok">medida · {m.versao}</span>
+        <p>O modelo responde sem consultar nada. É a rodada desta página.</p>
+      </div>
+      <div class="condicao">
+        <span class="cond-rotulo">2 · Busca na web</span>
+        <span class="cond-estado">rodada prevista</span>
+        <p>O modelo pode buscar antes de responder. A web mistura páginas oficiais e códigos inventados.</p>
+      </div>
+      <div class="condicao">
+        <span class="cond-rotulo">3 · Fonte estruturada</span>
+        <span class="cond-estado">rodada prevista</span>
+        <p>O modelo consulta o dataset verificado pelo servidor MCP.</p>
+      </div>
+    </div>
+    <p class="h2-hint" style="margin-top:20px">A fonte da terceira condição já está disponível para qualquer assistente:</p>
     <div class="cta-mcp">
       <h3>Conecte sua IA à BNCC oficial</h3>
       <p>Cole uma URL no Claude, no ChatGPT ou no seu editor e o assistente passa a consultar as aprendizagens verificadas em vez de responder de memória.</p>
@@ -262,6 +281,15 @@ const maiorNota = b.modelos[0].nota;
   .rec-val { text-align: right; font-family: var(--mono); font-weight: 700; }
   .recorte p.nota { font-size: 12px; color: var(--ink-muted); margin: 10px 0 0; }
 
+  .condicoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .condicao { border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; background: var(--bg); }
+  .condicao.medida { border-color: var(--accent); background: var(--accent-bg); }
+  .cond-rotulo { display: block; font-family: var(--mono); font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+  .cond-estado { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-muted); border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; margin-bottom: 10px; }
+  .cond-estado.ok { color: var(--accent-ink); border-color: var(--accent); background: var(--bg); }
+  .condicao p { font-size: 12.5px; color: var(--ink-muted); line-height: 1.55; margin: 0; }
+  .condicao.medida p { color: var(--ink); }
+
   .cta-mcp { border: 1.5px solid var(--accent); border-radius: 12px; padding: 24px; background: var(--accent-bg); text-align: center; }
   .cta-mcp h3 { font-size: 18px; margin: 0 0 8px; }
   .cta-mcp p { font-size: 14px; color: var(--ink-muted); margin: 0 auto 16px; max-width: 52ch; }
@@ -276,6 +304,7 @@ const maiorNota = b.modelos[0].nota;
     .manchete { grid-template-columns: 1fr; text-align: center; }
     .num-bloco { align-items: center; }
     .recortes { grid-template-columns: 1fr; }
+    .condicoes { grid-template-columns: 1fr; }
     .lm-row { grid-template-columns: 1fr 44px 14px; }
     .lm-trilho { display: none; }
     .perguntas { grid-template-columns: 1fr 1fr; }
