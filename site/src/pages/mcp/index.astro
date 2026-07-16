@@ -30,7 +30,7 @@ const inspectorCmd = `$ npx @modelcontextprotocol/inspector --cli \\
   <section class="hero-dev" aria-labelledby="h-abre">
     <div>
       <span class="pub-label">Conector MCP</span>
-      <h1 class="abre" id="h-abre">Sua IA, com a BNCC de verdade</h1>
+      <h1 class="abre" id="h-abre">Sua IA com a BNCC oficial</h1>
       <p class="abre-sub">Conecte esta URL ao Claude, ao ChatGPT ou ao seu editor e o assistente passa a <strong>consultar as {total} aprendizagens verificadas</strong> antes de responder: códigos reais, texto oficial e a fonte junto. Sem instalar nada, sem cadastro, sem chave.</p>
       <div class="url-conexao">
         <code>https://mcp.bncc.dev/mcp</code>
@@ -48,22 +48,23 @@ const inspectorCmd = `$ npx @modelcontextprotocol/inspector --cli \\
     <div class="chat" role="img" aria-label="Exemplo de conversa: o assistente consulta a BNCC pelo conector antes de responder">
       <div class="chat-bar">
         <span class="chat-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="chat-titulo">seu assistente · conectado a bncc.dev</span>
+        <span class="chat-titulo">A IA que você já usa · conectado ao mcp.bncc.dev</span>
       </div>
-      <div class="chat-corpo">
-        <div class="msg user">Preciso trabalhar notícias falsas com o 9º ano. Quais habilidades da BNCC se aplicam?</div>
-        <div class="tool-call"><span class="spin">⚙</span> bncc_buscar("notícias falsas")</div>
+      <div class="chat-corpo" id="chat-demo">
+        <div class="msg user revela" data-passo="1">Preciso trabalhar notícias falsas com o 9º ano. Quais habilidades da BNCC se aplicam?</div>
+        <div class="tool-call revela" data-passo="2"><span class="spin">⚙</span> bncc_buscar("notícias falsas")</div>
         <div class="msg assistant">
-          <p>Na BNCC, a habilidade central para isso no 9º ano é:</p>
-          <div class="cartao-hab">
+          <p class="revela datilografada" data-passo="3">Na BNCC, a habilidade central para isso no 9º ano é:</p>
+          <div class="cartao-hab revela" data-passo="4">
             <span class="cod">{fake.codigo}</span><span class="ctx">{fake.componente!.nome} · 9º ano</span>
             <span class="txt">{textoFake}</span>
             <span class="fonte">fonte: PDF homologado, via <a href={`/habilidade/${fake.codigo}/`}>bncc.dev/habilidade/{fake.codigo}</a></span>
           </div>
-          <p>Quer que eu monte uma sequência de 3 aulas a partir dela?</p>
+          <p class="revela" data-passo="5">Quer que eu monte uma sequência de 3 aulas a partir dela?</p>
         </div>
       </div>
     </div>
+    <noscript><style>.revela { opacity: 1 !important; transform: none !important; }</style></noscript>
   </section>
 
   <section class="faixa-home" aria-labelledby="h-conectar" style="margin-top: 44px;">
@@ -180,5 +181,46 @@ const inspectorCmd = `$ npx @modelcontextprotocol/inspector --cli \\
       const t = btn.textContent; btn.textContent = 'copiado ✓';
       setTimeout(() => { btn.textContent = t; }, 1600);
     }
+
+    // anima o chat de exemplo: mensagem → tool call → resposta digitada → card → pergunta final
+    (function () {
+      const chat = document.getElementById('chat-demo');
+      if (!chat) return;
+      const reduzido = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const passos = [...chat.querySelectorAll('.revela')].sort((a, b) => a.dataset.passo - b.dataset.passo);
+
+      function digitar(el, aoTerminar) {
+        const texto = el.textContent;
+        el.textContent = '';
+        el.classList.add('mostrar', 'digitando');
+        let i = 0;
+        (function proximo() {
+          el.textContent = texto.slice(0, i);
+          i++;
+          if (i <= texto.length) { setTimeout(proximo, 20 + Math.random() * 18); }
+          else { el.classList.remove('digitando'); aoTerminar(); }
+        })();
+      }
+
+      function rodar() {
+        if (reduzido) { passos.forEach((el) => el.classList.add('mostrar')); return; }
+        let atraso = 150;
+        passos.forEach((el) => {
+          if (el.classList.contains('datilografada')) {
+            const tamanho = el.textContent.length;
+            setTimeout(() => digitar(el, () => {}), atraso);
+            atraso += 500 + tamanho * 22;
+          } else {
+            setTimeout(() => el.classList.add('mostrar'), atraso);
+            atraso += el.classList.contains('tool-call') ? 900 : 500;
+          }
+        });
+      }
+
+      const obs = new IntersectionObserver((entradas) => {
+        if (entradas[0].isIntersecting) { rodar(); obs.disconnect(); }
+      }, { threshold: .4 });
+      obs.observe(chat);
+    })();
   </script>
 </Base>

@@ -776,6 +776,20 @@ a.rota:hover { border-color: var(--accent); background: var(--bg-subtle); text-d
 .cartao-hab .fonte { display: block; font-family: var(--mono); font-size: 10.5px; color: #8b949e; margin-top: 6px; }
 .cartao-hab .fonte a { color: #46c07a; }
 
+/* animação do chat de exemplo: cada "revela" nasce invisível e o script
+   revela em sequência (mensagem → tool call → resposta digitada → card →
+   pergunta final). Nome próprio (não ".passo") para não colidir com os
+   cards numerados de /ensina/. Sem JS ou com prefers-reduced-motion,
+   tudo aparece pronto (ver <noscript> e o media query abaixo). */
+.revela { opacity: 0; transform: translateY(6px); transition: opacity .35s ease, transform .35s ease; }
+.revela.mostrar { opacity: 1; transform: none; }
+.datilografada.mostrar { border-right: 2px solid transparent; }
+.datilografada.digitando { border-right-color: #5bd58e; animation: cursor-pisca .8s step-end infinite; }
+@keyframes cursor-pisca { 50% { border-right-color: transparent; } }
+@media (prefers-reduced-motion: reduce) {
+  .revela { opacity: 1; transform: none; transition: none; }
+}
+
 /* conectar: cards por cliente, passos numerados */
 .clientes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .cliente { border: 1px solid var(--border); border-radius: 10px; padding: 15px 17px; background: var(--bg); }
