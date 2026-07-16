@@ -1,6 +1,6 @@
 # @bncc/mcp
 
-Servidor MCP da BNCC: as 1.580 aprendizagens da Base Nacional Comum Curricular, verificadas e com fonte oficial, como tools para agentes de IA. Casca fina sobre o [@bncc/dados](https://www.npmjs.com/package/@bncc/dados): dados embutidos, zero rede.
+Servidor MCP da BNCC: as 1.721 aprendizagens da Base Nacional Comum Curricular e do complemento de Computação, verificadas e com fonte oficial, como tools para agentes de IA. Casca fina sobre o [@bncc/dados](https://www.npmjs.com/package/@bncc/dados): dados embutidos, zero rede.
 
 **Pré-release.** Publicação junto da release `dados-v1.0.0` do [bncc-dados](https://github.com/bncc-dev/bncc-dados).
 

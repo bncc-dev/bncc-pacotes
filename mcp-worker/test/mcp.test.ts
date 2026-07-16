@@ -51,7 +51,8 @@ describe('handshake MCP', () => {
 
   it('initialize traz instruções com contagem dinâmica e data-version', async () => {
     const { msg } = await rpc(initialize());
-    expect(msg.result.instructions).toContain('1.580');
+    expect(msg.result.instructions).toContain('1.721');
+    expect(msg.result.instructions).toContain('Computação');
     expect(msg.result.instructions).toMatch(/Versão dos dados: dados-/);
   });
 
@@ -87,8 +88,32 @@ describe('tools via HTTP', () => {
   it('bncc_estatisticas traz total e a versão dos dados', async () => {
     const { msg } = await rpc(toolCall('bncc_estatisticas', {}));
     const r = conteudo(msg);
-    expect(r.total).toBe(1580);
+    expect(r.total).toBe(1721);
+    expect(r.computacao).toBe(141);
     expect(r.versao.data_version).toMatch(/^dados-/);
+  });
+
+  it('bncc_lookup devolve EF03CO05 (complemento de Computação) com eixo e fonte', async () => {
+    const { msg } = await rpc(toolCall('bncc_lookup', { codigo: 'EF03CO05' }));
+    const r = conteudo(msg);
+    expect(r.codigo).toBe('EF03CO05');
+    expect(r.documento).toBe('computacao-2022');
+    expect(r.componente.nome).toBe('Computação');
+    expect(r.eixo.nome).toBeTruthy();
+    expect(r.fonte).toBeTruthy();
+  });
+
+  it('bncc_buscar encontra aprendizagens de Computação', async () => {
+    const { msg } = await rpc(toolCall('bncc_buscar', { texto: 'algoritmo', limite: 50 }));
+    const r = conteudo(msg);
+    expect(r.resultados.some((x: { codigo: string }) => x.codigo.includes('CO'))).toBe(true);
+  });
+
+  it('bncc_decodificar explica um código CO', async () => {
+    const { msg } = await rpc(toolCall('bncc_decodificar', { codigo: 'EF15CO01' }));
+    const r = conteudo(msg);
+    expect(r.documento).toBe('computacao-2022');
+    expect(r.anos).toEqual([1, 2, 3, 4, 5]);
   });
 
   it('POST na raiz também atende MCP', async () => {

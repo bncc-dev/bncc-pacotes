@@ -8,8 +8,8 @@
  */
 import { decodificar } from './decodificar.js';
 import type {
-  Alinhamento, AprendizagemResolvida, ContextoOrganizacao, Estrutura,
-  HabilidadeEF, HabilidadeEM, ObjetivoEI,
+  Alinhamento, AprendizagemResolvida, ContextoOrganizacao, DadosComputacao, Estrutura,
+  HabilidadeEF, HabilidadeEFCO, HabilidadeEM, HabilidadeEMCO, ObjetivoEI, ObjetivoEICO,
 } from './tipos.js';
 
 // Reexporta o decodificador (puro) para que runtimes sem sistema de arquivos
@@ -24,6 +24,13 @@ export interface DadosBNCC {
   ensinoFundamental: { habilidades: HabilidadeEF[]; contextos_organizacao: ContextoOrganizacao[] };
   ensinoMedio: { habilidades: HabilidadeEM[]; contextos_organizacao: ContextoOrganizacao[] };
   versao?: { data_version: string; origem: string; commit: string; checksums_sha256: Record<string, string> };
+  /**
+   * Complemento de Computação (anexo ao Parecer CNE/CEB 2/2022). Opcional:
+   * quando injetado, as 141 aprendizagens CO entram em porCodigo, buscar e
+   * estatisticas. A casca fs do pacote ainda não o carrega (entra na 1.0);
+   * runtimes que importam os JSONs como módulos (ex.: mcp-worker) ativam aqui.
+   */
+  computacao?: DadosComputacao;
 }
 
 /** Normalização para busca textual: minúsculas, sem acentos, espaços únicos. */
@@ -36,16 +43,32 @@ export interface FiltroEM { area?: string; competencia?: number; apenasLP?: bool
 export interface FiltroEI { campo?: string; grupoEtario?: string }
 export interface FiltroBusca { etapa?: 'EI' | 'EF' | 'EM'; componente?: string; ano?: number }
 
+type RegistroCO = ObjetivoEICO | HabilidadeEFCO | HabilidadeEMCO;
+type Registro = ObjetivoEI | HabilidadeEF | HabilidadeEM | RegistroCO;
+
+function ehComputacao(reg: Registro): reg is RegistroCO {
+  return reg.documento === 'computacao-2022';
+}
+
 export function criarConsultas(dados: DadosBNCC) {
   const estruturaDados = dados.estrutura;
   const ei = dados.educacaoInfantil;
   const ef = dados.ensinoFundamental;
   const em = dados.ensinoMedio;
+  const co = dados.computacao;
+  const registrosCO: RegistroCO[] = co
+    ? [...co.objetivos_ei, ...co.habilidades_ef, ...co.habilidades_em]
+    : [];
 
-  const porCodigoMapa = new Map<string, ObjetivoEI | HabilidadeEF | HabilidadeEM>();
+  const porCodigoMapa = new Map<string, Registro>();
   for (const o of ei.objetivos) porCodigoMapa.set(o.codigo, o);
   for (const h of ef.habilidades) porCodigoMapa.set(h.codigo, h);
   for (const h of em.habilidades) porCodigoMapa.set(h.codigo, h);
+  for (const r of registrosCO) porCodigoMapa.set(r.codigo, r);
+
+  const eixosCO = new Map((co?.eixos ?? []).map((e) => [e.id, e.nome]));
+  const objetosCO = new Map((co?.objetos_conhecimento ?? []).map((o) => [o.id, o.nome]));
+  const competenciasCO = new Map((co?.competencias ?? []).map((c) => [c.id, c]));
 
   const contextos = new Map<string, ContextoOrganizacao>();
   for (const c of [...ef.contextos_organizacao, ...em.contextos_organizacao]) contextos.set(c.id, c);
@@ -60,7 +83,45 @@ export function criarConsultas(dados: DadosBNCC) {
     return contextos.get(id)?.nome ?? nomesComponentes.get(id) ?? nomesAreas.get(id) ?? nomesCampos.get(id) ?? id;
   }
 
-  function resolver(reg: ObjetivoEI | HabilidadeEF | HabilidadeEM): AprendizagemResolvida {
+  function resolverCO(reg: RegistroCO): AprendizagemResolvida {
+    const etapa = decodificar(reg.codigo).etapa;
+    const base = {
+      codigo: reg.codigo,
+      etapa,
+      texto: reg.texto,
+      vigencia: reg.vigencia,
+      fonte: reg.fonte,
+      documento: 'computacao-2022' as const,
+    };
+    if (etapa === 'EI') {
+      const o = reg as ObjetivoEICO;
+      return {
+        ...base,
+        eixo: { id: o.eixo, nome: eixosCO.get(o.eixo) ?? o.eixo },
+        grupoEtario: o.grupo_etario,
+      };
+    }
+    if (etapa === 'EF') {
+      const h = reg as HabilidadeEFCO;
+      return {
+        ...base,
+        componente: { id: 'co-comp-computacao', nome: 'Computação' },
+        anos: h.anos,
+        eixo: { id: h.eixo, nome: eixosCO.get(h.eixo) ?? h.eixo },
+        objetosConhecimento: h.objetos_conhecimento.map((id) => ({ id, nome: objetosCO.get(id) ?? id })),
+      };
+    }
+    const h = reg as HabilidadeEMCO;
+    const comp = competenciasCO.get(h.competencia);
+    return {
+      ...base,
+      componente: { id: 'co-comp-computacao', nome: 'Computação' },
+      competenciaComputacao: { id: h.competencia, numero: comp?.numero ?? 0, texto: comp?.texto ?? '' },
+    };
+  }
+
+  function resolver(reg: Registro): AprendizagemResolvida {
+    if (ehComputacao(reg)) return resolverCO(reg);
     const etapa = decodificar(reg.codigo).etapa;
     const base = { codigo: reg.codigo, etapa, texto: reg.texto, vigencia: reg.vigencia, fonte: reg.fonte };
 
@@ -144,10 +205,11 @@ export function criarConsultas(dados: DadosBNCC) {
 
   function buscar(texto: string, filtro: FiltroBusca = {}): AprendizagemResolvida[] {
     const alvo = normalizarTexto(texto);
-    const universo: Array<ObjetivoEI | HabilidadeEF | HabilidadeEM> = [
+    const universo: Registro[] = [
       ...(!filtro.etapa || filtro.etapa === 'EI' ? ei.objetivos : []),
       ...(!filtro.etapa || filtro.etapa === 'EF' ? ef.habilidades : []),
       ...(!filtro.etapa || filtro.etapa === 'EM' ? em.habilidades : []),
+      ...registrosCO.filter((r) => !filtro.etapa || decodificar(r.codigo).etapa === filtro.etapa),
     ];
     const comp = filtro.componente && (filtro.componente.includes('-comp-') ? filtro.componente : `ef-comp-${filtro.componente.toLowerCase()}`);
     return universo
@@ -160,6 +222,11 @@ export function criarConsultas(dados: DadosBNCC) {
   function progressaoEI(codigo: string): { alinhamento: string; objetivos: AprendizagemResolvida[]; nota?: string } {
     const reg = porCodigo(codigo);
     if (reg.etapa !== 'EI') throw new Error(`${reg.codigo}: progressão por alinhamento só existe na Educação Infantil`);
+    if (reg.documento === 'computacao-2022') {
+      throw new Error(
+        `${reg.codigo}: objetivos do complemento de Computação não têm alinhamento oficial entre grupos etários (dica: a progressão por alinhamento cobre só os objetivos da BNCC 2018)`,
+      );
+    }
     const al = alinhamentoPorId.get(reg.alinhamento!);
     if (!al) throw new Error(`${reg.codigo}: alinhamento ${reg.alinhamento} não encontrado`);
     return { alinhamento: al.id, objetivos: al.objetivos.map(porCodigo), nota: al.nota };
@@ -171,13 +238,14 @@ export function criarConsultas(dados: DadosBNCC) {
 
   function estatisticas() {
     return {
-      total: ei.objetivos.length + ef.habilidades.length + em.habilidades.length,
+      total: ei.objetivos.length + ef.habilidades.length + em.habilidades.length + registrosCO.length,
       educacaoInfantil: ei.objetivos.length,
       ensinoFundamental: ef.habilidades.length,
       ensinoMedio: em.habilidades.length,
       alinhamentosEI: ei.alinhamentos.length,
       competenciasGerais: estruturaDados.competencias_gerais.length,
       competenciasEspecificas: estruturaDados.competencias_especificas.length,
+      ...(co ? { computacao: registrosCO.length } : {}),
     };
   }
 

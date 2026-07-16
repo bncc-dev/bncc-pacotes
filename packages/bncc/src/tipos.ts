@@ -112,6 +112,68 @@ export interface Estrutura {
   competencias_especificas: CompetenciaEspecifica[];
 }
 
+/** Complemento de Computação (anexo ao Parecer CNE/CEB 2/2022) — computacao.json. */
+export interface EixoCO {
+  id: string;
+  documento: string;
+  nome: string;
+}
+
+export interface ObjetoConhecimentoCO {
+  id: string;
+  documento: string;
+  nome: string;
+  pai: string | null;
+}
+
+export interface CompetenciaCO {
+  id: string;
+  documento: string;
+  tipo: string;
+  numero: number;
+  texto: string;
+  fonte?: Fonte;
+}
+
+export interface ObjetivoEICO {
+  codigo: string;
+  documento: string;
+  texto: string;
+  eixo: string;
+  grupo_etario: string;
+  vigencia: Vigencia;
+  fonte: Fonte;
+}
+
+export interface HabilidadeEFCO {
+  codigo: string;
+  documento: string;
+  texto: string;
+  eixo: string;
+  anos: number[];
+  objetos_conhecimento: string[];
+  vigencia: Vigencia;
+  fonte: Fonte;
+}
+
+export interface HabilidadeEMCO {
+  codigo: string;
+  documento: string;
+  texto: string;
+  competencia: string;
+  vigencia: Vigencia;
+  fonte: Fonte;
+}
+
+export interface DadosComputacao {
+  eixos: EixoCO[];
+  objetos_conhecimento: ObjetoConhecimentoCO[];
+  competencias: CompetenciaCO[];
+  objetivos_ei: ObjetivoEICO[];
+  habilidades_ef: HabilidadeEFCO[];
+  habilidades_em: HabilidadeEMCO[];
+}
+
 /** Registro de aprendizagem com nomes de contexto resolvidos. */
 export interface AprendizagemResolvida {
   codigo: string;
@@ -119,6 +181,12 @@ export interface AprendizagemResolvida {
   texto: string;
   vigencia: Vigencia;
   fonte: Fonte;
+  /** 'computacao-2022' para o complemento de Computação; ausente = BNCC 2018. */
+  documento?: 'computacao-2022';
+  /** Computação: eixo (Pensamento Computacional, Mundo Digital, Cultura Digital). */
+  eixo?: { id: string; nome: string };
+  /** Computação: competência específica do complemento associada (EM). */
+  competenciaComputacao?: { id: string; numero: number; texto: string };
   /** EI */
   campoExperiencias?: { id: string; nome: string };
   grupoEtario?: string;

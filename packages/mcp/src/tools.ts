@@ -28,6 +28,7 @@ function compacto(r: ReturnType<Consultas['porCodigo']>) {
     ...(r.area ? { area: r.area.nome } : {}),
     ...(r.anos ? { anos: r.anos } : {}),
     ...(r.campoExperiencias ? { campo: r.campoExperiencias.nome, grupo: r.grupoEtario } : {}),
+    ...(r.eixo ? { eixo: r.eixo.nome, ...(r.grupoEtario ? { grupo: r.grupoEtario } : {}) } : {}),
   };
 }
 
@@ -41,13 +42,14 @@ export function instrucoesServidor(bncc: Consultas, dataVersion: string): string
   return `Dados oficiais e verificados da BNCC (Base Nacional Comum Curricular brasileira): ${total} aprendizagens das três etapas, cada uma com fonte oficial (página do PDF homologado).
 Regras: (1) nunca invente códigos ou textos de habilidade; se um código não está nos dados, ele não existe na BNCC; (2) a numeração tem lacunas legítimas; (3) ao citar uma aprendizagem para o usuário, inclua o código e, quando relevante, a fonte.
 Etapas: EI (objetivos por campo de experiências e grupo etário), EF (habilidades por componente e ano), EM (habilidades por área, sem seriação). Códigos: EI02TS01, EF67LP08, EM13LGG103.
+O complemento de Computação (anexo ao Parecer CNE/CEB 2/2022, vigente e oficial) está incluído: códigos CO nas três etapas (ex.: EI03CO01, EF03CO05, EF15CO01, EM13CO26), organizados por eixo (Pensamento Computacional, Mundo Digital, Cultura Digital).
 Versão dos dados: ${dataVersion}.`;
 }
 
 export function registrarTools(servidor: McpServer, bncc: Consultas, versao: Versao): void {
   servidor.registerTool('bncc_lookup', {
     title: 'Buscar aprendizagem por código',
-    description: 'Retorna o registro completo e verificado de uma aprendizagem da BNCC pelo código (ex.: "EF67LP08", "EI02TS01", "EM13LGG103"; aceita minúsculas). Inclui texto oficial, contexto pedagógico resolvido (componente, unidade temática/prática, objetos de conhecimento, competências) e a fonte oficial com página do PDF homologado. Use sempre que o usuário mencionar um código ou quando precisar do enunciado exato: nunca cite de memória.',
+    description: 'Retorna o registro completo e verificado de uma aprendizagem da BNCC pelo código (ex.: "EF67LP08", "EI02TS01", "EM13LGG103", "EF03CO05" do complemento de Computação; aceita minúsculas). Inclui texto oficial, contexto pedagógico resolvido (componente, unidade temática/prática, objetos de conhecimento, competências) e a fonte oficial com página do PDF homologado. Use sempre que o usuário mencionar um código ou quando precisar do enunciado exato: nunca cite de memória.',
     inputSchema: { codigo: z.string().describe('Código BNCC, ex.: EF67LP08') },
   }, async ({ codigo }) => {
     try { return json(bncc.porCodigo(codigo)); } catch (e) { return erro(e); }
@@ -55,7 +57,7 @@ export function registrarTools(servidor: McpServer, bncc: Consultas, versao: Ver
 
   servidor.registerTool('bncc_buscar', {
     title: 'Busca textual nos enunciados',
-    description: 'Busca um termo nos textos oficiais das aprendizagens (normalizada: acentos e maiúsculas não importam). Use para encontrar habilidades sobre um tema (ex.: texto="frações", componente="MA"). Retorna {total, exibindo, resultados}; se total > exibindo, refine os filtros ou aumente o limite. Componentes do EF: LP, AR, EF, LI, MA, CI, GE, HI, ER.',
+    description: 'Busca um termo nos textos oficiais das aprendizagens (normalizada: acentos e maiúsculas não importam). Use para encontrar habilidades sobre um tema (ex.: texto="frações", componente="MA"). Retorna {total, exibindo, resultados}; se total > exibindo, refine os filtros ou aumente o limite. Componentes do EF: LP, AR, EF, LI, MA, CI, GE, HI, ER. O complemento de Computação (códigos CO) entra na busca por padrão.',
     inputSchema: {
       texto: z.string().describe('Termo a buscar nos enunciados'),
       etapa: z.enum(['EI', 'EF', 'EM']).optional(),
@@ -93,7 +95,7 @@ export function registrarTools(servidor: McpServer, bncc: Consultas, versao: Ver
 
   servidor.registerTool('bncc_decodificar', {
     title: 'Decodificar a estrutura de um código',
-    description: 'Explica a anatomia de um código BNCC sem consultar o dataset: etapa, ano(s) ou bloco, componente/área, competência embutida (EM) e sequência. Funciona para qualquer código gramaticalmente válido, mesmo que não exista (atenção: existência se confere com bncc_lookup). Use para validar/explicar códigos que o usuário digitou.',
+    description: 'Explica a anatomia de um código BNCC sem consultar o dataset: etapa, ano(s) ou bloco, componente/área, competência embutida (EM) e sequência; códigos CO do complemento de Computação também. Funciona para qualquer código gramaticalmente válido, mesmo que não exista (atenção: existência se confere com bncc_lookup). Use para validar/explicar códigos que o usuário digitou.',
     inputSchema: { codigo: z.string().describe('Código BNCC a decodificar') },
   }, async ({ codigo }) => {
     try { return json(decodificar(codigo)); } catch (e) { return erro(e); }

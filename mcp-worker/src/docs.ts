@@ -23,7 +23,7 @@ export function paginaDocs(dataVersion: string, versaoServidor: string): string 
 </head>
 <body>
 <h1>mcp.bncc.dev <span class="beta">beta</span></h1>
-<p>A Base Nacional Comum Curricular como servidor <a href="https://modelcontextprotocol.io">MCP</a> remoto: aberto, gratuito, sem cadastro e sem API key. Seu agente de IA consulta as aprendizagens verificadas em vez de alucinar códigos. Dados conferidos contra os documentos oficiais do MEC (data-version <code>${dataVersion}</code>).</p>
+<p>A Base Nacional Comum Curricular como servidor <a href="https://modelcontextprotocol.io">MCP</a> remoto: aberto, gratuito, sem cadastro e sem API key. Seu agente de IA consulta as aprendizagens verificadas em vez de alucinar códigos, incluindo o complemento de Computação (Parecer CNE/CEB 2/2022, códigos CO). Dados conferidos contra os documentos oficiais do MEC (data-version <code>${dataVersion}</code>).</p>
 <pre>https://mcp.bncc.dev/mcp</pre>
 
 <h2>Como conectar</h2>
