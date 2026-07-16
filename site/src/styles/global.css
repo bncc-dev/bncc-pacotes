@@ -76,7 +76,7 @@ code, .mono { font-family: var(--mono); }
 /* na VT323 o ponto ocupa a célula monoespaçada inteira; cola o bncc.dev */
 .wordmark .dot { margin: 0 -9px; }
 .wordmark:hover { text-decoration: none; }
-.wordmark .dot { color: #e5484d; } /* vermelho da maçã pixel */
+.wordmark .dot { color: #009c3b; } /* verde da moldura da logo bandeira */
 .search {
   flex: 1; max-width: 420px; display: flex; align-items: center; gap: 8px;
   padding: 5px 12px; background: var(--bg); border: 1px solid var(--border);
@@ -245,6 +245,7 @@ footer.rodape {
   justify-content: space-between; gap: 32px;
 }
 .rodape-marca { display: grid; gap: 8px; align-content: start; justify-items: start; }
+.rodape-logo { display: block; margin-bottom: 2px; }
 .rodape-wordmark { font-size: 24px; }
 .rodape-tese { margin: 0; max-width: 26ch; line-height: 1.55; text-wrap: pretty; }
 .rodape-fino { margin: 0; font-size: 12px; line-height: 1.7; }

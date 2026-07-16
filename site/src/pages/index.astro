@@ -18,7 +18,7 @@ const promptIA = `# bncc.dev · instruções para agentes
    bncc.dev/objetivo/{codigo} · Educação Infantil
 3. Dados em lote: api.bncc.dev, os CSVs do site ou o
    pacote @bncc/dados. Sem key, sem cadastro.
-4. Índice completo: bncc.dev/llms.txt`;
+4. Conteúdo completo: bncc.dev/llms-full.txt`;
 const snippetNpm = `$ npm install @bncc/dados
 
 import { porCodigo } from '@bncc/dados';
@@ -70,7 +70,7 @@ https://mcp.bncc.dev/mcp
           <h2 class="pub-frase" id="h-dev">Importe, conecte e integre os dados verificados da BNCC. Sem montar infra, sem key.</h2>
           <ul class="mescla">
             <li><strong>Traga a BNCC para seu código:</strong> <span class="caso">bibliotecas para <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">JavaScript</a> e <a href="https://pypi.org/project/bncc/" target="_blank" rel="noopener">Python</a>, e repositório com os dados brutos.</span></li>
-            <li><strong>Conecte seu assistente de IA via <a href="https://www.npmjs.com/package/@bncc/mcp" target="_blank" rel="noopener">MCP</a>:</strong> <span class="caso">evite alucinações, o servidor só traz dados reais.</span></li>
+            <li><strong>Conecte seu assistente de IA via <a href="/mcp/">conector MCP</a>:</strong> <span class="caso">evite alucinações, o servidor só traz dados reais.</span></li>
             <li><strong>Integre sua aplicação via <a href="/api/">API REST</a>:</strong> <span class="caso">interface com dados reais, conectada aos nossos servidores.</span></li>
             <li><strong>Use prompts no Lovable, Replit ou Claude Code para construir suas aplicações:</strong> <span class="caso">garanta o uso de dados oficiais e rastreáveis.</span></li>
           </ul>
@@ -78,7 +78,6 @@ https://mcp.bncc.dev/mcp
         <div class="pub-acao">
           <div class="terminal">
             <div class="term-bar">
-              <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
               <div class="term-tabs" role="tablist" aria-label="Comece agora">
                 <button class="tab" role="tab" aria-selected="true" data-panel="hero-prompt" type="button">prompt.txt</button>
                 <button class="tab" role="tab" aria-selected="false" data-panel="hero-npm" type="button">npm</button>
@@ -105,7 +104,7 @@ https://mcp.bncc.dev/mcp
             </div>
             <TestadorApi id="hero-api" aba />
           </div>
-          <p class="pane-foot"><strong>Use agora:</strong> <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">npm</a> · <a href="https://pypi.org/project/bncc/" target="_blank" rel="noopener">PyPI</a> · <a href="/api/">API</a> · <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">dados brutos</a></p>
+          <p class="pane-foot"><strong>Use agora:</strong> <a href="https://www.npmjs.com/package/@bncc/dados" target="_blank" rel="noopener">npm</a> · <a href="https://pypi.org/project/bncc/" target="_blank" rel="noopener">PyPI</a> · <a href="/mcp/">MCP</a> · <a href="/api/">API</a> · <a href="https://github.com/bncc-dev/bncc-dados" target="_blank" rel="noopener">dados brutos</a></p>
         </div>
       </section>
 
