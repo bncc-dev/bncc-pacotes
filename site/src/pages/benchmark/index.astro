@@ -7,7 +7,7 @@ const b = BENCHMARK;
 const m = b.meta;
 
 // Números-manchete calculados dos julgamentos oficiais (ver PROVENIENCIA.md).
-const aAlucGeral = 59; // % das transcrições (tarefa A) com texto inventado ou de outra habilidade, média dos 17
+const aAlucGeral = 59; // % das transcrições (tarefa A) com texto inventado ou de outra habilidade, agregado das respostas dos 17
 const bNegadasGeral = 34; // % dos códigos reais negados ("não existe") na tarefa B
 const abaixoDe50 = b.modelos.filter((x) => x.nota < 50).length;
 
@@ -137,7 +137,7 @@ const maiorNota = b.modelos[0].nota;
 
   <section class="faixa" aria-labelledby="h-recortes">
     <h2 id="h-recortes">Onde a memória falha mais</h2>
-    <p class="h2-hint">Taxa de alucinação na tarefa de transcrição (texto inventado ou de outra habilidade), média dos {m.total_modelos} modelos. Computação (Parecer CNE/CEB 2/2022) é o grupo de controle: é rara nos dados de treino, o que separa quem conhece a BNCC de quem só reconhece os trechos mais famosos.</p>
+    <p class="h2-hint">Taxa de alucinação na tarefa de transcrição (texto inventado ou de outra habilidade), agregada das respostas dos {m.total_modelos} modelos. Computação (Parecer CNE/CEB 2/2022) é o grupo de controle: é rara nos dados de treino, o que separa quem conhece a BNCC de quem só reconhece os trechos mais famosos.</p>
     <div class="recortes">
       <div class="recorte">
         <h3>Por etapa</h3>
