@@ -1,0 +1,74 @@
+/* bncc.dev · MARCA CANÔNICA — topbar (barra superior + wordmark + nav).
+   Par do tokens.css: o site importa via global.css; outros apps vendorizam.
+   Depende dos tokens (variáveis) e da Bytesized declarada em tokens.css. */
+
+.topbar {
+  display: flex; align-items: center; gap: 16px; padding: 10px 24px;
+  background: var(--bg-subtle); border-bottom: 1px solid var(--border);
+}
+.wordmark {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Bytesized', var(--mono); font-size: 28px; font-weight: 400;
+  color: var(--ink); letter-spacing: 0; white-space: nowrap; text-decoration: none;
+}
+.wordmark .maca { width: 18px; height: auto; flex: none; }
+/* na VT323 o ponto ocupa a célula monoespaçada inteira; cola o bncc.dev */
+.wordmark .dot { margin: 0 -9px; }
+.wordmark:hover { text-decoration: none; }
+.wordmark .dot { color: #009c3b; } /* verde da moldura da logo bandeira */
+.search {
+  flex: 1; max-width: 420px; display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--ink-muted); font-size: 13px;
+}
+.search input { border: 0; background: transparent; width: 100%; font: inherit; color: var(--ink); outline: none; }
+/* o anel de foco fica no container; o input interno não desenha o dele */
+.search:focus-within { box-shadow: var(--shadow-focus); border-color: var(--accent); }
+.search input:focus-visible, .big-search input:focus-visible { box-shadow: none; }
+.search kbd {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-muted);
+  border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; background: var(--bg-subtle);
+}
+.topbar-links { margin-left: auto; display: flex; align-items: center; gap: 16px; font-size: 13px; }
+.topbar-links a { color: var(--ink); }
+/* dropdowns do topo (details/summary: funcionam sem JS; o JS só fecha por fora/Esc) */
+.nav-drop { position: relative; }
+.nav-drop summary {
+  list-style: none; cursor: pointer; color: var(--ink); white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.nav-drop summary::-webkit-details-marker { display: none; }
+.nav-drop summary::after {
+  content: ""; width: 0; height: 0; margin-top: 1px;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid var(--ink-muted);
+  transition: transform .15s ease;
+}
+.nav-drop[open] summary::after { transform: rotate(180deg); }
+.drop-menu {
+  position: absolute; top: calc(100% + 10px); left: 50%; transform: translateX(-50%);
+  z-index: 30; display: grid; gap: 2px; min-width: 190px; padding: 6px;
+  background: var(--bg); border: 1px solid var(--border-strong); border-radius: 10px;
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, .35);
+}
+.drop-menu a { padding: 7px 11px; border-radius: 7px; white-space: nowrap; }
+.drop-menu a:hover { background: var(--bg-subtle); text-decoration: none; }
+.badge-version {
+  font-family: var(--mono); font-size: 11px; color: var(--accent-ink);
+  background: var(--accent-bg); border: 1px solid var(--accent);
+  border-radius: 999px; padding: 1px 8px; white-space: nowrap;
+}
+.theme-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; padding: 0; font: inherit; color: var(--ink-muted);
+  background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+}
+.theme-btn:hover { color: var(--accent-ink); border-color: var(--accent); }
+
+@media (max-width: 800px) {
+  .topbar { flex-wrap: wrap; gap: 10px; padding: 10px 16px; }
+  .topbar-links { margin-left: auto; gap: 12px; }
+  .topbar-links > a, .topbar-links .nav-drop { display: none; }
+  .search { order: 3; max-width: none; width: 100%; }
+  .search kbd { display: none; }
+}
