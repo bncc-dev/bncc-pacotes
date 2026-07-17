@@ -175,6 +175,13 @@ export function criarConsultas(dados: DadosBNCC) {
   }
 
   function habilidadesEF(filtro: FiltroEF = {}): AprendizagemResolvida[] {
+    // Computação só com filtro explícito (componente 'CO'); o padrão segue BNCC 2018.
+    if (filtro.componente && ['co', 'co-comp-computacao', 'ef-comp-co'].includes(filtro.componente.toLowerCase())) {
+      if (filtro.unidadeTematica || filtro.pratica || filtro.campoAtuacao) return [];
+      return (co?.habilidades_ef ?? [])
+        .filter((h) => !filtro.ano || h.anos.includes(filtro.ano))
+        .map(resolver);
+    }
     const comp = filtro.componente && (filtro.componente.startsWith('ef-comp-') ? filtro.componente : `ef-comp-${filtro.componente.toLowerCase()}`);
     return ef.habilidades
       .filter((h) => !comp || h.componente === comp)
@@ -186,6 +193,11 @@ export function criarConsultas(dados: DadosBNCC) {
   }
 
   function habilidadesEM(filtro: FiltroEM = {}): AprendizagemResolvida[] {
+    // Computação só com filtro explícito (area 'CO'); o padrão segue BNCC 2018.
+    if (filtro.area && ['co', 'em-area-co'].includes(filtro.area.toLowerCase())) {
+      if (filtro.competencia || filtro.apenasLP) return [];
+      return (co?.habilidades_em ?? []).map(resolver);
+    }
     const area = filtro.area && (filtro.area.startsWith('em-area-') ? filtro.area : `em-area-${filtro.area.toLowerCase()}`);
     return em.habilidades
       .filter((h) => !area || h.area === area)
@@ -195,6 +207,13 @@ export function criarConsultas(dados: DadosBNCC) {
   }
 
   function objetivosEI(filtro: FiltroEI = {}): AprendizagemResolvida[] {
+    // Computação só com filtro explícito (campo 'CO'); o padrão segue BNCC 2018.
+    if (filtro.campo && ['co', 'ei-campo-co'].includes(filtro.campo.toLowerCase())) {
+      const grupoCO = filtro.grupoEtario && (filtro.grupoEtario.startsWith('ei-grupo-') ? filtro.grupoEtario : `ei-grupo-${filtro.grupoEtario}`);
+      return (co?.objetivos_ei ?? [])
+        .filter((o) => !grupoCO || o.grupo_etario === grupoCO)
+        .map(resolver);
+    }
     const campo = filtro.campo && (filtro.campo.startsWith('ei-campo-') ? filtro.campo : `ei-campo-${filtro.campo.toLowerCase()}`);
     const grupo = filtro.grupoEtario && (filtro.grupoEtario.startsWith('ei-grupo-') ? filtro.grupoEtario : `ei-grupo-${filtro.grupoEtario}`);
     return ei.objetivos

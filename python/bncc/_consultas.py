@@ -89,6 +89,12 @@ def _id_componente(componente):
 
 def habilidades_ef(componente=None, ano=None, unidade_tematica=None, pratica=None, campo_atuacao=None):
     """Habilidades do Ensino Fundamental, com filtros opcionais (sigla ou id de componente)."""
+    # Computação só com filtro explícito (componente 'CO'); o padrão segue BNCC 2018.
+    if componente and componente.lower() in ('co', 'co-comp-computacao', 'ef-comp-co'):
+        if unidade_tematica or pratica or campo_atuacao:
+            return []
+        return [_resolver(h) for h in indice()['co_habilidades_ef']
+                if not ano or ano in h['anos']]
     comp = _id_componente(componente)
     saida = []
     for h in indice()['habilidades_ef']:
@@ -110,6 +116,11 @@ def habilidades_ef(componente=None, ano=None, unidade_tematica=None, pratica=Non
 
 def habilidades_em(area=None, competencia=None, apenas_lp=False):
     """Habilidades do Ensino Médio. `area` aceita id (em-area-lgg) ou sigla (LGG)."""
+    # Computação só com filtro explícito (area 'CO'); o padrão segue BNCC 2018.
+    if area and area.lower() in ('co', 'em-area-co'):
+        if competencia or apenas_lp:
+            return []
+        return [_resolver(h) for h in indice()['co_habilidades_em']]
     aid = area if (area is None or area.startswith('em-area-')) else f'em-area-{area.lower()}'
     i = indice()
     saida = []
@@ -127,6 +138,11 @@ def habilidades_em(area=None, competencia=None, apenas_lp=False):
 
 def objetivos_ei(campo=None, grupo_etario=None):
     """Objetivos da Educação Infantil. `campo` aceita id (ei-campo-ts) ou sigla (TS)."""
+    # Computação só com filtro explícito (campo 'CO'); o padrão segue BNCC 2018.
+    if campo and campo.lower() in ('co', 'ei-campo-co'):
+        gid = grupo_etario if (grupo_etario is None or grupo_etario.startswith('ei-grupo-')) else f'ei-grupo-{grupo_etario}'
+        return [_resolver(o) for o in indice()['co_objetivos_ei']
+                if not gid or o['grupo_etario'] == gid]
     cid = campo if (campo is None or campo.startswith('ei-campo-')) else f'ei-campo-{campo.lower()}'
     gid = grupo_etario if (grupo_etario is None or grupo_etario.startswith('ei-grupo-')) else f'ei-grupo-{grupo_etario}'
     return [_resolver(o) for o in indice()['objetivos_ei']

@@ -72,7 +72,7 @@ export function registrarTools(servidor: McpServer, bncc: Consultas, versao: Ver
 
   servidor.registerTool('bncc_listar', {
     title: 'Listar aprendizagens por filtros estruturados',
-    description: 'Lista aprendizagens de uma etapa com filtros estruturados (sem busca textual). EF: componente (sigla, ex.: LP) e/ou ano (1-9). EM: area (LGG, MAT, CNT, CHS) e/ou competencia (número) e/ou apenas_lp. EI: campo (EO, CG, TS, EF, ET) e/ou grupo_etario (01, 02, 03). Use para cobertura curricular ("todas as habilidades do 4º ano de Matemática") e navegação. Retorna {total, exibindo, resultados}.',
+    description: 'Lista aprendizagens de uma etapa com filtros estruturados (sem busca textual). EF: componente (sigla, ex.: LP) e/ou ano (1-9). EM: area (LGG, MAT, CNT, CHS) e/ou competencia (número) e/ou apenas_lp. EI: campo (EO, CG, TS, EF, ET) e/ou grupo_etario (01, 02, 03). Computação: componente=CO (EF), area=CO (EM) ou campo=CO (EI). Use para cobertura curricular ("todas as habilidades do 4º ano de Matemática") e navegação. Retorna {total, exibindo, resultados}.',
     inputSchema: {
       etapa: z.enum(['EI', 'EF', 'EM']),
       componente: z.string().optional().describe('EF: sigla do componente (LP, MA, CI...)'),

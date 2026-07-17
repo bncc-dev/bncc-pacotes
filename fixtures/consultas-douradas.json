@@ -268,6 +268,40 @@
     "etapa": "EM",
     "sequencia": 26
    }
+  },
+  {
+   "id": "co-ef-listagem",
+   "operacao": "contar_habilidadesEF",
+   "args": {
+    "componente": "CO"
+   },
+   "esperado": 104
+  },
+  {
+   "id": "co-ef-ano3",
+   "operacao": "contar_habilidadesEF",
+   "args": {
+    "componente": "CO",
+    "ano": 3
+   },
+   "esperado": 18,
+   "nota": "inclui os blocos EF15CO/EF35CO que cobrem o 3º ano, mesma semântica dos blocos de LP"
+  },
+  {
+   "id": "co-em-listagem",
+   "operacao": "contar_habilidadesEM",
+   "args": {
+    "area": "CO"
+   },
+   "esperado": 26
+  },
+  {
+   "id": "co-ei-listagem",
+   "operacao": "contar_objetivosEI",
+   "args": {
+    "campo": "CO"
+   },
+   "esperado": 11
   }
  ]
 }

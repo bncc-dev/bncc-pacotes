@@ -90,7 +90,7 @@ describe('@bncc/mcp', () => {
 
   it('bncc_estatisticas inclui a data-version', async () => {
     const r = conteudo(await cliente.callTool({ name: 'bncc_estatisticas', arguments: {} }));
-    expect(r.total).toBe(1580);
+    expect(r.total).toBe(1721);
     expect(r.versao.data_version).toMatch(/^dados-/);
   });
 

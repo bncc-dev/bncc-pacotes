@@ -43,6 +43,6 @@ Regras que o pacote respeita: códigos inexistentes lançam `ValueError` em vez 
 
 ## Números
 
-1.580 aprendizagens (93 EI + 1.304 EF + 183 EM) · 10 competências gerais · 105 específicas.
+1.721 aprendizagens: 1.580 da BNCC 2018 (93 EI + 1.304 EF + 183 EM) + 141 do complemento de Computação (Parecer CNE/CEB 2/2022) · 10 competências gerais · 105 específicas.
 
 Projeto **bncc.dev**, mantido pela Profy. Dados CC BY 4.0, código MIT.
