@@ -114,7 +114,7 @@ export function datasetJsonLd() {
     '@type': 'Dataset',
     '@id': `${SITE}/#dataset`,
     name: 'BNCC em dados abertos · bncc.dev',
-    description: `As ${s.total + totalCO} aprendizagens da Base Nacional Comum Curricular brasileira e do complemento de Computação (Parecer CNE/CEB 2/2022) como dados estruturados e verificados: cada registro rastreável à fonte oficial, com texto conferido contra o documento homologado ou o anexo do parecer.`,
+    description: `As ${s.total} aprendizagens da Base Nacional Comum Curricular brasileira e do complemento de Computação (Parecer CNE/CEB 2/2022) como dados estruturados e verificados: cada registro rastreável à fonte oficial, com texto conferido contra o documento homologado ou o anexo do parecer.`,
     url: SITE,
     sameAs: 'https://github.com/bncc-dev/bncc-dados',
     identifier: v.data_version,

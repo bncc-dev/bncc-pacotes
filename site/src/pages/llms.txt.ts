@@ -5,11 +5,11 @@ import { estatisticasCO } from '../lib/computacao';
 export const GET: APIRoute = () => {
   const s = estatisticas();
   const sCO = estatisticasCO();
-  const total = s.total + sCO.total;
+  const total = s.total; // já inclui a Computação desde @bncc/dados 0.3.0
   const v = versao();
   const corpo = `# bncc.dev
 
-> A BNCC (Base Nacional Comum Curricular brasileira) em dados abertos, rastreáveis e acessíveis: ${total.toLocaleString('pt-BR')} aprendizagens com fonte oficial (${s.total.toLocaleString('pt-BR')} da BNCC 2018 + ${sCO.total} do complemento de Computação, Parecer CNE/CEB 2/2022). Versão dos dados: ${v.data_version}. Licença dos dados: CC BY 4.0; código: MIT. Tudo aberto, sem API key e sem cadastro.
+> A BNCC (Base Nacional Comum Curricular brasileira) em dados abertos, rastreáveis e acessíveis: ${total.toLocaleString('pt-BR')} aprendizagens com fonte oficial (${(s.total - sCO.total).toLocaleString('pt-BR')} da BNCC 2018 + ${sCO.total} do complemento de Computação, Parecer CNE/CEB 2/2022). Versão dos dados: ${v.data_version}. Licença dos dados: CC BY 4.0; código: MIT. Tudo aberto, sem API key e sem cadastro.
 
 Regras para agentes:
 - Nunca invente códigos ou textos de habilidade. Se uma página não existe em bncc.dev, o código não existe na BNCC (a numeração oficial tem lacunas legítimas).

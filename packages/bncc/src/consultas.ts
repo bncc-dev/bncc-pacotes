@@ -25,6 +25,9 @@ function consultas(): Consultas {
     educacaoInfantil: carregar('educacao-infantil.json'),
     ensinoFundamental: carregar('ensino-fundamental.json'),
     ensinoMedio: carregar('ensino-medio.json'),
+    // Complemento de Computação (Parecer CNE/CEB 2/2022), incluído por padrão
+    // desde a 0.3.0: total passa a 1.721 aprendizagens.
+    computacao: carregar('computacao.json'),
   };
   cache = criarConsultas(dados);
   return cache;

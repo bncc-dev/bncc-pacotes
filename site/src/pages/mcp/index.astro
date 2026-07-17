@@ -5,7 +5,7 @@ import { estatisticasCO } from '../../lib/computacao';
 
 const s = estatisticas();
 const sCO = estatisticasCO();
-const total = (s.total + sCO.total).toLocaleString('pt-BR');
+const total = s.total.toLocaleString('pt-BR'); // já inclui a Computação desde @bncc/dados 0.3.0
 
 // A demo do chat usa dados reais do pacote: nada de texto inventado.
 const fake = porCodigo('EF09LP01');

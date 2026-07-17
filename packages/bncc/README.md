@@ -1,6 +1,6 @@
 # @bncc/dados
 
-A BNCC (Base Nacional Comum Curricular) como dados estruturados e verificados, com API de consulta tipada em português. Dados embutidos, zero dependências, zero rede.
+A BNCC (Base Nacional Comum Curricular) como dados estruturados e verificados, com API de consulta tipada em português. Inclui o complemento de Computação (Parecer CNE/CEB 2/2022). Dados embutidos, zero dependências, zero rede.
 
 Cada registro é rastreável à fonte oficial (planilha do MEC + página do PDF homologado). Fonte dos dados: [bncc-dados](https://github.com/bncc-dev/bncc-dados), extração reprodutível com validação em CI.
 
@@ -64,10 +64,12 @@ const bncc = criarConsultas({ estrutura, educacaoInfantil, ensinoFundamental, en
 bncc.porCodigo('EF67LP08').texto;
 ```
 
+O complemento de Computação é opcional no núcleo: injete também `computacao` (de `@bncc/dados/dados/computacao.json`) para incluí-lo. A API padrão do pacote já o carrega.
+
 A mesma API (`porCodigo`, `buscar`, `habilidadesEF`...), a mesma semântica. É o caminho usado pela API hospedada do bncc.dev.
 
 ## Números
 
-1.580 aprendizagens (93 EI + 1.304 EF + 183 EM) · 10 competências gerais · 105 específicas · 885 contextos de organização · install até a primeira consulta em ~1 segundo.
+1.721 aprendizagens: 1.580 da BNCC 2018 (93 EI + 1.304 EF + 183 EM) + 141 do complemento de Computação (11 EI + 104 EF + 26 EM) · 10 competências gerais · 105 específicas · 885 contextos de organização · install até a primeira consulta em ~1 segundo.
 
 Projeto **bncc.dev**, mantido pela Profy. Dados CC BY 4.0, código MIT.

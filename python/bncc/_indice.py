@@ -18,12 +18,16 @@ def indice():
     ei = _carregar('educacao-infantil')
     ef = _carregar('ensino-fundamental')
     em = _carregar('ensino-medio')
+    # Complemento de Computação (Parecer CNE/CEB 2/2022), incluído por padrão desde a 0.2.0 do PyPI
+    co = _carregar('computacao')
 
     por_codigo = {}
     for o in ei['objetivos']:
         por_codigo[o['codigo']] = o
     for h in ef['habilidades'] + em['habilidades']:
         por_codigo[h['codigo']] = h
+    for r in co['objetivos_ei'] + co['habilidades_ef'] + co['habilidades_em']:
+        por_codigo[r['codigo']] = r
 
     contextos = {c['id']: c for c in ef['contextos_organizacao'] + em['contextos_organizacao']}
     competencias = {c['id']: c for c in estrutura['competencias_especificas']}
@@ -38,6 +42,11 @@ def indice():
         'habilidades_ef': ef['habilidades'], 'habilidades_em': em['habilidades'],
         'por_codigo': por_codigo, 'contextos': contextos,
         'competencias': competencias, 'alinhamento_por_id': alinhamentos, 'nomes': nomes,
+        'co_objetivos_ei': co['objetivos_ei'], 'co_habilidades_ef': co['habilidades_ef'],
+        'co_habilidades_em': co['habilidades_em'],
+        'co_eixos': {e['id']: e['nome'] for e in co['eixos']},
+        'co_objetos': {o['id']: o['nome'] for o in co['objetos_conhecimento']},
+        'co_competencias': {c['id']: c for c in co['competencias']},
     }
 
 

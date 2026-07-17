@@ -5,7 +5,7 @@ import { estatisticasCO, porCodigoCO } from '../lib/computacao';
 
 const s = estatisticas();
 const sCO = estatisticasCO();
-const total = (s.total + sCO.total).toLocaleString('pt-BR');
+const total = s.total.toLocaleString('pt-BR'); // já inclui a Computação desde @bncc/dados 0.3.0
 const v = versao();
 
 const segs = segmentosDecoder('EF67LP08');

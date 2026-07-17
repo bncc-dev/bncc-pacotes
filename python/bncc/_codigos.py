@@ -17,6 +17,9 @@ BLOCOS_EF = {'15': [1, 2, 3, 4, 5], '69': [6, 7, 8, 9], '12': [1, 2], '35': [3, 
              '67': [6, 7], '89': [8, 9]}
 BLOCOS_VALIDOS_POR_COMPONENTE = {'AR': {'15', '69'}, 'LP': {'15', '69', '12', '35', '67', '89'},
                                  'EF': {'12', '35', '67', '89'}}
+# Complemento de Computação (Parecer CNE/CEB 2/2022): códigos CO nas três etapas.
+COMPONENTE_CO = 'Computação'
+BLOCOS_VALIDOS_CO = {'15', '69'}
 AREAS_EM = {'LGG': 'Linguagens e suas Tecnologias', 'MAT': 'Matemática e suas Tecnologias',
             'CNT': 'Ciências da Natureza e suas Tecnologias', 'CHS': 'Ciências Humanas e Sociais Aplicadas'}
 
@@ -32,9 +35,31 @@ def decodificar(codigo):
                 'grupo_etario_nome': GRUPOS_EI[grupo], 'campo_experiencias': campo,
                 'campo_experiencias_nome': CAMPOS_EI[campo], 'sequencia': int(seq)}
 
+    # Computação na Educação Infantil (EI03CO01): eixo em vez de campo de experiências
+    m = re.fullmatch(r'EI(0[123])CO(\d{2})', codigo)
+    if m:
+        grupo, seq = m.groups()
+        return {'codigo': codigo, 'etapa': 'EI', 'documento': 'computacao-2022',
+                'grupo_etario': grupo, 'grupo_etario_nome': GRUPOS_EI[grupo],
+                'campo_experiencias': 'CO', 'campo_experiencias_nome': COMPONENTE_CO,
+                'sequencia': int(seq)}
+
     m = re.fullmatch(r'EF(\d{2})([A-Z]{2})(\d{2})', codigo)
     if m:
         anos_str, comp, seq = m.groups()
+        # Computação no EF: numera por ano (EF01CO01) e por bloco (EF15CO01, EF69CO10)
+        if comp == 'CO':
+            if anos_str in BLOCOS_EF:
+                if anos_str not in BLOCOS_VALIDOS_CO:
+                    raise ValueError(f'{codigo}: bloco {anos_str!r} inválido para {COMPONENTE_CO}')
+                anos = BLOCOS_EF[anos_str]
+            elif anos_str.startswith('0') and 1 <= int(anos_str) <= 9:
+                anos = [int(anos_str)]
+            else:
+                raise ValueError(f'{codigo}: ano/bloco {anos_str!r} inválido')
+            return {'codigo': codigo, 'etapa': 'EF', 'documento': 'computacao-2022',
+                    'anos': anos, 'bloco': anos_str in BLOCOS_EF,
+                    'componente': 'CO', 'componente_nome': COMPONENTE_CO, 'sequencia': int(seq)}
         if comp not in COMPONENTES_EF:
             raise ValueError(f'{codigo}: componente {comp!r} desconhecido')
         if anos_str in BLOCOS_EF:
@@ -58,6 +83,13 @@ def decodificar(codigo):
     if m:
         return {'codigo': codigo, 'etapa': 'EM', 'seriacao': None, 'area': 'LGG',
                 'area_nome': AREAS_EM['LGG'], 'componente': 'LP',
+                'competencia_especifica': None, 'sequencia': int(m.group(1))}
+
+    # Computação no EM (EM13CO26): componente próprio, sem área de 2018
+    m = re.fullmatch(r'EM13CO(\d{2})', codigo)
+    if m:
+        return {'codigo': codigo, 'etapa': 'EM', 'documento': 'computacao-2022', 'seriacao': None,
+                'area': 'CO', 'area_nome': COMPONENTE_CO, 'componente': 'CO',
                 'competencia_especifica': None, 'sequencia': int(m.group(1))}
 
     raise ValueError(f'{codigo}: não corresponde a nenhuma gramática BNCC (EI/EF/EM)')

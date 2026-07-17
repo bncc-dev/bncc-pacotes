@@ -1,36 +1,273 @@
 {
-  "descricao": "Consultas douradas compartilhadas entre os pacotes npm e PyPI (teste de paridade). Valores capturados do dataset validado dados-2026.07. Inclui as consultas do caso de uso âncora (C*).",
-  "data_version": "dados-2026.07",
-  "casos": [
-    { "id": "decodifica-ei", "operacao": "decodificar", "args": "ei02ts01", "esperado": { "etapa": "EI", "grupoEtario": "02", "campoExperiencias": "TS", "sequencia": 1 } },
-    { "id": "decodifica-ef-bloco", "operacao": "decodificar", "args": "EF67EF01", "esperado": { "etapa": "EF", "anos": [6, 7], "bloco": true, "componente": "EF", "sequencia": 1 } },
-    { "id": "decodifica-em-area", "operacao": "decodificar", "args": "EM13LGG103", "esperado": { "etapa": "EM", "area": "LGG", "competenciaEspecifica": 1, "sequencia": 3 } },
-    { "id": "decodifica-em-lp", "operacao": "decodificar", "args": "EM13LP02", "esperado": { "etapa": "EM", "componente": "LP", "competenciaEspecifica": null, "sequencia": 2 } },
-    { "id": "decodifica-invalido-bloco", "operacao": "decodificar_erro", "args": "EF15MA01", "esperado": "bloco" },
-    { "id": "decodifica-invalido-grama", "operacao": "decodificar_erro", "args": "XX99ZZ01", "esperado": "gramática" },
-
-    { "id": "C4-lookup-ef67lp08", "operacao": "porCodigo", "args": "EF67LP08", "esperado": { "etapa": "EF", "anos": [6, 7], "praticaLinguagem": "Leitura", "temLocalizadorPdf": true } },
-    { "id": "C9-lookup-em-area", "operacao": "porCodigo", "args": "EM13LGG103", "esperado": { "etapa": "EM", "competenciasNumeros": [1] } },
-    { "id": "C9-lookup-em-lp", "operacao": "porCodigo", "args": "EM13LP02", "esperado": { "etapa": "EM", "competenciasNumeros": [1] } },
-    { "id": "lookup-inexistente", "operacao": "porCodigo_erro", "args": "EF01CI99", "esperado": "não existe" },
-
-    { "id": "C11-cobertura-ci", "operacao": "contar_habilidadesEF", "args": { "componente": "CI" }, "esperado": 111 },
-    { "id": "lp-ano6", "operacao": "contar_habilidadesEF", "args": { "componente": "LP", "ano": 6 }, "esperado": 106 },
-    { "id": "C3-lp-ano6-leitura", "operacao": "contar_habilidadesEF", "args": { "componente": "LP", "ano": 6, "pratica": "Leitura" }, "esperado": 37 },
-    { "id": "C2-lp-anos-3a6", "operacao": "contar_uniao_anos_ef", "args": { "componente": "LP", "anos": [3, 4, 5, 6] }, "esperado": 238 },
-
-    { "id": "em-lgg", "operacao": "contar_habilidadesEM", "args": { "area": "LGG" }, "esperado": 82 },
-    { "id": "em-lgg-ce1", "operacao": "contar_habilidadesEM", "args": { "area": "LGG", "competencia": 1 }, "esperado": 30 },
-    { "id": "em-so-lp", "operacao": "contar_habilidadesEM", "args": { "apenasLP": true }, "esperado": 54 },
-
-    { "id": "C8-ei-campo-ts", "operacao": "contar_objetivosEI", "args": { "campo": "TS" }, "esperado": 9 },
-    { "id": "ei-todos", "operacao": "contar_objetivosEI", "args": {}, "esperado": 93 },
-
-    { "id": "C6-busca-fracoes", "operacao": "contar_buscar", "args": { "texto": "frações", "etapa": "EF", "componente": "MA" }, "esperado": 6, "nota": "plural exato; a consulta C6 do caso âncora usava prefixo 'fraç' (9)" },
-    { "id": "busca-sem-acento", "operacao": "contar_buscar", "args": { "texto": "fracoes", "etapa": "EF", "componente": "MA" }, "esperado": 6, "nota": "normalização: mesma contagem com e sem acento" },
-
-    { "id": "C8-progressao-ei", "operacao": "progressaoEI_codigos", "args": "EI02TS01", "esperado": ["EI01TS01", "EI02TS01", "EI03TS01"] },
-
-    { "id": "estatisticas", "operacao": "estatisticas", "args": null, "esperado": { "total": 1580, "educacaoInfantil": 93, "ensinoFundamental": 1304, "ensinoMedio": 183, "alinhamentosEI": 32, "competenciasGerais": 10, "competenciasEspecificas": 105 } }
-  ]
+ "descricao": "Consultas douradas compartilhadas entre os pacotes npm e PyPI (teste de paridade). Valores capturados do dataset validado dados-2026.07. Inclui as consultas do caso de uso âncora (C*).",
+ "data_version": "dados-2026.07",
+ "casos": [
+  {
+   "id": "decodifica-ei",
+   "operacao": "decodificar",
+   "args": "ei02ts01",
+   "esperado": {
+    "etapa": "EI",
+    "grupoEtario": "02",
+    "campoExperiencias": "TS",
+    "sequencia": 1
+   }
+  },
+  {
+   "id": "decodifica-ef-bloco",
+   "operacao": "decodificar",
+   "args": "EF67EF01",
+   "esperado": {
+    "etapa": "EF",
+    "anos": [
+     6,
+     7
+    ],
+    "bloco": true,
+    "componente": "EF",
+    "sequencia": 1
+   }
+  },
+  {
+   "id": "decodifica-em-area",
+   "operacao": "decodificar",
+   "args": "EM13LGG103",
+   "esperado": {
+    "etapa": "EM",
+    "area": "LGG",
+    "competenciaEspecifica": 1,
+    "sequencia": 3
+   }
+  },
+  {
+   "id": "decodifica-em-lp",
+   "operacao": "decodificar",
+   "args": "EM13LP02",
+   "esperado": {
+    "etapa": "EM",
+    "componente": "LP",
+    "competenciaEspecifica": null,
+    "sequencia": 2
+   }
+  },
+  {
+   "id": "decodifica-invalido-bloco",
+   "operacao": "decodificar_erro",
+   "args": "EF15MA01",
+   "esperado": "bloco"
+  },
+  {
+   "id": "decodifica-invalido-grama",
+   "operacao": "decodificar_erro",
+   "args": "XX99ZZ01",
+   "esperado": "gramática"
+  },
+  {
+   "id": "C4-lookup-ef67lp08",
+   "operacao": "porCodigo",
+   "args": "EF67LP08",
+   "esperado": {
+    "etapa": "EF",
+    "anos": [
+     6,
+     7
+    ],
+    "praticaLinguagem": "Leitura",
+    "temLocalizadorPdf": true
+   }
+  },
+  {
+   "id": "C9-lookup-em-area",
+   "operacao": "porCodigo",
+   "args": "EM13LGG103",
+   "esperado": {
+    "etapa": "EM",
+    "competenciasNumeros": [
+     1
+    ]
+   }
+  },
+  {
+   "id": "C9-lookup-em-lp",
+   "operacao": "porCodigo",
+   "args": "EM13LP02",
+   "esperado": {
+    "etapa": "EM",
+    "competenciasNumeros": [
+     1
+    ]
+   }
+  },
+  {
+   "id": "lookup-inexistente",
+   "operacao": "porCodigo_erro",
+   "args": "EF01CI99",
+   "esperado": "não existe"
+  },
+  {
+   "id": "C11-cobertura-ci",
+   "operacao": "contar_habilidadesEF",
+   "args": {
+    "componente": "CI"
+   },
+   "esperado": 111
+  },
+  {
+   "id": "lp-ano6",
+   "operacao": "contar_habilidadesEF",
+   "args": {
+    "componente": "LP",
+    "ano": 6
+   },
+   "esperado": 106
+  },
+  {
+   "id": "C3-lp-ano6-leitura",
+   "operacao": "contar_habilidadesEF",
+   "args": {
+    "componente": "LP",
+    "ano": 6,
+    "pratica": "Leitura"
+   },
+   "esperado": 37
+  },
+  {
+   "id": "C2-lp-anos-3a6",
+   "operacao": "contar_uniao_anos_ef",
+   "args": {
+    "componente": "LP",
+    "anos": [
+     3,
+     4,
+     5,
+     6
+    ]
+   },
+   "esperado": 238
+  },
+  {
+   "id": "em-lgg",
+   "operacao": "contar_habilidadesEM",
+   "args": {
+    "area": "LGG"
+   },
+   "esperado": 82
+  },
+  {
+   "id": "em-lgg-ce1",
+   "operacao": "contar_habilidadesEM",
+   "args": {
+    "area": "LGG",
+    "competencia": 1
+   },
+   "esperado": 30
+  },
+  {
+   "id": "em-so-lp",
+   "operacao": "contar_habilidadesEM",
+   "args": {
+    "apenasLP": true
+   },
+   "esperado": 54
+  },
+  {
+   "id": "C8-ei-campo-ts",
+   "operacao": "contar_objetivosEI",
+   "args": {
+    "campo": "TS"
+   },
+   "esperado": 9
+  },
+  {
+   "id": "ei-todos",
+   "operacao": "contar_objetivosEI",
+   "args": {},
+   "esperado": 93
+  },
+  {
+   "id": "C6-busca-fracoes",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "frações",
+    "etapa": "EF",
+    "componente": "MA"
+   },
+   "esperado": 6,
+   "nota": "plural exato; a consulta C6 do caso âncora usava prefixo 'fraç' (9)"
+  },
+  {
+   "id": "busca-sem-acento",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "fracoes",
+    "etapa": "EF",
+    "componente": "MA"
+   },
+   "esperado": 6,
+   "nota": "normalização: mesma contagem com e sem acento"
+  },
+  {
+   "id": "C8-progressao-ei",
+   "operacao": "progressaoEI_codigos",
+   "args": "EI02TS01",
+   "esperado": [
+    "EI01TS01",
+    "EI02TS01",
+    "EI03TS01"
+   ]
+  },
+  {
+   "id": "estatisticas",
+   "operacao": "estatisticas",
+   "args": null,
+   "esperado": {
+    "total": 1721,
+    "educacaoInfantil": 93,
+    "ensinoFundamental": 1304,
+    "ensinoMedio": 183,
+    "alinhamentosEI": 32,
+    "competenciasGerais": 10,
+    "competenciasEspecificas": 105,
+    "computacao": 141
+   }
+  },
+  {
+   "id": "porCodigo EF03CO05 (Computação)",
+   "operacao": "porCodigo",
+   "args": "EF03CO05",
+   "esperado": {
+    "etapa": "EF",
+    "anos": [
+     3
+    ],
+    "temLocalizadorPdf": true
+   }
+  },
+  {
+   "id": "decodificar EF15CO01 (Computação, bloco)",
+   "operacao": "decodificar",
+   "args": "EF15CO01",
+   "esperado": {
+    "etapa": "EF",
+    "anos": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ],
+    "bloco": true,
+    "sequencia": 1
+   }
+  },
+  {
+   "id": "decodificar EM13CO26 (Computação, EM)",
+   "operacao": "decodificar",
+   "args": "EM13CO26",
+   "esperado": {
+    "etapa": "EM",
+    "sequencia": 26
+   }
+  }
+ ]
 }

@@ -3,7 +3,33 @@ from ._codigos import decodificar
 from ._indice import indice, normalizar_texto, resolver_nome, versao as _versao
 
 
+def _resolver_co(reg):
+    i = indice()
+    etapa = decodificar(reg['codigo'])['etapa']
+    base = {'codigo': reg['codigo'], 'etapa': etapa, 'texto': reg['texto'],
+            'vigencia': reg['vigencia'], 'fonte': reg['fonte'],
+            'documento': 'computacao-2022'}
+    if etapa == 'EI':
+        return {**base,
+                'eixo': {'id': reg['eixo'], 'nome': i['co_eixos'].get(reg['eixo'], reg['eixo'])},
+                'grupo_etario': reg['grupo_etario']}
+    if etapa == 'EF':
+        return {**base,
+                'componente': {'id': 'co-comp-computacao', 'nome': 'Computação'},
+                'anos': reg['anos'],
+                'eixo': {'id': reg['eixo'], 'nome': i['co_eixos'].get(reg['eixo'], reg['eixo'])},
+                'objetos_conhecimento': [{'id': o, 'nome': i['co_objetos'].get(o, o)}
+                                         for o in reg['objetos_conhecimento']]}
+    c = i['co_competencias'].get(reg['competencia'], {})
+    return {**base,
+            'componente': {'id': 'co-comp-computacao', 'nome': 'Computação'},
+            'competencia_computacao': {'id': reg['competencia'],
+                                       'numero': c.get('numero', 0), 'texto': c.get('texto', '')}}
+
+
 def _resolver(reg):
+    if reg.get('documento') == 'computacao-2022':
+        return _resolver_co(reg)
     i = indice()
     etapa = decodificar(reg['codigo'])['etapa']
     base = {'codigo': reg['codigo'], 'etapa': etapa, 'texto': reg['texto'],
@@ -118,6 +144,12 @@ def buscar(texto, etapa=None, componente=None, ano=None):
         universo += i['habilidades_ef']
     if etapa in (None, 'EM'):
         universo += i['habilidades_em']
+    if etapa in (None, 'EI'):
+        universo += i['co_objetivos_ei']
+    if etapa in (None, 'EF'):
+        universo += i['co_habilidades_ef']
+    if etapa in (None, 'EM'):
+        universo += i['co_habilidades_em']
     comp = componente if (componente is None or '-comp-' in componente) else f'ef-comp-{componente.lower()}'
     saida = []
     for r in universo:
@@ -136,6 +168,10 @@ def progressao_ei(codigo):
     reg = por_codigo(codigo)
     if reg['etapa'] != 'EI':
         raise ValueError(f"{reg['codigo']}: progressão por alinhamento só existe na Educação Infantil")
+    if reg.get('documento') == 'computacao-2022':
+        raise ValueError(f"{reg['codigo']}: objetivos do complemento de Computação não têm alinhamento "
+                         'oficial entre grupos etários (dica: a progressão por alinhamento cobre só os '
+                         'objetivos da BNCC 2018)')
     al = indice()['alinhamento_por_id'][reg['alinhamento']]
     return {'alinhamento': al['id'], 'objetivos': [por_codigo(c) for c in al['objetivos']],
             'nota': al.get('nota')}
@@ -149,14 +185,16 @@ def estrutura():
 def estatisticas():
     """Contagens do dataset."""
     i = indice()
+    co_total = len(i['co_objetivos_ei']) + len(i['co_habilidades_ef']) + len(i['co_habilidades_em'])
     return {
-        'total': len(i['objetivos_ei']) + len(i['habilidades_ef']) + len(i['habilidades_em']),
+        'total': len(i['objetivos_ei']) + len(i['habilidades_ef']) + len(i['habilidades_em']) + co_total,
         'educacao_infantil': len(i['objetivos_ei']),
         'ensino_fundamental': len(i['habilidades_ef']),
         'ensino_medio': len(i['habilidades_em']),
         'alinhamentos_ei': len(i['alinhamentos']),
         'competencias_gerais': len(i['estrutura']['competencias_gerais']),
         'competencias_especificas': len(i['estrutura']['competencias_especificas']),
+        'computacao': co_total,
     }
 
 

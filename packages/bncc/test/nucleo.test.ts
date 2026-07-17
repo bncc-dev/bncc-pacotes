@@ -33,8 +33,7 @@ describe('núcleo injetável (criarConsultas)', () => {
     expect(c.porCodigo('EM13LGG103')).toEqual(porCodigo('EM13LGG103'));
   });
 
-  it('mantém as contagens do dataset', () => {
-    expect(c.estatisticas()).toEqual(estatisticas());
+  it('mantém as contagens do dataset (núcleo sem o módulo CO = só BNCC 2018)', () => {
     expect(c.estatisticas().total).toBe(1580);
   });
 
@@ -49,9 +48,11 @@ describe('núcleo injetável (criarConsultas)', () => {
 describe('complemento de Computação injetado (computacao-2022)', () => {
   const cCO = criarConsultas({ ...dados, computacao: carregar('computacao.json') });
 
-  it('soma as 141 aprendizagens CO às contagens', () => {
+  it('soma as 141 aprendizagens CO às contagens (paridade com a casca fs, que liga o módulo por padrão)', () => {
     expect(cCO.estatisticas().total).toBe(1721);
     expect((cCO.estatisticas() as { computacao?: number }).computacao).toBe(141);
+    expect(cCO.estatisticas()).toEqual(estatisticas());
+    expect(cCO.porCodigo('EF03CO05')).toEqual(porCodigo('EF03CO05'));
   });
 
   it('resolve registros CO das três etapas com eixo e contexto', () => {
@@ -93,7 +94,7 @@ describe('complemento de Computação injetado (computacao-2022)', () => {
     expect(() => decodificar('EF12CO01')).toThrow(/bloco '12' inválido/);
   });
 
-  it('sem o módulo injetado, nada muda (npm atual)', () => {
+  it('sem o módulo injetado, o núcleo serve só a BNCC 2018', () => {
     expect(c.estatisticas().total).toBe(1580);
     expect((c.estatisticas() as { computacao?: number }).computacao).toBeUndefined();
     expect(() => c.porCodigo('EF03CO05')).toThrow(/não existe/);
