@@ -1,10 +1,37 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { breadcrumbJsonLd } from '../../lib/dados';
-import { BENCHMARK, NOME_TAREFA, dataCurta, nota, pct, pct1, usd } from '../../lib/benchmark';
+import { BENCHMARK, NOME_TAREFA, dataCurta, nota, pct, usd } from '../../lib/benchmark';
 
 const b = BENCHMARK;
 const m = b.meta;
+
+// Valores agregados para os "Principais achados" (derivados, não editados à mão).
+const primeiro = b.modelos[0];
+const ultimo = b.modelos[b.modelos.length - 1];
+const media = (f: (x: (typeof b.modelos)[number]) => number): number =>
+  b.modelos.reduce((s, x) => s + f(x), 0) / b.modelos.length;
+const mediaFiel = media((x) => x.a_fiel);
+const mediaAluc = media((x) => x.a_aluc);
+const mediaNegaReais = 1 - media((x) => x.b_reais);
+const recEtapa = Object.fromEntries(b.recortes.por_etapa.map((r) => [r.rotulo, r.taxa]));
+const recModulo = Object.fromEntries(b.recortes.por_modulo.map((r) => [r.rotulo, r.taxa]));
+
+// Amostras cruas reais por modelo (até 10 cada), para o drawer de JSON bruto.
+// Vem prontas do exportador do benchmark; o arquivo completo (900 respostas por
+// modelo) fica gated na release dados-v1.0.0.
+const amostrasPorModelo: Record<string, unknown[]> = {};
+for (const [modelo, lista] of Object.entries(b.amostras_drawer)) {
+  amostrasPorModelo[modelo] = lista.map((a) => ({
+    item_id: a.item_id,
+    parafrase: a.parafrase,
+    tarefa: a.tarefa,
+    pergunta: a.pergunta,
+    resposta: a.resposta,
+    veredito: a.veredito,
+    ok: a.ok,
+  }));
+}
 
 const LOGOS: Record<string, string> = {
   OpenAI: 'openai',
@@ -27,11 +54,14 @@ const LOGOS: Record<string, string> = {
     <li>leaderboard</li>
   </ol>
 
+  <div class="badges-topo">
+    <span class="pub-label selo-vermelho">Benchmark de alucinação</span><span class="versao-label">{m.versao}</span>
+  </div>
+
   <div class="cabecalho">
     <div class="cabecalho-texto">
-      <span class="pub-label selo-vermelho">Benchmark de alucinação</span><span class="versao-label">{m.versao}</span>
       <h1 class="abre">Leaderboard do benchmark</h1>
-      <p class="abre-sub">Mede quanto cada modelo inventa a BNCC quando não tem uma fonte pra consultar. Aqui estão a nota por dimensão, uma amostra das respostas usadas no julgamento e o detalhe de cada modelo. Para a leitura guiada, veja o <a href="/benchmark/">resumo dos resultados</a>.</p>
+      <p class="abre-sub">Modelos de linguagem tendem a produzir códigos e textos da BNCC que parecem plausíveis, mas não existem. Medimos essa alucinação em condição fechada, sem acesso a fonte externa (como pesquisa web ou datasets), ao longo de cinco dimensões de competência curricular. A metodologia separa a invenção pura (códigos ausentes de qualquer fonte) da confusão com currículos derivados, com temperatura fixa e versões pinadas para reprodutibilidade. Esta página traz a tabela completa por modelo, a nota por dimensão e as respostas cruas. Leitura guiada no <a href="/benchmark/">resumo dos resultados</a>.</p>
     </div>
 
     <div class="metadados" aria-label="Metadados da rodada">
@@ -43,9 +73,7 @@ const LOGOS: Record<string, string> = {
     </div>
   </div>
 
-  <section class="faixa faixa-tabela" aria-labelledby="h-tabela">
-    <h2 id="h-tabela">Tabela completa por modelo</h2>
-    <p class="h2-hint hint-tabela">A nota composta é a média de cinco dimensões: reconhecer códigos reais, recusar códigos falsos, transcrever fielmente, achar o código pelo texto e citar com texto certo. <strong>"Invenção pura"</strong> conta só a aceitação de códigos que não existem em nenhuma fonte, nem oficial nem em currículo derivado; <strong>"confusão-derivado"</strong> mede à parte os códigos que não estão na BNCC mas existem em currículos derivados dela. Curiosidade da rodada: em {m.total_respostas.toLocaleString('pt-BR')} respostas, houve <strong>{m.abstencoes_a === 1 ? 'uma única abstenção' : `${m.abstencoes_a} abstenções`}</strong> na tarefa de transcrição. Nenhum modelo tem o hábito de dizer "não sei".</p>
+  <section class="faixa faixa-tabela" aria-label="Tabela do leaderboard por modelo">
     <div class="rolagem">
       <table>
         <thead>
@@ -53,12 +81,12 @@ const LOGOS: Record<string, string> = {
             <th>#</th>
             <th>Modelo</th>
             <th class="num">Nota <span class="th-info" tabindex="0" data-tip="Nota composta 0-100: média das cinco dimensões medidas. Critério de ordenação da tabela.">i</span></th>
-            <th class="num">B reais <span class="th-info" tabindex="0" data-tip="Códigos reais confirmados: perguntado se um código verdadeiro existe, disse que sim.">i</span></th>
+            <th class="num">Confirma <span class="th-info" tabindex="0" data-tip="Códigos reais confirmados: perguntado se um código verdadeiro existe, disse que sim.">i</span></th>
             <th class="num">Invenção pura <span class="th-info" tabindex="0" data-tip="Códigos falsos aceitos como reais, contando só os que não existem em NENHUMA fonte (protocolo anti-vexame). Quanto menor, melhor.">i</span></th>
             <th class="num">Confusão-derivado <span class="th-info" tabindex="0" data-tip="Códigos que não estão na BNCC mas existem em currículos derivados dela, aceitos como reais. Erro mais desculpável, medido à parte. Quanto menor, melhor.">i</span></th>
-            <th class="num">A fiel <span class="th-info" tabindex="0" data-tip="Transcrição: pedido o texto oficial de um código real, respondeu com o texto certo (exato ou paráfrase fiel).">i</span></th>
-            <th class="num">D <span class="th-info" tabindex="0" data-tip="Lookup inverso: dado o texto oficial de uma habilidade, encontrou o código correspondente.">i</span></th>
-            <th class="num">C texto ok <span class="th-info" tabindex="0" data-tip="Geração aberta: dos códigos que o modelo citou espontaneamente em listas, quantos vieram com o texto oficial certo.">i</span></th>
+            <th class="num">Transcreve <span class="th-info" tabindex="0" data-tip="Transcrição: pedido o texto oficial de um código real, respondeu com o texto certo (exato ou paráfrase fiel).">i</span></th>
+            <th class="num">Localiza <span class="th-info" tabindex="0" data-tip="Lookup inverso: dado o texto oficial de uma habilidade, encontrou o código correspondente.">i</span></th>
+            <th class="num">Cita <span class="th-info" tabindex="0" data-tip="Geração aberta: dos códigos que o modelo citou espontaneamente em listas, quantos vieram com o texto oficial certo.">i</span></th>
             <th class="num">Custo US$ <span class="th-info alinhar-direita" tabindex="0" data-tip={`Custo total das ${(m.total_itens * 3).toLocaleString('pt-BR')} respostas deste modelo na rodada.`}>i</span></th>
           </tr>
         </thead>
@@ -79,17 +107,96 @@ const LOGOS: Record<string, string> = {
               </tr>
               <tr class="linha-detalhe" id={`det-${mod.posicao}`}>
                 <td colspan="10"><div class="detalhe-viewport"><div class="detalhe-inner"><div class="detalhe">
-                  {mod.exemplos.map((ex) => (
-                    <div class:list={['detalhe-exemplo', ex.rotulo]}>
-                      <p class="detalhe-rotulo">{ex.rotulo === 'invencao' ? 'Exemplo de invenção' : ex.rotulo === 'confusao' ? 'Exemplo de confusão com currículo derivado' : 'Exemplo de abstenção'}</p>
-                      <p class="detalhe-pergunta">"{ex.pergunta}"</p>
-                      <p>"{ex.resposta}"</p>
-                      <p class="detalhe-explica">{ex.explicacao}</p>
+                  <div class="detalhe-grid">
+                    <aside class="ficha" aria-label={`Perfil quantitativo de ${mod.nome}`}>
+                      <p class="ficha-titulo">Perfil deste modelo</p>
+
+                      <div class="ficha-bloco">
+                        <div class="ficha-rot">
+                          <span>Desempenho por tarefa</span>
+                          <label class="visualmente-oculto" for={`sel-tarefa-${mod.posicao}`}>Escolha a tarefa</label>
+                          <select class="ficha-sel" id={`sel-tarefa-${mod.posicao}`}>
+                            <option value="A">A · transcrição</option>
+                            <option value="C">C · geração aberta</option>
+                            <option value="D">D · lookup inverso</option>
+                          </select>
+                        </div>
+
+                        <div class="tarefa-vis" data-tarefa="A">
+                          <div class="barra-a" role="img" aria-label={`fiel ${pct(mod.a_fiel)}, alucinou ${pct(mod.a_aluc)}, absteve ${pct(mod.a_abstencao)}`}>
+                            <span class="seg fiel" style={`width:${mod.a_fiel * 100}%`}></span>
+                            <span class="seg aluc" style={`width:${mod.a_aluc * 100}%`}></span>
+                            <span class="seg abst" style={`width:${mod.a_abstencao * 100}%`}></span>
+                          </div>
+                          <div class="ficha-legenda">
+                            <span><i class="pt fiel"></i>transcreveu fiel <b>{pct(mod.a_fiel)}</b></span>
+                            <span><i class="pt aluc"></i>alucinou o texto <b>{pct(mod.a_aluc)}</b></span>
+                            <span><i class="pt abst"></i>absteve-se <b>{pct(mod.a_abstencao)}</b></span>
+                          </div>
+                        </div>
+
+                        <div class="tarefa-vis oculto" data-tarefa="C">
+                          <div class="barra-a" role="img" aria-label={`texto certo ${pct(mod.c_texto_ok)}, texto errado ${pct(Math.max(0, 1 - mod.c_texto_ok - mod.c_inventados))}, inventou ${pct(mod.c_inventados)}`}>
+                            <span class="seg fiel" style={`width:${mod.c_texto_ok * 100}%`}></span>
+                            <span class="seg abst" style={`width:${Math.max(0, 1 - mod.c_texto_ok - mod.c_inventados) * 100}%`}></span>
+                            <span class="seg aluc" style={`width:${mod.c_inventados * 100}%`}></span>
+                          </div>
+                          <div class="ficha-legenda">
+                            <span><i class="pt fiel"></i>texto certo <b>{pct(mod.c_texto_ok)}</b></span>
+                            <span><i class="pt abst"></i>existe, texto errado <b>{pct(Math.max(0, 1 - mod.c_texto_ok - mod.c_inventados))}</b></span>
+                            <span><i class="pt aluc"></i>inventou o código <b>{pct(mod.c_inventados)}</b></span>
+                          </div>
+                          <p class="tarefa-nota">sobre {mod.c_citados.toLocaleString('pt-BR')} códigos citados espontaneamente</p>
+                        </div>
+
+                        <div class="tarefa-vis oculto" data-tarefa="D">
+                          <div class="barra-a" role="img" aria-label={`achou o código ${pct(mod.d_ok)}, errou ${pct(1 - mod.d_ok)}`}>
+                            <span class="seg fiel" style={`width:${mod.d_ok * 100}%`}></span>
+                            <span class="seg aluc" style={`width:${(1 - mod.d_ok) * 100}%`}></span>
+                          </div>
+                          <div class="ficha-legenda">
+                            <span><i class="pt fiel"></i>achou o código <b>{pct(mod.d_ok)}</b></span>
+                            <span><i class="pt aluc"></i>errou <b>{pct(1 - mod.d_ok)}</b></span>
+                          </div>
+                          <p class="tarefa-nota">dado o texto oficial, encontrar o código correspondente</p>
+                        </div>
+                      </div>
+
+                      <div class="ficha-bloco">
+                        <div class="ficha-rot">Códigos falsos aceitos como reais</div>
+                        <div class="mini">
+                          <span class="mini-k">invenção pura</span>
+                          <span class="mini-track"><b class="err" style={`width:${Math.max(mod.invencao_pura * 100, 1.5)}%`}></b></span>
+                          <span class="mini-v">{pct(mod.invencao_pura)}</span>
+                        </div>
+                        <div class="mini">
+                          <span class="mini-k">confusão-derivado</span>
+                          <span class="mini-track"><b class="warn" style={`width:${Math.max(mod.confusao_derivado * 100, 1.5)}%`}></b></span>
+                          <span class="mini-v">{pct(mod.confusao_derivado)}</span>
+                        </div>
+                      </div>
+
+                      <div class="ficha-nums">
+                        <div><b>{mod.c_citados.toLocaleString('pt-BR')}</b><span>códigos citados (C)</span></div>
+                        <div><b>US$ {(mod.custo_usd / (m.total_itens * 3)).toFixed(3).replace('.', ',')}</b><span>por resposta</span></div>
+                      </div>
+                    </aside>
+
+                    <div class="detalhe-exemplos">
+                      {mod.exemplos.map((ex) => (
+                        <div class:list={['detalhe-exemplo', ex.rotulo]}>
+                          <p class="detalhe-rotulo">{ex.rotulo === 'invencao' ? 'Exemplo de invenção' : ex.rotulo === 'confusao' ? 'Exemplo de confusão com currículo derivado' : 'Exemplo de abstenção'}</p>
+                          <p class="detalhe-pergunta">"{ex.pergunta}"</p>
+                          <p>"{ex.resposta}"</p>
+                          <p class="detalhe-explica">{ex.explicacao}</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+
                   <div class="detalhe-rodape">
+                    <button type="button" class="ver-bruto" data-modelo={mod.id} data-nome={mod.nome}>ver JSON bruto ({(amostrasPorModelo[mod.id] || []).length} amostras)</button>
                     {mod.cortados > 0 && <span>{mod.cortados} respostas cortadas por limite técnico, fora das taxas</span>}
-                    <span>inventou {pct1(mod.c_inventados)} dos {mod.c_citados.toLocaleString('pt-BR')} códigos que citou em listas</span>
                     <span>arquivo bruto completo ({(m.total_itens * 3).toLocaleString('pt-BR')} respostas): publicação junto com o dataset 1.0</span>
                   </div>
                 </div></div></div></td>
@@ -102,9 +209,39 @@ const LOGOS: Record<string, string> = {
     <p class="h2-hint" style="margin-top:12px">Passe o mouse no <code>i</code> de cada coluna para ver o que ela mede. Clique numa linha para ver exemplos reais das respostas do modelo.</p>
   </section>
 
+  <section class="faixa" aria-labelledby="h-achados">
+    <h2 id="h-achados">Principais achados</h2>
+    <p class="h2-hint">O que a rodada mostra, em condição fechada. Resultados preliminares: a validação humana por amostra acontece antes da publicação 1.0.</p>
+    <ol class="achados">
+      <li><strong>Alucinar é a regra, não a exceção.</strong> Na transcrição, os modelos acertaram o texto oficial em apenas {pct(mediaFiel)} das vezes e o inventaram em {pct(mediaAluc)}. E negaram {pct(mediaNegaReais)} dos códigos que existem de verdade.</li>
+      <li><strong>Quase ninguém diz "não sei".</strong> Foram {m.abstencoes_a === 1 ? 'uma única abstenção' : `${m.abstencoes_a} abstenções`} em {m.total_respostas.toLocaleString('pt-BR')} respostas. O comportamento padrão é responder com confiança, mesmo errado.</li>
+      <li><strong>O intervalo entre modelos é enorme.</strong> Da nota {nota(primeiro.nota)} ({primeiro.nome}) à {nota(ultimo.nota)} ({ultimo.nome}). Mesmo o líder aceita {pct(primeiro.invencao_pura)} de códigos inventados como reais.</li>
+      <li><strong>Conteúdo mais recente é o ponto fraco.</strong> A alucinação salta de {pct(recModulo['BNCC 2018'])} na BNCC de 2018 para {pct(recModulo['Computação 2022'])} no complemento de Computação de 2022, e cresce da Educação Infantil ({pct(recEtapa['Infantil'])}) ao Ensino Médio ({pct(recEtapa['Médio'])}). Quanto mais novo o conteúdo, mais o modelo inventa, e mais uma fonte estruturada importa.</li>
+      <li><strong>Marca e preço não são garantia.</strong> Uma mesma fabricante aparece no pódio e na metade de baixo da tabela; modelos econômicos e caros se misturam no ranking. O nome do modelo não prediz se ele conhece a BNCC.</li>
+    </ol>
+  </section>
+
+  <section class="faixa" aria-labelledby="h-tabela">
+    <h2 id="h-tabela">As cinco dimensões da nota</h2>
+    <p class="h2-hint hint-tabela">A nota composta corresponde à média de cinco dimensões: reconhecimento de códigos reais, recusa de códigos inexistentes, fidelidade de transcrição, recuperação de código a partir do texto e citação espontânea com texto correto. A métrica de <strong>invenção pura</strong> contabiliza apenas a aceitação de códigos ausentes de qualquer fonte, oficial ou derivada; a <strong>confusão-derivado</strong> é medida à parte e cobre códigos inexistentes na BNCC, porém presentes em currículos dela derivados. Observação da rodada: em {m.total_respostas.toLocaleString('pt-BR')} respostas, registrou-se <strong>{m.abstencoes_a === 1 ? 'uma única abstenção' : `${m.abstencoes_a} abstenções`}</strong>, na tarefa de transcrição. Nenhum modelo demonstra a disposição de responder "não sei".</p>
+  </section>
+
+  <section class="faixa" aria-labelledby="h-metodo">
+    <h2 id="h-metodo">Protocolo de medição</h2>
+    <p class="h2-hint hint-tabela">Cada <strong>item</strong> é uma pergunta de teste sobre a BNCC (por exemplo: se um código existe, ou qual é o texto oficial de uma habilidade). Foram {m.total_itens} itens, e cada um foi apresentado de três formas diferentes (as <strong>formulações</strong>, para o resultado não depender de como a pergunta é redigida) a {m.total_modelos} modelos, em <strong>condição fechada</strong>, ou seja, sem deixar o modelo consultar nenhuma fonte externa. O total são {m.total_respostas.toLocaleString('pt-BR')} respostas, cada uma julgada, uma a uma, contra o gabarito verificado.</p>
+    <ul class="garantias">
+      <li><strong>Condição sem ferramenta:</strong> a medição isola a memória do modelo, sem consulta a fonte externa. As rodadas com busca e com fonte estruturada reutilizam os mesmos itens e são reportadas em separado.</li>
+      <li><strong>Gabarito verificado:</strong> o padrão de referência são as 1.721 aprendizagens do dataset, conferidas contra os documentos homologados do MEC.</li>
+      <li><strong>Verificação anti-vexame dos falsos:</strong> cada código falso foi checado individualmente, com adjudicação humana registrada; um código ausente da BNCC mas presente em currículo derivado é contabilizado à parte, como confusão-derivado.</li>
+      <li><strong>Julgamento auditável:</strong> o juiz automático registra cada decisão, item a item. A validação humana por amostra, pela Equipe Pedagógica, está prevista antes da publicação 1.0.</li>
+      <li><strong>Determinismo:</strong> temperatura 0 e versões pinadas; cada resposta carrega o checkpoint do modelo, a rota que a serviu e a data.</li>
+      <li><strong>Truncamentos não penalizam:</strong> respostas cortadas por limite técnico são registradas como artefato de execução e ficam fora das taxas.</li>
+    </ul>
+  </section>
+
   <section class="faixa" aria-labelledby="h-respostas">
     <h2 id="h-respostas">Amostra das respostas cruas</h2>
-    <p class="h2-hint">Cada cartão é uma resposta real da rodada, com o julgamento que ela recebeu. Os arquivos completos (todas as {m.total_respostas.toLocaleString('pt-BR')} respostas, com prompt, tokens e custo por chamada) serão publicados junto com a versão 1.0 do dataset.</p>
+    <p class="h2-hint">Cada cartão reproduz uma resposta real da rodada, com o julgamento atribuído. Os arquivos completos (as {m.total_respostas.toLocaleString('pt-BR')} respostas, com prompt, tokens e custo por chamada) serão publicados com a versão 1.0 do dataset.</p>
 
     <div class="filtro-bar">
       <select id="filtro-modelo" aria-label="Filtrar por modelo">
@@ -135,24 +272,35 @@ const LOGOS: Record<string, string> = {
     <p class="h2-hint" id="sem-amostras" style="display:none; margin-top:12px">Nenhuma amostra com esse filtro.</p>
   </section>
 
-  <section class="faixa" aria-labelledby="h-heldout">
-    <h2 id="h-heldout">O que não está aqui, de propósito</h2>
+  <section class="faixa" aria-labelledby="h-fecho">
+    <h2 id="h-fecho">Limitações e próximos passos</h2>
     <div class="heldout">
-      <strong>Held-out privado.</strong> Uma fração dos itens nunca é publicada, nem aqui nem no repositório. Serve para medir, em remedições futuras, se um modelo aprendeu a BNCC ou memorizou este benchmark. Se os números públicos subirem sem o held-out acompanhar, o ganho foi memorização de teste.
+      <strong>Held-out privado.</strong> Uma fração dos itens não é publicada, aqui ou no repositório. Serve para distinguir, em remedições futuras, aprendizado real da BNCC de memorização deste benchmark: se as taxas públicas melhorarem sem o held-out acompanhar, o ganho foi memorização do teste.
     </div>
+    <ol class="proximos">
+      <li><strong>Rodadas com ferramenta.</strong> A mesma bateria com busca web e com fonte estruturada (bncc.dev), para medir quanto o acesso à fonte derruba a alucinação.</li>
+      <li><strong>Validação humana.</strong> Amostra das respostas julgada pela Equipe Pedagógica, antes da publicação 1.0.</li>
+      <li><strong>Publicação completa.</strong> Repositório público e os arquivos brutos das {m.total_respostas.toLocaleString('pt-BR')} respostas, na release <code>dados-v1.0.0</code>.</li>
+      <li><strong>Remedição contínua.</strong> Reexecução quando surgir um modelo novo relevante, com o held-out separando aprendizado real de memorização do teste.</li>
+    </ol>
   </section>
 
-  <section class="faixa" aria-labelledby="h-confianca">
-    <h2 id="h-confianca">Como isso foi medido</h2>
-    <ul class="garantias">
-      <li><strong>Rodada sem ferramenta:</strong> mede a memória dos modelos. As rodadas com busca e com fonte estruturada usam os mesmos itens e são publicadas em separado.</li>
-      <li><strong>Gabarito é o dataset verificado:</strong> as mesmas 1.721 aprendizagens conferidas contra os documentos homologados do MEC.</li>
-      <li><strong>Códigos falsos, checados um a um:</strong> protocolo anti-vexame com adjudicação humana registrada. Nenhuma "invenção pura" existe por acaso em currículo derivado; quando existe, vira a métrica separada de confusão-derivado.</li>
-      <li><strong>Julgamento automático com trilha completa:</strong> juiz automático com registro de cada decisão, item a item. A validação humana por amostra, pela Equipe Pedagógica, está no roteiro antes da publicação 1.0.</li>
-      <li><strong>Temperatura 0, versões pinadas:</strong> cada resposta registra o checkpoint exato do modelo, a rota que o serviu e a data.</li>
-      <li><strong>Respostas cortadas não punem:</strong> truncamento por limite técnico é registrado como artefato de execução e fica fora das taxas.</li>
-    </ul>
-  </section>
+  <script type="application/json" id="amostras-json" set:html={JSON.stringify(amostrasPorModelo)}></script>
+
+  <div class="drawer-fundo" id="drawer-fundo"></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-nome">
+    <div class="drawer-cabecalho">
+      <div class="drawer-titulo">
+        <span class="rotulo">Amostra bruta · JSON</span>
+        <span class="nome" id="drawer-nome"></span>
+      </div>
+      <button class="drawer-fechar" id="drawer-fechar" type="button" aria-label="Fechar">×</button>
+    </div>
+    <div class="drawer-corpo">
+      <pre id="drawer-conteudo"></pre>
+      <p class="drawer-nota" id="drawer-nota"></p>
+    </div>
+  </aside>
 </Base>
 
 <svg style="display:none" aria-hidden="true">
@@ -202,6 +350,16 @@ const LOGOS: Record<string, string> = {
     });
   });
 
+  // seletor de tarefa na ficha "Perfil deste modelo" (A/C/D)
+  document.querySelectorAll('.ficha-sel').forEach((sel) => {
+    sel.addEventListener('change', () => {
+      const bloco = sel.closest('.ficha-bloco');
+      bloco.querySelectorAll('.tarefa-vis').forEach((vis) => {
+        vis.classList.toggle('oculto', vis.dataset.tarefa !== sel.value);
+      });
+    });
+  });
+
   // filtros da amostra de respostas
   const filtroModelo = document.getElementById('filtro-modelo');
   const filtroVeredito = document.getElementById('filtro-veredito');
@@ -219,6 +377,48 @@ const LOGOS: Record<string, string> = {
   }
   filtroModelo.addEventListener('change', filtrar);
   filtroVeredito.addEventListener('change', filtrar);
+
+  // drawer lateral com o JSON bruto das amostras reais por modelo
+  const amostrasPorModelo = JSON.parse(document.getElementById('amostras-json').textContent || '{}');
+  const drawer = document.getElementById('drawer');
+  const drawerFundo = document.getElementById('drawer-fundo');
+  const drawerNome = document.getElementById('drawer-nome');
+  const drawerConteudo = document.getElementById('drawer-conteudo');
+  const drawerNota = document.getElementById('drawer-nota');
+  const TOTAL_POR_MODELO = 900;
+  let ultimoFoco = null;
+
+  function abrirDrawer(modeloId, nome, origem) {
+    const amostras = amostrasPorModelo[modeloId] || [];
+    ultimoFoco = origem;
+    drawerNome.textContent = `brutos-${modeloId}-seco.jsonl`;
+    // formato JSONL: uma resposta real por linha, como no arquivo bruto
+    drawerConteudo.textContent = amostras.map((linha) => JSON.stringify(linha)).join('\n');
+    drawerNota.innerHTML = `Mostrando <strong>${amostras.length}</strong> de ${TOTAL_POR_MODELO.toLocaleString('pt-BR')} respostas de <strong>${nome}</strong>. O arquivo bruto completo será publicado junto com o dataset 1.0.`;
+    drawerFundo.classList.add('aberta');
+    drawer.classList.add('aberta');
+    document.getElementById('drawer-fechar').focus();
+    document.body.style.overflow = 'hidden';
+  }
+
+  function fecharDrawer() {
+    drawerFundo.classList.remove('aberta');
+    drawer.classList.remove('aberta');
+    document.body.style.overflow = '';
+    if (ultimoFoco) ultimoFoco.focus();
+  }
+
+  document.querySelectorAll('.ver-bruto').forEach((botao) => {
+    botao.addEventListener('click', (ev) => {
+      ev.stopPropagation(); // não deixa o clique fechar a linha expandida
+      abrirDrawer(botao.dataset.modelo, botao.dataset.nome, botao);
+    });
+  });
+  document.getElementById('drawer-fechar').addEventListener('click', fecharDrawer);
+  drawerFundo.addEventListener('click', fecharDrawer);
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape' && drawer.classList.contains('aberta')) fecharDrawer();
+  });
 </script>
 
 <style>
@@ -235,12 +435,12 @@ const LOGOS: Record<string, string> = {
   .md-item .md-k { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); font-weight: 600; }
   .md-item .md-v { font-family: var(--mono); font-size: 13px; font-weight: 600; text-align: right; }
 
-  section.faixa { padding: 32px 0 0; margin-top: 32px; border-top: 1px solid var(--border); }
+  section.faixa { padding: 32px 0 0; margin-top: 32px; }
   section.faixa > h2 { font-size: 19px; font-weight: 700; letter-spacing: -.015em; margin: 0 0 6px; }
   section.faixa .h2-hint { font-size: 13px; margin: 0 0 18px; max-width: 74ch; line-height: 1.6; }
 
   section.faixa-tabela { border-top: 0; padding-top: 0; margin-top: 32px; }
-  .hint-tabela { font-size: 14.5px; max-width: none; }
+  section.faixa .hint-tabela { font-size: 14.5px; max-width: none; }
 
   .rolagem { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
   table { border-collapse: collapse; width: 100%; font-size: 12.5px; min-width: 860px; }
@@ -258,7 +458,7 @@ const LOGOS: Record<string, string> = {
 
   tbody tr.linha-modelo { cursor: pointer; }
   .btn-expandir { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-family: var(--mono); color: var(--ink-muted); background: none; border: none; padding: 3px 6px; margin: -3px -6px; border-radius: 5px; cursor: pointer; }
-  .btn-expandir .seta { display: inline-block; font-size: 9px; transition: transform .15s ease; color: var(--border-strong); }
+  .btn-expandir .seta { display: inline-block; font-size: 13px; transition: transform .15s ease; color: var(--border-strong); }
   .btn-expandir[aria-expanded="true"] .seta { transform: rotate(90deg); color: var(--accent-ink); }
   .btn-expandir:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent); }
   tr.linha-modelo.aberta { background: var(--bg-subtle); }
@@ -268,10 +468,53 @@ const LOGOS: Record<string, string> = {
   .detalhe-viewport { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .22s ease; }
   tr.linha-detalhe.aberta .detalhe-viewport { grid-template-rows: 1fr; }
   .detalhe-inner { overflow: hidden; min-height: 0; }
-  .detalhe { font-size: 12.5px; line-height: 1.6; max-width: 68ch; padding: 16px 16px 16px 52px; }
+  .detalhe { font-size: 12.5px; line-height: 1.6; padding: 16px 20px 16px 52px; }
   .detalhe p { margin: 0; }
 
+  .detalhe-grid { display: grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: 28px; align-items: start; }
+  .detalhe-exemplos { max-width: 68ch; }
+
+  /* Ficha quantitativa (coluna direita) */
+  .ficha { border: 1px solid var(--border); border-radius: 10px; background: var(--bg); padding: 14px 16px 16px; }
+  .ficha-titulo { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-muted); margin: 0 0 12px !important; }
+  .ficha-bloco { margin-bottom: 14px; }
+  .ficha-rot { font-size: 11.5px; font-weight: 650; margin-bottom: 7px; display: flex; align-items: center; justify-content: space-between; gap: 7px; }
+  .ficha-tag { font-family: var(--mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-muted); background: var(--bg-subtle); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+
+  .ficha-sel { font: inherit; font-family: var(--mono); font-size: 10.5px; font-weight: 600; color: var(--accent-ink); background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 5px; padding: 2px 6px; cursor: pointer; }
+  .ficha-sel:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+  .tarefa-vis.oculto { display: none; }
+  .tarefa-nota { margin: 7px 0 0 !important; font-size: 10.5px; color: var(--ink-muted); }
+  .visualmente-oculto { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .barra-a { display: flex; height: 8px; border-radius: 999px; overflow: hidden; background: var(--bg-subtle); }
+  .barra-a .seg { height: 100%; }
+  .barra-a .seg.fiel { background: var(--accent); }
+  .barra-a .seg.aluc { background: var(--erro); }
+  .barra-a .seg.abst { background: var(--border-strong); }
+  .ficha-legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 11px; color: var(--ink-muted); }
+  .ficha-legenda span { display: inline-flex; align-items: center; gap: 5px; }
+  .ficha-legenda b { color: var(--ink); font-family: var(--mono); font-weight: 600; }
+  .ficha-legenda .pt { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .pt.fiel { background: var(--accent); }
+  .pt.aluc { background: var(--erro); }
+  .pt.abst { background: var(--border-strong); }
+
+  .mini { display: grid; grid-template-columns: 110px 1fr 40px; align-items: center; gap: 9px; margin-top: 6px; font-size: 11px; }
+  .mini-k { color: var(--ink-muted); }
+  .mini-track { height: 6px; border-radius: 999px; background: var(--bg-subtle); overflow: hidden; }
+  .mini-track b { display: block; height: 100%; }
+  .mini-track .err { background: var(--erro); }
+  .mini-track .warn { background: var(--alerta, #9a6b00); }
+  .mini-v { text-align: right; font-family: var(--mono); font-weight: 600; }
+
+  .ficha-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; padding-top: 4px; }
+  .ficha-nums > div { display: flex; flex-direction: column; }
+  .ficha-nums b { font-family: var(--mono); font-size: 15px; font-weight: 700; line-height: 1.1; }
+  .ficha-nums span { font-size: 10.5px; color: var(--ink-muted); margin-top: 2px; }
+
   .detalhe-exemplo { position: relative; margin: 0 0 12px; padding: 8px 12px 9px; border-radius: 0 5px 5px 0; border-left: 3px solid var(--border-strong); background: var(--bg); }
+  .detalhe-exemplos .detalhe-exemplo:last-child { margin-bottom: 0; }
   .detalhe-exemplo.invencao { border-left-color: var(--erro); }
   .detalhe-exemplo.confusao { border-left-color: var(--alerta, #9a6b00); }
   .detalhe-exemplo.abstencao { border-left-color: var(--accent); }
@@ -280,8 +523,29 @@ const LOGOS: Record<string, string> = {
   .abstencao .detalhe-rotulo { color: var(--accent-ink); }
   .detalhe-pergunta { font-style: italic; color: var(--ink-muted); margin: 0 0 4px !important; }
   .detalhe-explica { color: var(--ink-muted); margin: 4px 0 0 !important; font-size: 12px; }
-  .detalhe-rodape { display: flex; flex-wrap: wrap; gap: 6px 18px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 11.5px; color: var(--ink-muted); }
+  .detalhe-rodape { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; padding-top: 14px; font-size: 11.5px; color: var(--ink-muted); }
   .detalhe-rodape:first-child { padding-top: 0; border-top: 0; }
+
+  .ver-bruto { font: inherit; font-size: 11.5px; font-family: var(--mono); color: var(--accent-ink); background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 6px; padding: 3px 10px; cursor: pointer; transition: background .12s ease; }
+  .ver-bruto:hover { background: var(--accent); color: var(--bg); }
+  .ver-bruto:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+
+  /* Drawer lateral com o JSON bruto */
+  .drawer-fundo { position: fixed; inset: 0; background: rgba(15, 20, 25, .45); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 50; animation: none; }
+  .drawer-fundo.aberta { opacity: 1; pointer-events: auto; }
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(520px, 94vw); background: var(--bg); border-left: 1px solid var(--border); box-shadow: -12px 0 32px rgba(15, 20, 25, .18); transform: translateX(100%); transition: transform .24s ease; z-index: 51; display: flex; flex-direction: column; animation: none; }
+  .drawer.aberta { transform: translateX(0); }
+  .drawer-cabecalho { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); background: var(--bg-subtle); }
+  .drawer-titulo { flex: 1; min-width: 0; }
+  .drawer-titulo .rotulo { display: block; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); margin-bottom: 2px; }
+  .drawer-titulo .nome { display: block; font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .drawer-fechar { flex: none; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; line-height: 1; color: var(--ink-muted); background: none; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
+  .drawer-fechar:hover { color: var(--ink); border-color: var(--border-strong); }
+  .drawer-fechar:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+  .drawer-corpo { flex: 1; overflow-y: auto; padding: 16px; }
+  .drawer-corpo pre { margin: 0; font-family: var(--mono); font-size: 11.5px; line-height: 1.7; color: var(--ink); background: var(--bg-inset); border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
+  .drawer-nota { margin: 12px 0 0; font-size: 11.5px; line-height: 1.6; color: var(--ink-muted); }
+  .drawer-nota strong { color: var(--ink); }
 
   .th-info { display: inline-flex; align-items: center; justify-content: center; width: 12px; height: 12px; margin-left: 2px; border-radius: 50%; border: 1px solid var(--border-strong); color: var(--ink-muted); font-family: var(--mono); font-size: 9px; font-weight: 700; text-transform: none; letter-spacing: normal; vertical-align: middle; cursor: help; position: relative; }
   .th-info:hover, .th-info:focus-visible { color: var(--bg); background: var(--accent-ink); border-color: var(--accent-ink); outline: none; }
@@ -316,8 +580,20 @@ const LOGOS: Record<string, string> = {
   .heldout { border-left: 3px solid var(--alerta, #9a6b00); background: var(--alerta-bg, #fdf6e3); border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: 13px; }
   .heldout strong:first-child { color: var(--alerta, #9a6b00); }
 
+  .achados { margin: 0; padding: 0; list-style: none; counter-reset: achado; display: grid; gap: 14px; max-width: 82ch; }
+  .achados li { position: relative; padding-left: 40px; font-size: 14px; line-height: 1.55; counter-increment: achado; }
+  .achados li::before { content: counter(achado); position: absolute; left: 0; top: -1px; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent-ink); background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 50%; }
+  .achados li strong { font-weight: 650; }
+
+  .proximos { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; max-width: 82ch; }
+  .proximos li { position: relative; padding-left: 26px; font-size: 14px; line-height: 1.55; }
+  .proximos li::before { content: "→"; position: absolute; left: 0; top: 0; font-weight: 700; color: var(--accent); }
+  .proximos li strong { font-weight: 650; }
+  .proximos li code { font-size: 12px; color: var(--accent-ink); }
+
   @media (max-width: 760px) {
     .cabecalho { grid-template-columns: 1fr; gap: 20px; }
     .detalhe { padding-left: 16px; }
+    .detalhe-grid { grid-template-columns: 1fr; gap: 18px; }
   }
 </style>

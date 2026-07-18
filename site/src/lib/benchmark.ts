@@ -68,6 +68,8 @@ export interface Benchmark {
   modelos: ModeloBenchmark[];
   recortes: { por_etapa: RecorteLinha[]; por_modulo: RecorteLinha[] };
   amostras: AmostraCrua[];
+  /** Até 10 respostas reais por modelo (id → amostras), para o drawer de JSON bruto. */
+  amostras_drawer: Record<string, AmostraCrua[]>;
 }
 
 export const BENCHMARK = bruto as Benchmark;

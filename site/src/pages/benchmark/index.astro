@@ -26,8 +26,8 @@ const maiorNota = b.modelos[0].nota;
   <section aria-labelledby="h-abre">
     <span class="pub-label selo-vermelho">Benchmark de alucinação</span><span class="versao-label">{m.versao}</span>
     <h1 class="abre" id="h-abre">Avaliamos o quanto IAs podem alucinar quando o assunto é BNCC</h1>
-    <p class="abre-sub">E vimos que elas erram bastante. Fizemos {m.total_respostas.toLocaleString('pt-BR')} perguntas a {m.total_modelos} modelos sobre códigos e textos reais da BNCC, sem dar a eles nenhuma fonte de consulta.</p>
-    <p class="abre-sub">Aplicativos consomem IA por API. A API não busca na web por padrão. Esta rodada mede o que o modelo responde nessa condição.</p>
+    <p class="abre-sub">E erram com frequência: produzem códigos e textos que parecem plausíveis, mas não existem. Fizemos {m.total_respostas.toLocaleString('pt-BR')} perguntas a {m.total_modelos} modelos sobre códigos e textos reais da BNCC, em condição fechada, sem dar a eles nenhuma fonte para consultar.</p>
+    <p class="abre-sub">É a condição em que a maioria dos aplicativos usa IA: via API, que não busca na web por padrão. Esta rodada mede o que o modelo responde apoiado apenas na própria memória.</p>
     <p class="meta-hero mono">Medido em {dataCurta(m.medido_em)} · {m.total_modelos} modelos · gabarito: dataset bncc.dev {m.dataset_versao}, 1.721 aprendizagens verificadas</p>
 
     <div class="manchetes-duplas">
@@ -43,8 +43,8 @@ const maiorNota = b.modelos[0].nota;
   </section>
 
   <section class="faixa" aria-labelledby="h-como">
-    <h2 id="h-como">Como avaliamos</h2>
-    <p class="h2-hint">Repetimos estas quatro perguntas para centenas de códigos e habilidades da BNCC, cada uma em 3 formulações diferentes.</p>
+    <h2 id="h-como">As quatro tarefas</h2>
+    <p class="h2-hint">Cada modelo passou por quatro tarefas, repetidas para centenas de códigos e habilidades da BNCC, cada uma em três formulações diferentes (para o resultado não depender de como a pergunta é redigida).</p>
 
     <div class="perguntas">
       <div class="pergunta-card">
@@ -157,7 +157,7 @@ const maiorNota = b.modelos[0].nota;
   </section>
 
   <section class="faixa" aria-labelledby="h-confianca">
-    <h2 id="h-confianca">Como medimos</h2>
+    <h2 id="h-confianca">Protocolo de medição</h2>
     <div class="numbers" style="margin-bottom: 18px;">
       <div class="num"><span class="v">{m.total_itens}</span><span class="k">itens no banco oficial</span></div>
       <div class="num"><span class="v">{m.total_modelos}</span><span class="k">modelos testados</span></div>
@@ -165,11 +165,11 @@ const maiorNota = b.modelos[0].nota;
       <div class="num"><span class="v">{m.total_respostas.toLocaleString('pt-BR')}</span><span class="k">respostas julgadas</span></div>
     </div>
     <ul class="garantias">
-      <li><strong>Gabarito é o dataset verificado:</strong> as mesmas 1.721 aprendizagens conferidas contra os documentos homologados do MEC, com fonte em cada registro.</li>
-      <li><strong>Códigos falsos, checados um a um:</strong> nenhum "código inexistente" do teste existe por acaso em currículo estadual ou municipal. Cada armadilha foi verificada e classificada (protocolo anti-vexame), e a confusão com currículos derivados é medida à parte, não punida como invenção.</li>
-      <li><strong>Julgamento automático com trilha completa:</strong> respostas ambíguas vão a um juiz automático e cada julgamento fica registrado, item a item, para auditoria. A validação humana por amostra, pela Equipe Pedagógica, está no roteiro antes da publicação 1.0.</li>
-      <li><strong>Temperatura 0, versões pinadas:</strong> cada resposta registra o modelo exato, a rota que o serviu, os tokens e o custo.</li>
-      <li><strong>Auditável de ponta a ponta:</strong> prompts, respostas cruas e julgamentos ficam em arquivos por modelo; a publicação completa dos brutos e do harness acompanha a versão 1.0 do dataset.</li>
+      <li><strong>Gabarito verificado:</strong> o padrão de referência são as 1.721 aprendizagens do dataset, conferidas contra os documentos homologados do MEC, com fonte em cada registro.</li>
+      <li><strong>Verificação anti-vexame dos falsos:</strong> nenhum código falso do teste existe por acaso em currículo estadual ou municipal. Cada um foi checado e classificado individualmente, e a confusão com currículos derivados é medida à parte, não punida como invenção.</li>
+      <li><strong>Julgamento auditável:</strong> respostas ambíguas vão a um juiz automático, e cada decisão fica registrada, item a item. A validação humana por amostra, pela Equipe Pedagógica, está prevista antes da publicação 1.0.</li>
+      <li><strong>Determinismo:</strong> temperatura 0 e versões pinadas; cada resposta registra o modelo exato, a rota que a serviu, os tokens e o custo.</li>
+      <li><strong>Publicação auditável:</strong> prompts, respostas cruas e julgamentos ficam em arquivos por modelo; a publicação completa dos brutos e do harness acompanha a versão 1.0 do dataset.</li>
     </ul>
     <p class="pledge">Isto mede se a IA tem onde consultar. Sem fonte, os modelos inventam a BNCC. A fonte existe e é aberta: <a href="https://github.com/bncc-dev/bncc-dados/blob/main/docs/divisao-aberto-comercial.md" target="_blank" rel="noopener">a regra de ouro do projeto</a>.</p>
   </section>
