@@ -1,5 +1,0 @@
-# bncc.dev · crawlers bem-vindos, incluindo os de IA (o projeto existe para ser lido por eles)
-User-agent: *
-Allow: /
-
-Sitemap: https://bncc.dev/sitemap-index.xml

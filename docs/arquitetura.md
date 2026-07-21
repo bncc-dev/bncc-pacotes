@@ -16,7 +16,7 @@ flowchart LR
     FIX -.->|pytest| PY
     MCP --> AGENTES["Claude Code, Cursor..."]
     WORKER --> REMOTOS["Claude, ChatGPT...<br/>(colar URL, zero install)"]
-    NPM -->|getStaticPaths no build| SITE["site/ (Astro)<br/>1.787 páginas estáticas<br/>bncc.dev"]
+    NPM -->|npm, getStaticPaths no build| SITE["bncc-site (repo próprio)<br/>Astro · páginas estáticas<br/>bncc.dev"]
     NPM -->|núcleo injetável<br/>@bncc/dados/nucleo| APIH["bncc-api (repo próprio)<br/>Workers + Hono<br/>api.bncc.dev"]
     NPM --> APPS["apps TypeScript"]
     PY --> CIENCIA["Python, pandas, notebooks"]
@@ -91,15 +91,12 @@ Mapeamento de versões: a versão do pacote segue semver próprio; a data-versio
 
 O marco `1.0.0` não sai antes da release `dados-v1.0.0` do bncc-dados (revisão pedagógica registrada). Pré-releases publicadas em 09/07/2026: npm `@bncc/dados@0.1.0` e `0.2.0` (núcleo injetável) e `@bncc/mcp@0.1.1` (o 0.1.0 do MCP foi depreciado: publicado com npm publish sem conversão do workspace); PyPI `bncc 0.1.0`.
 
-### `site/` → bncc.dev (páginas canônicas)
+### bncc.dev → repo próprio `bncc-site`
 
-- Astro 5, geração 100% estática no build: 1.787 páginas (1.580 aprendizagens + 105 competências específicas + navegação por etapa/componente/ano/área/campo + busca + api + índices), 97 CSVs de listagem (mesmas colunas dos derivados do bncc-dados) e o índice de busca client-side (`/buscar-indice.json`). JS mínimo inline (~4 KB: tema, decoder, tabs, copiar e busca com sugestões ao vivo no topbar e na home, sobre o índice carregado sob demanda) + o script da página /buscar/ (busca client-side com filtros; troca para a API hospedada via constante no lançamento).
-- Consome o `@bncc/dados` via workspace (dogfooding: o site é o primeiro consumidor real do pacote), sempre através da camada `src/lib/dados.ts`. O pacote fica `ssr.external` no Vite porque carrega os JSONs relativos ao próprio módulo.
-- Design system dos mocks aprovados do projeto (GitHub-ish, accent verde, temas claro/escuro com botão + localStorage). Página de aprendizagem com decodificador interativo, relacionadas por objeto/prática/competência, tabs "Para máquinas" (JSON real, npm, Python, MCP), sidebar de proveniência (planilha + página do PDF + DECISOES), reportar erro e citar. JSON-LD LearningResource, sitemap, llms.txt.
-- Selo de verificação com a página do PDF homologado em cada página: a credibilidade como elemento de interface.
-- Deploy acontece na release (Cloudflare Pages); extração para repo próprio quando o pacote for publicado. Detalhes: `site/README.md`.
+O site **saiu deste monorepo** em 20/jul/2026 para o repo próprio `github.com/bncc-dev/bncc-site` (Astro, páginas estáticas por aprendizagem/competência + navegação + busca + CSVs). Ele consome o `@bncc/dados` publicado no **npm** (não mais via workspace), sempre pela camada `src/lib/dados.ts`, com o pacote `ssr.external` no Vite. Deploy contínuo na mesma infra AWS (ECS `bncc-site` → bncc.dev). Detalhes da migração: `iaebb/docs/plans/extracao-site-repo-proprio.md`.
 
 ## O que fica fora deste repo
 
 - Extração e validação dos dados: bncc-dados.
+- Site bncc.dev: repo bncc-site (consome `@bncc/dados` do npm).
 - API hospedada: repo bncc-api (Fase 4, em construção; consome `@bncc/dados/nucleo`).

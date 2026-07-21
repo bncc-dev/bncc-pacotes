@@ -29,12 +29,9 @@ Regra de ouro: **npm e PyPI andam juntos, sempre.**
 4. Teste em `packages/mcp/test/tools.test.ts` (cliente real do SDK via InMemoryTransport) + rode `node scripts/e2e.mjs` (em packages/mcp) contra o binário.
 5. Convergência de nomes: prefixo `bncc_`, pt-BR, snake_case.
 
-## Manter o site (site/)
+## Manter o site (bncc.dev)
 
-- **Dados mudaram** (nova sincronização): `pnpm --filter site build` regenera as 1.787 páginas, os 97 CSVs e o índice de busca; o CI confere contagem mínima (1.750) e links internos (`site/scripts/verificar-links.mjs`).
-- **Mudar conteúdo/design**: só via `src/` (páginas em `src/pages/`, componente central em `src/components/PaginaAprendizagem.astro`, design system em `src/styles/global.css`). Regras do diretório em `site/README.md`: dados só via `src/lib/dados.ts`, copy sem travessão, JS mínimo justificado.
-- **Nova página/rota**: adicionar em `src/pages/` com `getStaticPaths` consumindo o `@bncc/dados`; rodar build + verificar-links antes do push (link interno quebrado derruba o CI).
-- **Pegadinha conhecida**: o compilador do Astro confunde `<=`/`>=` dentro de expressões no template (interpreta como abertura de tag); mova comparações para o frontmatter.
+O site **não vive mais neste repo**. Migrou para `github.com/bncc-dev/bncc-site` (Astro, consumindo `@bncc/dados` do npm). Manutenção, build, CI e deploy do bncc.dev acontecem lá; ver o `README.md` daquele repo e `iaebb/docs/plans/extracao-site-repo-proprio.md`. Uma mudança que afete o site (nova consulta na API, novo dado) só chega ao bncc.dev quando o `bncc-site` atualizar o pin de `@bncc/dados` e rebuildar.
 
 ## Publicar (após o gate `dados-v1.0.0`)
 

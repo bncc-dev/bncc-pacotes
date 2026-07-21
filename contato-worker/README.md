@@ -14,7 +14,7 @@ Recebe o `POST` do formulário de `bncc.dev/contato/`, valida, filtra spam
    - Criar o endereço `contato@bncc.dev` encaminhando para esse destino
      (é o e-mail público exibido na página e o fallback do formulário).
 2. **Turnstile** (dashboard → Turnstile → Add site, domínio `bncc.dev`, modo Managed):
-   - A **site key** (pública) vai em `TURNSTILE_SITE_KEY` na página `site/src/pages/contato.astro`.
+   - A **site key** (pública) vai em `TURNSTILE_SITE_KEY` na página `src/pages/contato.astro` do repo `bncc-site` (github.com/bncc-dev/bncc-site).
    - A **secret key**: `pnpm exec wrangler secret put TURNSTILE_SECRET`.
 3. Neste `wrangler.toml`, trocar os dois `PREENCHER-NA-ETAPA-B@example.com`
    (var `DESTINO` e o binding `send_email`) pelo destino verificado no passo 1.
