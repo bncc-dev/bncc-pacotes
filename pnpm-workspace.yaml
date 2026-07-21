@@ -1,5 +1,6 @@
 packages:
   - packages/*
-  - site
   - contato-worker
   - mcp-worker
+  # site/ migrou para github.com/bncc-dev/bncc-site; a pasta aqui está
+  # arquivada e fora do workspace (não builda nem publica daqui).

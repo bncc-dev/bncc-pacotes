@@ -1,4 +1,10 @@
-# site/ · bncc.dev
+> ## ⚠️ MOVIDO — esta cópia está arquivada
+>
+> O site migrou para o repositório próprio **[github.com/bncc-dev/bncc-site](https://github.com/bncc-dev/bncc-site)** em 20/jul/2026. Lá ele consome `@bncc/dados` do npm (não mais do workspace), e o build/CI/deploy (AWS ECS `bncc-site` → bncc.dev) vivem no repo novo.
+>
+> **Esta pasta não é editada nem deployada daqui.** Está fora do `pnpm-workspace.yaml` e sem workflow de deploy. Mantida apenas como referência histórica. Qualquer mudança no site vai no repo `bncc-site`.
+
+# site/ · bncc.dev (arquivado)
 
 O site de consulta da BNCC: 1.787 páginas estáticas geradas pelo Astro a partir do pacote `@bncc/dados` (workspace). Uma URL permanente por aprendizagem e por competência específica, navegação por etapa/componente/ano/área/campo, busca client-side com filtros e CSVs por listagem.
 
