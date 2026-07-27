@@ -14,7 +14,8 @@
   "homepage": "https://github.com/bncc-dev/bncc-pacotes",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bncc-dev/bncc-pacotes.git"
+    "url": "git+https://github.com/bncc-dev/bncc-pacotes.git",
+    "directory": "packages/mcp"
   },
   "type": "module",
   "bin": {
@@ -28,7 +29,8 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE.md"
   ],
   "publishConfig": {
     "access": "public"

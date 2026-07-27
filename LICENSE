@@ -1,0 +1,29 @@
+# Licenças
+
+Este repositório usa duas licenças, porque contém duas coisas de natureza
+diferente. Mesmo modelo do [bncc-benchmark](https://github.com/bncc-dev/bncc-benchmark).
+
+## Código — MIT
+
+Todo o conteúdo de `packages/*/src/`, `python/bncc/*.py`, `mcp-worker/src/`,
+`scripts/`, os testes e os arquivos de configuração.
+Texto completo em [`LICENSE-CODIGO.md`](LICENSE-CODIGO.md).
+
+## Dados embutidos — CC BY 4.0
+
+Os JSONs em `packages/bncc/dados/` e `python/bncc/dados/` **não nascem aqui**:
+são sincronizados de um commit pinado do
+[bncc-dados](https://github.com/bncc-dev/bncc-dados) e mantêm a licença de lá,
+Creative Commons Attribution 4.0 International.
+Texto e atribuição em [`LICENSE-DADOS.md`](LICENSE-DADOS.md).
+
+A mesma divisão vale para os pacotes publicados: o tarball do npm e o wheel do
+PyPI carregam código MIT e dados CC BY 4.0 no mesmo artefato.
+
+## Nome e identidade visual — não licenciados
+
+"bncc.dev", "BNCC.dev" e a identidade visual do projeto (logo, wordmark, cores,
+tipografia) **não** são cobertos pelas licenças acima. O código é livre; a marca
+não. Derivados não devem se apresentar como sendo o bncc.dev nem usar a marca
+sem autorização. A marca canônica vive em
+[bncc-site](https://github.com/bncc-dev/bncc-site), em `src/marca/`.

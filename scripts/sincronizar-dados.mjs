@@ -10,7 +10,7 @@
 import { createHash } from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync, readdirSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 
 const ORIGEM = resolve(process.argv[2] ?? '../bncc-dados');
 const DESTINOS = ['packages/bncc/dados', 'python/bncc/dados'];
@@ -47,7 +47,11 @@ const versao = {
   data_version: dataVersion,
   origem: 'github.com/bncc-dev/bncc-dados',
   commit,
-  sincronizado_de: ORIGEM,
+  // Só o nome do diretório de origem, nunca o caminho absoluto: este arquivo
+  // viaja dentro do tarball do npm e do wheel do PyPI, e o caminho absoluto
+  // expõe o diretório pessoal de quem sincronizou. O `commit` acima é o que
+  // identifica a origem de forma reprodutível.
+  sincronizado_de: basename(ORIGEM),
   checksums_sha256: checksums,
 };
 

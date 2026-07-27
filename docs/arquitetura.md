@@ -95,7 +95,7 @@ O marco `1.0.0` não sai antes da release `dados-v1.0.0` do bncc-dados (revisão
 
 ### bncc.dev → repo próprio `bncc-site`
 
-O site **saiu deste monorepo** em 20/jul/2026 para o repo próprio `github.com/bncc-dev/bncc-site` (Astro, páginas estáticas por aprendizagem/competência + navegação + busca + CSVs). Ele consome o `@bncc/dados` publicado no **npm** (não mais via workspace), sempre pela camada `src/lib/dados.ts`, com o pacote `ssr.external` no Vite. Deploy contínuo na mesma infra AWS (ECS `bncc-site` → bncc.dev). Detalhes da migração: `iaebb/docs/plans/extracao-site-repo-proprio.md`.
+O site **saiu deste monorepo** em 20/jul/2026 para o repo próprio `github.com/bncc-dev/bncc-site` (Astro, páginas estáticas por aprendizagem/competência + navegação + busca + CSVs). Ele consome o `@bncc/dados` publicado no **npm** (não mais via workspace), sempre pela camada `src/lib/dados.ts`, com o pacote `ssr.external` no Vite. Deploy contínuo na infra do site, documentado no `docs/deploy.md` daquele repo.
 
 ## O que fica fora deste repo
 

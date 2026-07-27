@@ -15,7 +15,8 @@
   "homepage": "https://github.com/bncc-dev/bncc-pacotes",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bncc-dev/bncc-pacotes.git"
+    "url": "git+https://github.com/bncc-dev/bncc-pacotes.git",
+    "directory": "packages/bncc"
   },
   "type": "module",
   "main": "./dist/index.cjs",
@@ -37,7 +38,8 @@
   "files": [
     "dist",
     "dados",
-    "README.md"
+    "README.md",
+    "LICENSE.md"
   ],
   "scripts": {
     "build": "tsup src/index.ts src/nucleo.ts --format esm,cjs --dts --clean --shims",

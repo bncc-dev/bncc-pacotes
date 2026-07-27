@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Erro no dado da BNCC
+    url: https://github.com/bncc-dev/bncc-dados/issues/new/choose
+    about: "Texto divergente da fonte oficial, código errado, relação incorreta. O dado não nasce aqui: corrija na origem e ele chega aos pacotes na próxima sincronização."
+  - name: Dúvida de uso
+    url: https://github.com/bncc-dev/bncc-dados/discussions
+    about: "Como consultar, entender códigos, usar os pacotes npm, PyPI ou o servidor MCP."
+  - name: Problema de segurança
+    url: https://github.com/bncc-dev/bncc-pacotes/security/policy
+    about: "Não abra issue pública. Veja a política de segurança."
