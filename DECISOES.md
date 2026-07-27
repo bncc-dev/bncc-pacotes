@@ -76,6 +76,24 @@ a divisão. Nome e identidade visual ficam fora de ambas.
 **Por quê:** o mesmo artefato publicado carrega as duas naturezas, e uma licença
 única mentiria sobre uma delas. Modelo herdado do bncc-benchmark.
 
+## D9 · O gate `dados-v1.0.0` vale para o `1.0.0`, não para as pré-releases
+
+**Decisão:** pré-releases `0.x` dos pacotes podem ser publicadas antes da release
+`dados-v1.0.0` do bncc-dados. O gate continua valendo para o marco `1.0.0`.
+
+**Por quê:** o gate existe para proteger a **revisão pedagógica do dado**, não a
+superfície de código. Ler a regra como "nada sai até a 1.0" travava a
+`@bncc/mcp@0.2.0`, cujo export `./tools` é o que permite ao MCP remoto e a outros
+consumidores reusarem as tools. Sem ela publicada, o repositório aberto
+documentava uma superfície que ninguém conseguia instalar, e o bncc-playground
+seguia preso a um tarball vendorizado (`vendor/bncc-mcp-0.2.0.tgz`) em vez de
+consumir o pacote público.
+
+**Aplicado em:** `@bncc/mcp@0.2.0`, publicada em 27/jul/2026.
+
+**O que não mudou:** publicação continua exigindo credencial interativa do
+mantenedor, e continua sendo sempre `pnpm publish` (D6).
+
 ## D8 · `sincronizado_de` grava só o nome do diretório
 
 **Decisão:** o `VERSAO.json` registra `"sincronizado_de": "bncc-dados"`, não o

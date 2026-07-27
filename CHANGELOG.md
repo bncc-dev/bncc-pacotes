@@ -10,10 +10,6 @@ pedagógica registrada.
 
 ## Não publicado
 
-- `@bncc/mcp@0.2.0`: tools runtime-agnósticas (`registrarTools(servidor, bncc,
-  versao)` recebe o objeto `Consultas` injetado) e export `./tools`, que permite
-  ao MCP remoto e a outros consumidores reusarem as tools sem o transporte
-  stdio. **Ainda não está no npm** (o publicado é o `0.1.1`).
 - Abertura do repositório: licenças separadas para código e dados, arquivos de
   comunidade (CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, DECISOES) e correção do
   `sincronizado_de`, que gravava caminho local no `VERSAO.json` embutido nos
@@ -32,6 +28,17 @@ pedagógica registrada.
 - Pré-release: dados embutidos e API de consulta tipada em português.
 
 ## `@bncc/mcp`
+
+### 0.2.0 — 27/jul/2026
+- **Tools runtime-agnósticas.** `registrarTools(servidor, bncc, versao)` recebe
+  o objeto `Consultas` injetado, em vez de carregar os dados por conta própria.
+  O transporte stdio (`servidor.ts`) monta o objeto com a casca de sistema de
+  arquivos do `@bncc/dados`; o MCP remoto monta via `criarConsultas` com os JSONs
+  importados. Nenhuma consulta é reimplementada (ver `DECISOES.md` D4).
+- **Novo export `./tools`**, para que o Worker remoto e outros consumidores
+  reusem as 7 tools sem o transporte stdio.
+- Publicada antes do gate `dados-v1.0.0`, por decisão registrada em
+  `DECISOES.md` D9.
 
 ### 0.1.1 — 09/jul/2026
 - Pré-release publicada por `pnpm publish`, corrigindo o `0.1.0`.
