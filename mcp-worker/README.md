@@ -5,8 +5,11 @@ cola `https://mcp.bncc.dev/mcp` no Claude, ChatGPT ou Cursor e consulta a BNCC
 sem instalar nada, sem cadastro e sem API key. Complementa o stdio local
 (`npx -y @bncc/mcp`), não o substitui.
 
-É um Worker separado de propósito (mesmo racional do contato-worker): a
-bncc-api permanece somente REST e cada superfície tem reputação própria.
+É um Worker separado de propósito (mesmo racional do worker de contato, hoje
+no repo `bncc-site`): a bncc-api permanece somente REST e cada superfície tem
+reputação própria. Este fica aqui porque não é infra avulsa: importa
+`@bncc/mcp/tools` e `@bncc/dados/nucleo` via `workspace:*` e é validado junto
+dos pacotes.
 Cloudflare-native: sobrevive à migração do dia D sem mudanças.
 
 ## Decisões
@@ -23,7 +26,8 @@ Cloudflare-native: sobrevive à migração do dia D sem mudanças.
   sem path. `GET` com `Accept: text/html` serve a página humana; `GET` de SSE
   standalone e `DELETE` recebem 405 pedagógico.
 - **Rate limit 60 req/min por IP** (binding `ratelimit`, namespace 1003;
-  1001 = api, 1002 = contato). O 429 aponta o MCP local como alternativa sem
+  1001 = api, 1002 = contato, este último no repo `bncc-site`; os números
+  seguem reservados). O 429 aponta o MCP local como alternativa sem
   limite. Ausente em dev/testes; o código tolera.
 - **CORS liberado** com `mcp-session-id` e `mcp-protocol-version` em
   allow/expose (clientes MCP de navegador precisam ler esses headers).

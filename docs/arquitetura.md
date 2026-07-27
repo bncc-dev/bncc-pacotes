@@ -32,15 +32,17 @@ flowchart LR
 
 ## Por que um monorepo
 
-Os projetos deste repo (pacote npm, pacote PyPI, servidor MCP nos dois transportes, site e o worker de contato) não são produtos independentes: são interfaces do mesmo dado, e precisam dizer exatamente a mesma coisa a cada release. Três mecanismos dependem de estarem no mesmo repositório:
+Os projetos deste repo (pacote npm, pacote PyPI e servidor MCP nos dois transportes) não são produtos independentes: são interfaces do mesmo dado, e precisam dizer exatamente a mesma coisa a cada release. Três mecanismos dependem de estarem no mesmo repositório:
 
 1. **Sincronização atômica do dataset.** O `scripts/sincronizar-dados.mjs` copia os JSONs do bncc-dados para `packages/bncc/dados` e `python/bncc/dados` em um único comando, registrando o mesmo commit, data-version e checksums no `VERSAO.json` de cada destino. Em repos separados, cada pacote sincronizaria por conta própria e nada impediria o npm de embutir uma data-version enquanto o PyPI embute outra. Aqui, o drift é estruturalmente impossível: ou os dois atualizam no mesmo commit, ou nenhum.
 
 2. **Paridade por fixture única.** O `fixtures/consultas-douradas.json` é um arquivo só, executado pelo vitest (npm) e pelo pytest (PyPI). É a prova de que as duas libs respondem identicamente às mesmas consultas (ver `docs/paridade.md`). Essa fonte única de verdade só existe porque os dois runners vivem no mesmo repo; separados, a fixture viraria uma cópia que dessincroniza, e o risco número 1 da fase (divergência silenciosa entre pacotes) voltaria pela porta dos fundos.
 
-3. **Cadeia de dependência validada por inteiro.** O workspace pnpm amarra a pilha: o MCP e o site consomem `@bncc/dados` via `workspace:*`, ou seja, sempre buildam contra a versão local, não uma publicada. Quando o dado ou a API muda, `pnpm -r build && pnpm -r test` valida tudo (lib, MCP, site) no mesmo commit, antes de qualquer publish. Em repos separados, uma mudança no `@bncc/dados` exigiria publicar no npm primeiro para só então o MCP e o site conseguirem buildar contra ela.
+3. **Cadeia de dependência validada por inteiro.** O workspace pnpm amarra a pilha: o `packages/mcp` e o `mcp-worker` consomem `@bncc/dados` via `workspace:*`, ou seja, sempre buildam contra a versão local, não uma publicada. Quando o dado ou a API muda, `pnpm -r build && pnpm -r test` valida tudo (lib, MCP local e MCP remoto) no mesmo commit, antes de qualquer publish. Em repos separados, uma mudança no `@bncc/dados` exigiria publicar no npm primeiro para só então o MCP conseguir buildar contra ela.
 
-A linha de corte segue o princípio "separar reputações" do projeto: separa-se o que envelhece em ritmos diferentes. Por isso o bncc-dados (dados envelhecem em anos), o bncc-api (deploy próprio em Workers, ciclo operacional independente) e os futuros templates (envelhecem em meses) são repos próprios. Já npm, PyPI, MCP e site envelhecem juntos, no ritmo do dataset que embarcam, e lançam em lockstep: sincroniza uma vez, roda a suíte inteira, publica tudo do mesmo commit.
+A linha de corte segue o princípio "separar reputações" do projeto: separa-se o que envelhece em ritmos diferentes. Por isso o bncc-dados (dados envelhecem em anos), o bncc-api (deploy próprio em Workers, ciclo operacional independente) e os futuros templates (envelhecem em meses) são repos próprios. Já npm, PyPI e MCP envelhecem juntos, no ritmo do dataset que embarcam, e lançam em lockstep: sincroniza uma vez, roda a suíte inteira, publica tudo do mesmo commit.
+
+O corolário prático: **o que não compartilha o dataset não fica.** O site saiu em jul/2026 (`bncc-site`) e o `contato-worker` o seguiu em jul/2026: era o backend do formulário de contato, sem um único import deste repo, e foi para junto da página que o chama. Ficou o `mcp-worker`, que parece infra mas não é: ele importa `@bncc/mcp/tools` e `@bncc/dados/nucleo` via `workspace:*` e é validado pelo mesmo `pnpm -r test`.
 
 Custo aceito em troca: tooling misto no mesmo repo (pnpm + uv) e histórico compartilhado entre os pacotes. Para interfaces finas sobre o mesmo dado, com um mantenedor, esse custo é bem menor que o risco de divergência entre elas.
 

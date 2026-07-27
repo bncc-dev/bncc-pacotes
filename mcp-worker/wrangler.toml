@@ -1,5 +1,6 @@
 # Servidor MCP remoto da BNCC (mcp.bncc.dev).
-# Cloudflare-native: sobrevive à migração do dia D (mesmo racional do contato-worker).
+# Cloudflare-native e independente da infra do site (que roda em AWS ECS desde
+# jul/2026): o MCP remoto não é afetado por deploy nem por migração do bncc.dev.
 name = "bncc-mcp"
 main = "src/index.ts"
 compatibility_date = "2026-07-01"
