@@ -76,7 +76,7 @@ publicados, no [bncc-benchmark](https://github.com/bncc-dev/bncc-benchmark).
 | Diretório | Publica | Versão |
 |---|---|---|
 | `packages/bncc` | npm [`@bncc/dados`](https://www.npmjs.com/package/@bncc/dados): dados embutidos + API tipada | `0.3.1` |
-| `packages/mcp` | npm [`@bncc/mcp`](https://www.npmjs.com/package/@bncc/mcp): o servidor MCP, via npx | `0.1.1` publicada; a `0.2.0` deste repo, com o export `./tools`, ainda não foi ao npm |
+| `packages/mcp` | npm [`@bncc/mcp`](https://www.npmjs.com/package/@bncc/mcp): o servidor MCP, via npx | `0.2.0` |
 | `python/` | PyPI [`bncc`](https://pypi.org/project/bncc/): a API equivalente em snake_case | `0.2.0` |
 | `mcp-worker/` | o mesmo MCP hospedado em `mcp.bncc.dev` (Cloudflare Workers) | no ar |
 

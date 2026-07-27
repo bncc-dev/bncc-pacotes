@@ -8,7 +8,7 @@ Monorepo das interfaces para máquina do bncc.dev: pacote npm `@bncc/dados`, ser
 2. **API muda nos dois pacotes ou em nenhum.** Toda alteração de consulta acontece em `packages/bncc/src/consultas.ts` E `python/bncc/_consultas.py`, com caso novo em `fixtures/consultas-douradas.json`. Um pacote na frente do outro = paridade quebrada = CI vermelho.
 3. **A fixture dourada não se ajusta "para passar".** Ela só muda com mudança documentada de dado ou de API (ver `docs/paridade.md`).
 4. **O MCP não reimplementa consultas.** As tools (`packages/mcp/src/tools.ts`) recebem o objeto `Consultas` injetado; se uma tool precisa de lógica nova, a lógica vai para o pacote (nos dois!) e a tool a consome. O worker remoto (`mcp-worker/`) também não reimplementa nada: consome `registrarTools` de `@bncc/mcp/tools` e os dados do núcleo injetável.
-5. **Nada de publicar nos registries.** Publicação é gateada (release `dados-v1.0.0` do bncc-dados) e exige credenciais interativas do mantenedor humano.
+5. **Nunca publique nos registries por conta própria.** Publicação exige credenciais interativas do mantenedor humano (2FA), e sempre com `pnpm publish`, nunca `npm publish`: só o pnpm converte o `workspace:*`, e publicar com npm gera pacote ininstalável (foi o que matou a `@bncc/mcp@0.1.0`). O gate da release `dados-v1.0.0` do bncc-dados vale para o marco `1.0.0` dos pacotes; pré-releases `0.x` podem sair antes, por decisão do mantenedor (ver `DECISOES.md` D9).
 6. **Zero dependências de runtime** nos pacotes de dados; MCP só SDK + zod v3 (não subir para zod 4 sem o SDK suportar).
 7. **O site não vive mais aqui.** Migrou para o repo próprio `github.com/bncc-dev/bncc-site` (consome `@bncc/dados` do npm). Mudanças no bncc.dev vão lá, não neste repo.
 
