@@ -5,8 +5,11 @@ description = "A BNCC (Base Nacional Comum Curricular) como dados estruturados e
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
+# Os JSONs em bncc/dados/ são CC BY 4.0, não MIT: o campo acima descreve o
+# código. A divisão está em LICENSE.md, que vai dentro do wheel.
+license-files = ["LICENSE.md"]
 keywords = ["bncc", "educacao", "base nacional comum curricular", "mec", "habilidades", "curriculo", "brasil"]
-authors = [{ name = "bncc.dev (Profy)", email = "marcos@profy.com.br" }]
+authors = [{ name = "bncc.dev (Profy)", email = "contato@bncc.dev" }]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -17,8 +20,11 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/bncc-dev/bncc-pacotes"
+Homepage = "https://bncc.dev"
+Codigo = "https://github.com/bncc-dev/bncc-pacotes"
 Dados = "https://github.com/bncc-dev/bncc-dados"
+Changelog = "https://github.com/bncc-dev/bncc-pacotes/blob/main/CHANGELOG.md"
+Issues = "https://github.com/bncc-dev/bncc-pacotes/issues"
 
 [project.optional-dependencies]
 pandas = ["pandas>=2"]

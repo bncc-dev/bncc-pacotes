@@ -6,5 +6,9 @@ __pycache__/
 .DS_Store
 python/dist/
 python/.venv/
-site/dist/
-site/.astro/
+
+# Documentos internos de operação/estratégia: ficam fora do repositório
+# público, no disco do time. Mesmo padrão do bncc-dados (plano-abertura,
+# guia-comunidade) e do bncc-benchmark (interno/).
+docs/plano-abertura.md
+interno/

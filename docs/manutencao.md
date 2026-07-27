@@ -31,7 +31,7 @@ Regra de ouro: **npm e PyPI andam juntos, sempre.**
 
 ## Manter o site (bncc.dev)
 
-O site **não vive mais neste repo**. Migrou para `github.com/bncc-dev/bncc-site` (Astro, consumindo `@bncc/dados` do npm). Manutenção, build, CI e deploy do bncc.dev acontecem lá; ver o `README.md` daquele repo e `iaebb/docs/plans/extracao-site-repo-proprio.md`. Uma mudança que afete o site (nova consulta na API, novo dado) só chega ao bncc.dev quando o `bncc-site` atualizar o pin de `@bncc/dados` e rebuildar.
+O site **não vive mais neste repo**. Migrou para `github.com/bncc-dev/bncc-site` (Astro, consumindo `@bncc/dados` do npm). Manutenção, build, CI e deploy do bncc.dev acontecem lá; ver o `README.md` e o `docs/deploy.md` daquele repo. Uma mudança que afete o site (nova consulta na API, novo dado) só chega ao bncc.dev quando o `bncc-site` atualizar o pin de `@bncc/dados` e rebuildar.
 
 ## Publicar (após o gate `dados-v1.0.0`)
 
@@ -50,7 +50,8 @@ O site **não vive mais neste repo**. Migrou para `github.com/bncc-dev/bncc-site
 |---|---|---|
 | `testar` | pnpm install + build + test (recursivo) | Versão do pnpm vem SÓ do `packageManager` do package.json raiz (declarar também na action quebra com "multiple versions") |
 | `python` | uv sync + pytest em `python/` | uv resolve o ambiente do zero; pandas entra pelo grupo dev |
-| `site` | build do @bncc/dados + build do site + verificar-links | Falha com menos de 1.650 páginas ou qualquer link interno quebrado |
+
+(O job `site` foi removido junto com a migração do site: build, CI e deploy do bncc.dev vivem no `bncc-site`.)
 
 ## Dependências: política
 
