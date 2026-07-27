@@ -2,7 +2,7 @@
   "data_version": "dados-2026.07",
   "origem": "github.com/bncc-dev/bncc-dados",
   "commit": "5d3f413db691e44213fc01b7bd313aef99905eeb",
-  "sincronizado_de": "/Users/marcosbeto/Dev/bncc-dados",
+  "sincronizado_de": "bncc-dados",
   "checksums_sha256": {
     "estrutura.json": "3c24cc32c4227ce372f39fe276216f8c6899708820156053824615706eb8bd74",
     "educacao-infantil.json": "e8549b4e35313b18d4fa02eb07b4ff603c3fef173224528a7aadd965680892e9",

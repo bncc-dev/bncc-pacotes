@@ -1,0 +1,37 @@
+name: Nova consulta ou tool
+description: Propor uma consulta nova na API dos pacotes, ou uma tool nova no MCP.
+labels: ["api"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Mudança de API pública se discute **antes** do PR: ela precisa sair nos dois
+        pacotes (npm e PyPI) ao mesmo tempo e ganha caso na fixture dourada.
+        Ver [CONTRIBUTING.md](../../CONTRIBUTING.md).
+  - type: textarea
+    id: caso
+    attributes:
+      label: O caso de uso
+      description: O que você está tentando fazer, e por que as consultas atuais não resolvem.
+    validations:
+      required: true
+  - type: textarea
+    id: assinatura
+    attributes:
+      label: Assinatura proposta
+      description: "Nos dois ecossistemas, na convenção de cada um. Ex.: `porArea(area)` / `por_area(area)`."
+      render: typescript
+    validations:
+      required: true
+  - type: checkboxes
+    id: nucleo
+    attributes:
+      label: Onde a lógica entra
+      options:
+        - label: "A lógica pertence ao núcleo injetável (`criarConsultas`), e as cascas (fs, MCP stdio, MCP remoto) apenas a consomem."
+          required: true
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas consideradas
+      description: Dá para resolver compondo consultas existentes? Se sim, o que falta.

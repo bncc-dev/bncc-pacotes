@@ -1,0 +1,52 @@
+name: Bug em consulta ou tool
+description: Uma consulta da lib, do MCP ou do pacote Python responde errado ou quebra.
+labels: ["correcao"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Antes de abrir:** se o problema é o *conteúdo* de uma aprendizagem (texto
+        divergente do documento oficial, código que não deveria existir), ele não se
+        resolve aqui. O dado vem do [bncc-dados](https://github.com/bncc-dev/bncc-dados)
+        e se corrige lá, com fonte oficial.
+
+        Se a consulta responde algo diferente do que os dados contêm, ou quebra, é aqui.
+  - type: dropdown
+    id: pacote
+    attributes:
+      label: Onde acontece
+      options:
+        - "@bncc/dados (npm)"
+        - "@bncc/mcp (servidor MCP local, npx)"
+        - "mcp.bncc.dev (MCP remoto)"
+        - "bncc (PyPI)"
+        - "Em mais de um"
+    validations:
+      required: true
+  - type: input
+    id: versao
+    attributes:
+      label: Versão
+      placeholder: "@bncc/dados@0.3.1, bncc 0.2.0..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproducao
+    attributes:
+      label: Como reproduzir
+      description: O menor trecho de código (ou a chamada de tool) que mostra o problema.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: O que você esperava e o que aconteceu
+    validations:
+      required: true
+  - type: checkboxes
+    id: paridade
+    attributes:
+      label: Paridade
+      options:
+        - label: "Testei a consulta equivalente no outro pacote (npm ↔ PyPI) e anotei acima se o comportamento difere."

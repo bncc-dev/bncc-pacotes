@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+title: "bncc.dev: pacotes npm, PyPI e servidor MCP da Base Nacional Comum Curricular"
+message: "Se você usar estes pacotes em pesquisa ou produto, cite-os conforme abaixo. Para citar o dataset em si, use o CITATION.cff do bncc-dados."
+type: software
+authors:
+  - name: "Profy"
+    website: "https://profy.com.br"
+    city: "São Paulo"
+    country: BR
+repository-code: "https://github.com/bncc-dev/bncc-pacotes"
+url: "https://bncc.dev"
+abstract: >-
+  As interfaces para máquina do bncc.dev: o pacote npm @bncc/dados (dados
+  embutidos e API de consulta tipada em português), o pacote PyPI bncc (API
+  equivalente em snake_case, paridade provada pelas mesmas consultas douradas)
+  e o servidor MCP @bncc/mcp, que expõe as 1.721 aprendizagens da BNCC e do
+  complemento de Computação como tools para agentes de IA. Os dados são
+  embutidos a partir de um commit pinado do dataset bncc-dados, com
+  data-version e checksums registrados, e nenhuma consulta faz I/O de rede.
+keywords:
+  - BNCC
+  - educação
+  - currículo
+  - Brasil
+  - MCP
+  - model context protocol
+  - npm
+  - PyPI
+license: MIT
+license-url: "https://github.com/bncc-dev/bncc-pacotes/blob/main/LICENSE"
+references:
+  - type: data
+    title: "bncc.dev: dados abertos e verificados da Base Nacional Comum Curricular"
+    authors:
+      - name: "Profy"
+    repository-code: "https://github.com/bncc-dev/bncc-dados"
+    license: CC-BY-4.0
+    notes: "Dataset embutido nos pacotes; DOI de conceito 10.5281/zenodo.21625233."
