@@ -1,6 +1,6 @@
 packages:
   - packages/*
-  - contato-worker
   - mcp-worker
-  # site/ migrou para github.com/bncc-dev/bncc-site; a pasta aqui está
-  # arquivada e fora do workspace (não builda nem publica daqui).
+  # site/ e contato-worker/ migraram para github.com/bncc-dev/bncc-site.
+  # Aqui fica o que compartilha o dataset: os pacotes e o mcp-worker, que
+  # consome @bncc/dados e @bncc/mcp via workspace:*.
