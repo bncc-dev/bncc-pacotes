@@ -44,6 +44,19 @@ O site **não vive mais neste repo**. Migrou para `github.com/bncc-dev/bncc-site
 - Ordem: `@bncc/dados` primeiro, depois `@bncc/mcp`, depois PyPI.
 - Depois de publicar: smoke real `npx -y @bncc/mcp` num cliente MCP e `pip install bncc` num venv limpo.
 
+## Onde o servidor MCP está registrado
+
+O `@bncc/mcp` está listado no [Smithery](https://smithery.ai/servers/bncc-dev/bncc-mcp), que indexa pelo par organização/repositório (`bncc-dev/bncc-mcp`), não pelo nome do pacote npm. Vale saber ao procurar a listagem: URLs no formato `@bncc/mcp` não resolvem.
+
+O que fazer quando sair versão nova:
+
+- **npm e PyPI**: os registries leem a versão publicada sozinhos. Nada a fazer.
+- **Smithery**: confira se a listagem pegou a versão nova e se a descrição continua correta. A descrição vem do pacote, então corrigi-la significa publicar versão nova, não editar no site.
+
+Registries ainda não usados, se quiser ampliar alcance: mcp.so, Glama, LobeHub e a lista `awesome-mcp-servers` no GitHub. Todos pedem o mesmo conjunto de metadados (nome, descrição de uma frase, contagem de tools, tipo de transporte, URL do repositório e do site), então prepare uma vez e reaproveite.
+
+O dataset que alimenta os pacotes tem arquivamento próprio, com DOI: veja `docs/versionamento.md` no bncc-dados.
+
 ## CI (`.github/workflows/ci.yml`)
 
 | Job | O que roda | Pegadinhas conhecidas |
