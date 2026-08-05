@@ -13,6 +13,7 @@
 import { Hono } from 'hono';
 import type { Context } from 'hono';
 import { cors } from 'hono/cors';
+import { HTTPException } from 'hono/http-exception';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPTransport } from '@hono/mcp';
 import { instrucoesServidor, registrarTools } from '@bncc/mcp/tools';
@@ -71,7 +72,14 @@ async function atenderMcp(c: Context<Ambiente>) {
   });
   await servidor.connect(transporte);
   const resposta = await transporte.handleRequest(c);
-  // Notificações puras não têm resposta JSON-RPC; a spec pede 202 Accepted.
+  // Notificações puras não têm resposta JSON-RPC; a spec pede 202 Accepted
+  // SEM corpo, mas o @hono/mcp 0.3.1 devolve o literal "null" serializado
+  // (ctx.json(null, 202)). Reescreve até sair o fix upstream.
+  if (resposta?.status === 202) {
+    const headers = new Headers(resposta.headers);
+    headers.delete('content-type');
+    return new Response(null, { status: 202, headers });
+  }
   return resposta ?? c.body(null, 202);
 }
 
@@ -102,9 +110,15 @@ app.notFound((c) => c.json({
   dica: 'O MCP atende em POST https://mcp.bncc.dev/mcp (a raiz também funciona). Documentação em https://mcp.bncc.dev/.',
 }, 404));
 
-app.onError((e, c) => c.json({
-  erro: 'Erro interno do servidor MCP.',
-  dica: 'Se persistir, reporte em github.com/bncc-dev/bncc-pacotes/issues.',
-}, 500));
+app.onError((e, c) => {
+  // O transport sinaliza erros de protocolo (ex.: versão MCP não suportada)
+  // como HTTPException com resposta JSON-RPC pronta. Repassar, não mascarar:
+  // um 500 aqui faz clientes (ChatGPT) abortarem em vez de negociar versão.
+  if (e instanceof HTTPException) return e.getResponse();
+  return c.json({
+    erro: 'Erro interno do servidor MCP.',
+    dica: 'Se persistir, reporte em github.com/bncc-dev/bncc-pacotes/issues.',
+  }, 500);
+});
 
 export default app;

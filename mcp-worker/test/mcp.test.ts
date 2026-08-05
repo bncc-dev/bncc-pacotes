@@ -56,9 +56,29 @@ describe('handshake MCP', () => {
     expect(msg.result.instructions).toMatch(/Versão dos dados: dados-/);
   });
 
-  it('notificação initialized é aceita com 202', async () => {
+  it('notificação initialized é aceita com 202 sem corpo (spec Streamable HTTP)', async () => {
     const { res } = await rpc({ jsonrpc: '2.0', method: 'notifications/initialized' });
     expect(res.status).toBe(202);
+    expect(await res.text()).toBe('');
+    expect(res.headers.get('content-type')).toBeNull();
+  });
+
+  it('versão de protocolo desconhecida vira erro JSON-RPC, nunca 500 (issue #6)', async () => {
+    // O discover do ChatGPT manda mcp-protocol-version novo; o transport recusa
+    // com HTTPException + erro JSON-RPC e o cliente negocia outra versão. Um
+    // 500 aqui aborta a criação do conector (424).
+    const res = await app.request('/mcp', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        accept: 'application/json, text/event-stream',
+        'mcp-protocol-version': '2099-01-01',
+      },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'server/discover', params: {} }),
+    });
+    expect(res.status).toBeLessThan(500);
+    const msg = JSON.parse(await res.text());
+    expect(msg.error.message).toContain('protocol version');
   });
 });
 
