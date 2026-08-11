@@ -12,3 +12,6 @@ python/.venv/
 # guia-comunidade) e do bncc-benchmark (interno/).
 docs/plano-abertura.md
 interno/
+
+# experimentos locais
+mcp-worker/teste/
