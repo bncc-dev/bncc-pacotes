@@ -1,6 +1,6 @@
 {
   "name": "@bncc/mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Servidor MCP da BNCC: as 1.721 aprendizagens da Base Nacional Comum Curricular e do complemento de Computação, verificadas e com fonte oficial, como tools para agentes de IA. Casca sobre @bncc/dados.",
   "keywords": [
     "bncc",

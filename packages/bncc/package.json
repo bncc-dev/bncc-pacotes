@@ -1,6 +1,6 @@
 {
   "name": "@bncc/dados",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A BNCC (Base Nacional Comum Curricular) como dados estruturados e verificados, com API de consulta tipada. Inclui o complemento de Computação (1.721 aprendizagens). Em desenvolvimento: a v1.0 sai junto da release dados-v1.0.0 do bncc-dados.",
   "keywords": [
     "bncc",

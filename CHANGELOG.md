@@ -17,6 +17,15 @@ pedagógica registrada.
 
 ## `@bncc/dados`
 
+### 0.3.2 — ago/2026
+- Dados atualizados para `dados-2026.07.1`: 11 textos corrigidos contra o PDF
+  homologado, a partir de auditoria independente de 10/08/2026 (EF03LP20,
+  EF69LP46, EF69LP34, EF02MA06, EF03MA05, EM13LP35, EF89LP19, EF69AR16,
+  EF03LP11, EF04LP01, EF69LP48). Nenhuma mudança de API ou de contagens.
+  Detalhes: changelog e decisão 12 do bncc-dados.
+- `VERSAO.json` agora registra a tag exata do commit sincronizado como
+  `data_version` (cobre patches em que a vigência dos registros não muda).
+
 ### 0.3.1 — jul/2026
 - Complemento de Computação incluído (1.721 aprendizagens no total).
 
@@ -28,6 +37,10 @@ pedagógica registrada.
 - Pré-release: dados embutidos e API de consulta tipada em português.
 
 ## `@bncc/mcp`
+
+### 0.2.1 — ago/2026
+- Reempacota com `@bncc/dados` 0.3.2 (dados `dados-2026.07.1`, 11 textos
+  corrigidos). Sem mudança de tools.
 
 ### 0.2.0 — 27/jul/2026
 - **Tools runtime-agnósticas.** `registrarTools(servidor, bncc, versao)` recebe
@@ -48,6 +61,10 @@ pedagógica registrada.
   dependência: o pacote saiu ininstalável. Origem da regra D6.
 
 ## `bncc` (PyPI)
+
+### 0.2.1 — ago/2026
+- Dados atualizados para `dados-2026.07.1` (11 textos corrigidos); paridade com
+  o npm 0.3.2 mantida pelas mesmas fixtures.
 
 ### 0.2.0 — jul/2026
 - Complemento de Computação; paridade com o npm mantida pelas mesmas fixtures.

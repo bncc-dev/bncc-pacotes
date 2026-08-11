@@ -40,8 +40,16 @@ for (const [origem, nome] of ARQUIVOS) {
   const conteudo = readFileSync(join(dadosDir, origem));
   checksums[nome] = createHash('sha256').update(conteudo).digest('hex');
 }
-const ef = JSON.parse(readFileSync(join(dadosDir, 'bncc-2018', 'ensino-fundamental.json'), 'utf8'));
-const dataVersion = ef.habilidades[0].vigencia.desde;
+// A data-version preferida é a tag exata do commit sincronizado (cobre patches
+// como dados-2026.07.1, em que a vigência dos registros não muda). Sem tag
+// exata, cai no `vigencia.desde` do primeiro registro.
+let dataVersion;
+try {
+  dataVersion = git('describe --tags --exact-match --match "dados-*"');
+} catch {
+  const ef = JSON.parse(readFileSync(join(dadosDir, 'bncc-2018', 'ensino-fundamental.json'), 'utf8'));
+  dataVersion = ef.habilidades[0].vigencia.desde;
+}
 
 const versao = {
   data_version: dataVersion,
