@@ -31,6 +31,14 @@ Cloudflare-native: sobrevive à migração do dia D sem mudanças.
   limite. Ausente em dev/testes; o código tolera.
 - **CORS liberado** com `mcp-session-id` e `mcp-protocol-version` em
   allow/expose (clientes MCP de navegador precisam ler esses headers).
+- **Browser Integrity Check da Cloudflare desligado para `mcp.bncc.dev`**
+  (issue #13, 25/ago/2026). O BIC é um filtro anti-bot para páginas de
+  navegador e barrava com 403 (`error code: 1010`) User-Agents de bibliotecas
+  HTTP, como `Python-urllib`, antes de a requisição chegar ao worker. Este é
+  um endpoint para máquinas; a proteção fica no rate limit acima. Se um
+  cliente voltar a receber 403 em texto puro (sem o `{erro, dica}` do
+  worker), confira essa configuração no painel da Cloudflare antes de
+  procurar no código.
 
 ## Dev e testes
 
