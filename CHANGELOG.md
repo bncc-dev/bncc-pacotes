@@ -10,28 +10,24 @@ pedagógica registrada.
 
 ## Não publicado
 
-- `buscar` / `bncc_buscar`: consulta por palavras (issue #9). Pontuação passa
-  a ser ignorada e, quando o trecho contíguo não casa, a busca devolve as
-  aprendizagens que contêm todas as palavras da consulta, em qualquer ordem
-  (determinístico, sem ranking). "ritmos velocidades fluxos" e "velocidades
-  ritmos" agora acham EI01ET06; consultas de uma palavra e os casos dourados
-  anteriores não mudam. Mudança de semântica: próxima versão é minor nos dois
-  pacotes de dados e no MCP. Três casos novos na fixture. `normalizarTexto`
-  (export público) segue igual.
-  Em `mcp.bncc.dev` desde o deploy do `mcp-worker` 0.2.2 (25/ago/2026).
-- `buscar` / `bncc_buscar`: o filtro `componente: "CO"` devolvia sempre zero,
-  porque os registros de Computação não trazem o campo `componente` (issue
-  #8). Agora restringe às habilidades EF de Computação, mesma regra de
-  `habilidadesEF`; três casos novos na fixture dourada. Vale para `@bncc/dados`,
-  `bncc` (PyPI) e, por consequência, `@bncc/mcp` (descrição da tool ajustada).
-  Em `mcp.bncc.dev` a correção está no ar desde o deploy do `mcp-worker` 0.2.1
-  (25/ago/2026); npm e PyPI recebem no próximo patch.
 - Abertura do repositório: licenças separadas para código e dados, arquivos de
   comunidade (CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, DECISOES) e correção do
   `sincronizado_de`, que gravava caminho local no `VERSAO.json` embutido nos
   pacotes.
 
 ## `@bncc/dados`
+
+### 0.4.0 — ago/2026
+- `buscar`: consulta por palavras (issue #9). Pontuação passa a ser ignorada e,
+  quando o trecho contíguo não casa, a busca devolve as aprendizagens que
+  contêm todas as palavras da consulta, em qualquer ordem (determinístico, sem
+  ranking). "ritmos velocidades fluxos" e "velocidades ritmos" agora acham
+  EI01ET06; consultas de uma palavra e os casos dourados anteriores não mudam.
+  `normalizarTexto` (export público) segue igual. Minor por mudar a semântica.
+- `buscar`: o filtro `componente: "CO"` devolvia sempre zero, porque os
+  registros de Computação não trazem o campo `componente` (issue #8). Agora
+  restringe às habilidades EF de Computação, mesma regra de `habilidadesEF`.
+- Seis casos novos na fixture dourada. Dados inalterados (`dados-2026.07.1`).
 
 ### 0.3.2 — ago/2026
 - Dados atualizados para `dados-2026.07.1`: 11 textos corrigidos contra o PDF
@@ -53,6 +49,13 @@ pedagógica registrada.
 - Pré-release: dados embutidos e API de consulta tipada em português.
 
 ## `@bncc/mcp`
+
+### 0.3.0 — ago/2026
+- Reempacota com `@bncc/dados` 0.4.0: `bncc_buscar` aceita consulta por
+  palavras e o filtro `componente="CO"` funciona (issues #8 e #9). Descrição
+  da tool explica as duas passadas da busca e orienta a enviar o enunciado
+  completo para localizar um código. No ar em `mcp.bncc.dev` desde o
+  `mcp-worker` 0.2.2 (25/ago/2026).
 
 ### 0.2.1 — ago/2026
 - Reempacota com `@bncc/dados` 0.3.2 (dados `dados-2026.07.1`, 11 textos
@@ -77,6 +80,10 @@ pedagógica registrada.
   dependência: o pacote saiu ininstalável. Origem da regra D6.
 
 ## `bncc` (PyPI)
+
+### 0.3.0 — ago/2026
+- `buscar`: consulta por palavras e filtro `componente="CO"` (issues #8 e #9);
+  paridade com o npm 0.4.0 mantida pelas mesmas fixtures. Dados inalterados.
 
 ### 0.2.1 — ago/2026
 - Dados atualizados para `dados-2026.07.1` (11 textos corrigidos); paridade com
