@@ -15,6 +15,8 @@ pedagógica registrada.
   #8). Agora restringe às habilidades EF de Computação, mesma regra de
   `habilidadesEF`; três casos novos na fixture dourada. Vale para `@bncc/dados`,
   `bncc` (PyPI) e, por consequência, `@bncc/mcp` (descrição da tool ajustada).
+  Em `mcp.bncc.dev` a correção está no ar desde o deploy do `mcp-worker` 0.2.1
+  (25/ago/2026); npm e PyPI recebem no próximo patch.
 - Abertura do repositório: licenças separadas para código e dados, arquivos de
   comunidade (CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, DECISOES) e correção do
   `sincronizado_de`, que gravava caminho local no `VERSAO.json` embutido nos
