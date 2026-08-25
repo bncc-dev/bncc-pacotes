@@ -230,9 +230,16 @@ export function criarConsultas(dados: DadosBNCC) {
       ...(!filtro.etapa || filtro.etapa === 'EM' ? em.habilidades : []),
       ...registrosCO.filter((r) => !filtro.etapa || decodificar(r.codigo).etapa === filtro.etapa),
     ];
-    const comp = filtro.componente && (filtro.componente.includes('-comp-') ? filtro.componente : `ef-comp-${filtro.componente.toLowerCase()}`);
+    // Computação: os registros CO não trazem o campo `componente` (ele é
+    // sintetizado na resolução), então o filtro restringe às habilidades EF de
+    // Computação, mesma regra de habilidadesEF (issue #8).
+    const filtraCO = !!filtro.componente && ['co', 'co-comp-computacao', 'ef-comp-co'].includes(filtro.componente.toLowerCase());
+    const comp = !filtraCO && filtro.componente
+      ? (filtro.componente.includes('-comp-') ? filtro.componente : `ef-comp-${filtro.componente.toLowerCase()}`)
+      : undefined;
     return universo
       .filter((r) => normalizarTexto(r.texto).includes(alvo))
+      .filter((r) => !filtraCO || (ehComputacao(r) && 'anos' in r))
       .filter((r) => !comp || ('componente' in r && (r as HabilidadeEF).componente === comp))
       .filter((r) => !filtro.ano || ('anos' in r && (r as HabilidadeEF).anos.includes(filtro.ano)))
       .map(resolver);
