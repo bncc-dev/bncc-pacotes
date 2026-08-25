@@ -18,6 +18,7 @@ pedagógica registrada.
   anteriores não mudam. Mudança de semântica: próxima versão é minor nos dois
   pacotes de dados e no MCP. Três casos novos na fixture. `normalizarTexto`
   (export público) segue igual.
+  Em `mcp.bncc.dev` desde o deploy do `mcp-worker` 0.2.2 (25/ago/2026).
 - `buscar` / `bncc_buscar`: o filtro `componente: "CO"` devolvia sempre zero,
   porque os registros de Computação não trazem o campo `componente` (issue
   #8). Agora restringe às habilidades EF de Computação, mesma regra de

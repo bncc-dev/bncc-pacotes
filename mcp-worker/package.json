@@ -1,6 +1,6 @@
 {
   "name": "bncc-mcp-worker",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Servidor MCP remoto da BNCC (mcp.bncc.dev): as tools do @bncc/mcp via streamable HTTP em Cloudflare Workers, sem instalação e sem API key.",
   "license": "MIT",
