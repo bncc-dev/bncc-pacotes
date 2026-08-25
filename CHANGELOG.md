@@ -10,6 +10,14 @@ pedagógica registrada.
 
 ## Não publicado
 
+- `buscar` / `bncc_buscar`: consulta por palavras (issue #9). Pontuação passa
+  a ser ignorada e, quando o trecho contíguo não casa, a busca devolve as
+  aprendizagens que contêm todas as palavras da consulta, em qualquer ordem
+  (determinístico, sem ranking). "ritmos velocidades fluxos" e "velocidades
+  ritmos" agora acham EI01ET06; consultas de uma palavra e os casos dourados
+  anteriores não mudam. Mudança de semântica: próxima versão é minor nos dois
+  pacotes de dados e no MCP. Três casos novos na fixture. `normalizarTexto`
+  (export público) segue igual.
 - `buscar` / `bncc_buscar`: o filtro `componente: "CO"` devolvia sempre zero,
   porque os registros de Computação não trazem o campo `componente` (issue
   #8). Agora restringe às habilidades EF de Computação, mesma regra de

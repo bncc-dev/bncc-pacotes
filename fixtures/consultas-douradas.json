@@ -238,6 +238,35 @@
    "nota": "issue #8: filtro CO combinado com ano (EF15CO02 e EF03CO02; o bloco EF15CO cobre o 3º ano)"
   },
   {
+   "id": "busca-palavras-sem-pontuacao",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "Vivenciar diferentes ritmos velocidades e fluxos nas interações e brincadeiras"
+   },
+   "esperado": 1,
+   "nota": "EI01ET06; issue #9: enunciado sem a vírgula original casa na passada contígua (pontuação ignorada)"
+  },
+  {
+   "id": "busca-palavras-qualquer-ordem",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "velocidades ritmos"
+   },
+   "esperado": 1,
+   "nota": "EI01ET06; issue #9: passada por palavras (todas presentes, qualquer ordem) quando o trecho contíguo não casa"
+  },
+  {
+   "id": "busca-palavras-com-filtro",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "resolução problemas",
+    "etapa": "EF",
+    "componente": "CO"
+   },
+   "esperado": 3,
+   "nota": "issue #9: passada por palavras respeita os filtros (EF05CO11, EF06CO05, EF69CO05)"
+  },
+  {
    "id": "C8-progressao-ei",
    "operacao": "progressaoEI_codigos",
    "args": "EI02TS01",

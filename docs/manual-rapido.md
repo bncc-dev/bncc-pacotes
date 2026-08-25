@@ -27,7 +27,7 @@ habilidadesEF({ componente: 'MA', unidadeTematica: 'Números' });
 habilidadesEM({ area: 'LGG', competencia: 1 });       // EM por área e competência
 objetivosEI({ campo: 'TS', grupoEtario: '02' });      // EI por campo e faixa etária
 
-// Busca textual (ignora acentos e caixa)
+// Busca textual (ignora acentos, caixa e pontuação; trecho contíguo ou, se não houver, todas as palavras em qualquer ordem)
 buscar('fake news');                       // [EM13LP39, EM13LP40]
 buscar('frações', { etapa: 'EF', ano: 5 });
 

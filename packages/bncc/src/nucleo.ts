@@ -38,6 +38,14 @@ export function normalizarTexto(t: string): string {
   return t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * Normalização de consulta: normalizarTexto + pontuação vira espaço. Interna
+ * a buscar; normalizarTexto segue exportada com a semântica de sempre.
+ */
+function normalizarBusca(t: string): string {
+  return normalizarTexto(t.replace(/[.,;:!?()"'«»“”‘’\[\]/-]/g, ' '));
+}
+
 export interface FiltroEF { componente?: string; ano?: number; unidadeTematica?: string; pratica?: string; campoAtuacao?: string }
 export interface FiltroEM { area?: string; competencia?: number; apenasLP?: boolean }
 export interface FiltroEI { campo?: string; grupoEtario?: string }
@@ -223,7 +231,11 @@ export function criarConsultas(dados: DadosBNCC) {
   }
 
   function buscar(texto: string, filtro: FiltroBusca = {}): AprendizagemResolvida[] {
-    const alvo = normalizarTexto(texto);
+    // Duas passadas, determinísticas (issue #9): (1) trecho contíguo do
+    // enunciado, com pontuação ignorada; (2) se nada casou, todas as palavras
+    // da consulta presentes no enunciado, em qualquer ordem.
+    const alvo = normalizarBusca(texto);
+    const palavras = alvo.split(' ').filter(Boolean);
     const universo: Registro[] = [
       ...(!filtro.etapa || filtro.etapa === 'EI' ? ei.objetivos : []),
       ...(!filtro.etapa || filtro.etapa === 'EF' ? ef.habilidades : []),
@@ -237,12 +249,16 @@ export function criarConsultas(dados: DadosBNCC) {
     const comp = !filtraCO && filtro.componente
       ? (filtro.componente.includes('-comp-') ? filtro.componente : `ef-comp-${filtro.componente.toLowerCase()}`)
       : undefined;
-    return universo
-      .filter((r) => normalizarTexto(r.texto).includes(alvo))
+    const candidatos = universo
       .filter((r) => !filtraCO || (ehComputacao(r) && 'anos' in r))
       .filter((r) => !comp || ('componente' in r && (r as HabilidadeEF).componente === comp))
       .filter((r) => !filtro.ano || ('anos' in r && (r as HabilidadeEF).anos.includes(filtro.ano)))
-      .map(resolver);
+      .map((r) => ({ r, t: normalizarBusca(r.texto) }));
+    const contiguos = candidatos.filter(({ t }) => t.includes(alvo));
+    if (contiguos.length > 0 || palavras.length < 2) return contiguos.map(({ r }) => resolver(r));
+    return candidatos
+      .filter(({ t }) => { const p = new Set(t.split(' ')); return palavras.every((w) => p.has(w)); })
+      .map(({ r }) => resolver(r));
   }
 
   function progressaoEI(codigo: string): { alinhamento: string; objetivos: AprendizagemResolvida[]; nota?: string } {

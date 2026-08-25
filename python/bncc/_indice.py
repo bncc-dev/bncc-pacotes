@@ -62,6 +62,11 @@ def normalizar_texto(t):
     return re.sub(r'\s+', ' ', t.casefold()).strip()
 
 
+def normalizar_busca(t):
+    """Normalização de consulta: normalizar_texto + pontuação vira espaço (interna a buscar)."""
+    return normalizar_texto(re.sub(r'[.,;:!?()"\'«»“”‘’\[\]/-]', ' ', t))
+
+
 def resolver_nome(id_):
     i = indice()
     ctx = i['contextos'].get(id_)

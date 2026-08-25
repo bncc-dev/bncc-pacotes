@@ -57,7 +57,7 @@ export function registrarTools(servidor: McpServer, bncc: Consultas, versao: Ver
 
   servidor.registerTool('bncc_buscar', {
     title: 'Busca textual nos enunciados',
-    description: 'Busca um termo nos textos oficiais das aprendizagens (normalizada: acentos e maiúsculas não importam). Use para encontrar habilidades sobre um tema (ex.: texto="frações", componente="MA"). Retorna {total, exibindo, resultados}; se total > exibindo, refine os filtros ou aumente o limite. Componentes do EF: LP, AR, EF, LI, MA, CI, GE, HI, ER e CO (Computação). O complemento de Computação (códigos CO) entra na busca por padrão; componente="CO" restringe às habilidades EF de Computação. Para localizar o código de um enunciado, envie o enunciado completo, sem filtros.',
+    description: 'Busca nos textos oficiais das aprendizagens. Acentos, maiúsculas e pontuação não importam. Casa primeiro o trecho contíguo; se nada casar, devolve as aprendizagens que contêm todas as palavras da consulta, em qualquer ordem (sem ranking: vazio significa que nenhum enunciado tem todas as palavras). Use para encontrar habilidades sobre um tema (ex.: texto="frações", componente="MA"). Retorna {total, exibindo, resultados}; se total > exibindo, refine os filtros ou aumente o limite. Componentes do EF: LP, AR, EF, LI, MA, CI, GE, HI, ER e CO (Computação). O complemento de Computação (códigos CO) entra na busca por padrão; componente="CO" restringe às habilidades EF de Computação. Para localizar o código de um enunciado, envie o enunciado completo, sem filtros.',
     inputSchema: {
       texto: z.string().describe('Termo a buscar nos enunciados'),
       etapa: z.enum(['EI', 'EF', 'EM']).optional(),

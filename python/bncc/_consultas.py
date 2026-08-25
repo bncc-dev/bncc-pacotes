@@ -1,6 +1,6 @@
 """API de consulta em português — espelho 1:1 do pacote npm @bncc/dados (snake_case)."""
 from ._codigos import decodificar
-from ._indice import indice, normalizar_texto, resolver_nome, versao as _versao
+from ._indice import indice, normalizar_busca, resolver_nome, versao as _versao
 
 
 def _resolver_co(reg):
@@ -150,8 +150,13 @@ def objetivos_ei(campo=None, grupo_etario=None):
 
 
 def buscar(texto, etapa=None, componente=None, ano=None):
-    """Busca textual normalizada (sem acentos/caixa) nos enunciados. Sem rede."""
-    alvo = normalizar_texto(texto)
+    """Busca textual nos enunciados, sem rede. Acentos, caixa e pontuação não importam.
+
+    Duas passadas, determinísticas (issue #9): (1) trecho contíguo do enunciado;
+    (2) se nada casou, todas as palavras da consulta presentes, em qualquer ordem.
+    """
+    alvo = normalizar_busca(texto)
+    palavras = [w for w in alvo.split(' ') if w]
     i = indice()
     universo = []
     if etapa in (None, 'EI'):
@@ -173,18 +178,19 @@ def buscar(texto, etapa=None, componente=None, ano=None):
     comp = None
     if componente and not filtra_co:
         comp = componente if '-comp-' in componente else f'ef-comp-{componente.lower()}'
-    saida = []
+    candidatos = []
     for r in universo:
-        if alvo not in normalizar_texto(r['texto']):
-            continue
         if filtra_co and not (r.get('documento') == 'computacao-2022' and 'anos' in r):
             continue
         if comp and r.get('componente') != comp:
             continue
         if ano and ano not in r.get('anos', []):
             continue
-        saida.append(_resolver(r))
-    return saida
+        candidatos.append((r, normalizar_busca(r['texto'])))
+    contiguos = [r for r, t in candidatos if alvo in t]
+    if contiguos or len(palavras) < 2:
+        return [_resolver(r) for r in contiguos]
+    return [_resolver(r) for r, t in candidatos if all(w in set(t.split(' ')) for w in palavras)]
 
 
 def progressao_ei(codigo):
