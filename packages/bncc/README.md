@@ -22,7 +22,7 @@ habilidadesEF({ componente: 'LP', ano: 6, pratica: 'Leitura' });   // 37 habilid
 habilidadesEM({ area: 'LGG', competencia: 1 });
 objetivosEI({ campo: 'TS', grupoEtario: '02' });
 
-// busca textual (normalizada: acentos e caixa não importam)
+// busca textual (acentos, caixa e pontuação não importam; trecho contíguo ou, se não houver, todas as palavras em qualquer ordem)
 buscar('frações', { etapa: 'EF', componente: 'MA' });
 
 // decodificação de códigos (as três gramáticas oficiais)
@@ -41,7 +41,7 @@ progressaoEI('EI02TS01');   // EI01TS01 → EI02TS01 → EI03TS01
 | `habilidadesEF(filtro?)` | Ensino Fundamental: por componente, ano, unidade temática, prática, campo de atuação |
 | `habilidadesEM(filtro?)` | Ensino Médio: por área, competência, só Língua Portuguesa |
 | `objetivosEI(filtro?)` | Educação Infantil: por campo de experiências e grupo etário |
-| `buscar(texto, filtro?)` | Busca textual normalizada nos enunciados |
+| `buscar(texto, filtro?)` | Busca textual nos enunciados: trecho contíguo ou, se não houver, todas as palavras em qualquer ordem |
 | `progressaoEI(codigo)` | Objetivos do mesmo aspecto nas três faixas etárias (alinhamento oficial) |
 | `estrutura()` | Espinha estrutural: etapas, áreas, componentes, competências, recortes |
 | `estatisticas()` | Contagens do dataset |

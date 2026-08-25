@@ -22,7 +22,7 @@ bncc.habilidades_ef(componente='LP', ano=6, pratica='Leitura')   # 37 habilidade
 bncc.habilidades_em(area='LGG', competencia=1)
 bncc.objetivos_ei(campo='TS', grupo_etario='02')
 
-# busca textual (acentos e caixa não importam)
+# busca textual (acentos, caixa e pontuação não importam; trecho contíguo ou, se não houver, todas as palavras em qualquer ordem)
 bncc.buscar('frações', etapa='EF', componente='MA')
 
 # decodificação de códigos (as três gramáticas oficiais)
