@@ -17,7 +17,7 @@ pedagógica registrada.
 
 ## `@bncc/dados`
 
-### 0.4.0 — ago/2026
+### 0.4.0 — 25/ago/2026
 - `buscar`: consulta por palavras (issue #9). Pontuação passa a ser ignorada e,
   quando o trecho contíguo não casa, a busca devolve as aprendizagens que
   contêm todas as palavras da consulta, em qualquer ordem (determinístico, sem
@@ -50,7 +50,7 @@ pedagógica registrada.
 
 ## `@bncc/mcp`
 
-### 0.3.0 — ago/2026
+### 0.3.0 — 25/ago/2026
 - Reempacota com `@bncc/dados` 0.4.0: `bncc_buscar` aceita consulta por
   palavras e o filtro `componente="CO"` funciona (issues #8 e #9). Descrição
   da tool explica as duas passadas da busca e orienta a enviar o enunciado
@@ -81,7 +81,7 @@ pedagógica registrada.
 
 ## `bncc` (PyPI)
 
-### 0.3.0 — ago/2026
+### 0.3.0 — 25/ago/2026
 - `buscar`: consulta por palavras e filtro `componente="CO"` (issues #8 e #9);
   paridade com o npm 0.4.0 mantida pelas mesmas fixtures. Dados inalterados.
 
