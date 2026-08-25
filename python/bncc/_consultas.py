@@ -166,10 +166,18 @@ def buscar(texto, etapa=None, componente=None, ano=None):
         universo += i['co_habilidades_ef']
     if etapa in (None, 'EM'):
         universo += i['co_habilidades_em']
-    comp = componente if (componente is None or '-comp-' in componente) else f'ef-comp-{componente.lower()}'
+    # Computação: os registros CO não trazem o campo `componente` (ele é
+    # sintetizado na resolução), então o filtro restringe às habilidades EF de
+    # Computação, mesma regra de habilidades_ef (issue #8).
+    filtra_co = bool(componente) and componente.lower() in ('co', 'co-comp-computacao', 'ef-comp-co')
+    comp = None
+    if componente and not filtra_co:
+        comp = componente if '-comp-' in componente else f'ef-comp-{componente.lower()}'
     saida = []
     for r in universo:
         if alvo not in normalizar_texto(r['texto']):
+            continue
+        if filtra_co and not (r.get('documento') == 'computacao-2022' and 'anos' in r):
             continue
         if comp and r.get('componente') != comp:
             continue

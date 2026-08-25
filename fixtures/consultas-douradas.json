@@ -207,6 +207,37 @@
    "nota": "normalização: mesma contagem com e sem acento"
   },
   {
+   "id": "busca-co-texto-exato",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "Identificar a adequação de diferentes tecnologias computacionais na resolução de problemas.",
+    "componente": "CO"
+   },
+   "esperado": 1,
+   "nota": "EF05CO11; issue #8: o filtro CO devolvia 0 (registros CO não têm campo componente)"
+  },
+  {
+   "id": "busca-co-tema",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "algoritmo",
+    "componente": "CO"
+   },
+   "esperado": 13,
+   "nota": "issue #8: Computação filtrável em buscar como em habilidadesEF (só habilidades EF; sem filtro são 34, 17 delas CO nas três etapas)"
+  },
+  {
+   "id": "busca-co-ano",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "algoritmo",
+    "componente": "CO",
+    "ano": 3
+   },
+   "esperado": 2,
+   "nota": "issue #8: filtro CO combinado com ano (EF15CO02 e EF03CO02; o bloco EF15CO cobre o 3º ano)"
+  },
+  {
    "id": "C8-progressao-ei",
    "operacao": "progressaoEI_codigos",
    "args": "EI02TS01",
