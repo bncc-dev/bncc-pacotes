@@ -156,3 +156,11 @@ describe('busca com ranking (issue #14, DECISOES.md D10)', () => {
     expect(c.buscar('brincadeiras de roda').map((x) => x.codigo)).toEqual(['EF12EF11']);
   });
 });
+
+describe('enunciado idêntico à consulta vem primeiro (issue #14)', () => {
+  const c = criarConsultas({ ...dados, computacao: carregar('computacao.json') });
+  it('EF08HI06 antes de EF08GE05, que contém o mesmo texto', () => {
+    const texto = c.porCodigo('EF08HI06').texto;
+    expect(c.buscar(texto).map((x) => x.codigo).slice(0, 2)).toEqual(['EF08HI06', 'EF08GE05']);
+  });
+});

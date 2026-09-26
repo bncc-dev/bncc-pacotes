@@ -219,9 +219,9 @@ def buscar(texto, etapa=None, componente=None, ano=None):
 
     Ranking determinístico (issue #14, DECISOES.md D10): consulta e enunciado são
     reduzidos a radicais sem palavras vazias; a pontuação é BM25 sobre o enunciado
-    mais os campos estruturais (peso menor). Três estratos: (A) todos os radicais e
-    o trecho literal; (B) todos os radicais; (C) parte dos radicais, só quando A e B
-    estão vazios. Dentro de cada estrato, por pontuação decrescente e código. Cada
+    mais os campos estruturais (peso menor). Estratos: enunciado idêntico à consulta;
+    (A) todos os radicais e o trecho literal; (B) todos os radicais; (C) parte dos
+    radicais, só quando os anteriores estão vazios. Dentro de cada estrato, por pontuação decrescente e código. Cada
     item traz 'pontuacao'.
     """
     alvo = normalizar_busca(texto)
@@ -263,11 +263,16 @@ def buscar(texto, etapa=None, componente=None, ano=None):
         # O trecho literal só distingue consultas de duas ou mais palavras; com
         # uma só, ele reintroduziria a diferença singular/plural que o radical apagou.
         literal = len(termos) >= 2 and alvo in doc['texto_norm']
-        pontuados.append((doc, casados, literal, round(s * 1000) / 1000))
+        # Enunciado idêntico à consulta vem antes dos que apenas a contêm: um
+        # texto mais longo que inclui a consulta pode pontuar mais no BM25.
+        exato = doc['texto_norm'] == alvo
+        pontuados.append((doc, casados, literal, round(s * 1000) / 1000, exato))
     chave = lambda p: (-p[3], p[0]['reg']['codigo'])
     todos = [p for p in pontuados if p[1] == len(termos)]
     if todos:
-        escolhidos = sorted([p for p in todos if p[2]], key=chave) + sorted([p for p in todos if not p[2]], key=chave)
+        escolhidos = (sorted([p for p in todos if p[4]], key=chave)
+                      + sorted([p for p in todos if p[2] and not p[4]], key=chave)
+                      + sorted([p for p in todos if not p[2] and not p[4]], key=chave))
     else:
         escolhidos = sorted(pontuados, key=chave)
     return [{**_resolver(p[0]['reg']), 'pontuacao': p[3]} for p in escolhidos]

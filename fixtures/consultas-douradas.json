@@ -388,6 +388,31 @@
    "nota": "issue #14: EI01ET06 continua o único resultado"
   },
   {
+   "id": "busca-enunciado-exato-primeiro",
+   "operacao": "primeiros_buscar",
+   "args": {
+    "texto": "Aplicar os conceitos de Estado, nação, território, governo e país para o entendimento de conflitos e tensões.",
+    "n": 2
+   },
+   "esperado": [
+    "EF08HI06",
+    "EF08GE05"
+   ],
+   "nota": "issue #14: enunciado idêntico à consulta vem antes de EF08GE05, cujo texto contém o de EF08HI06 e pontua mais no BM25"
+  },
+  {
+   "id": "busca-enunciado-exato-co",
+   "operacao": "primeiros_buscar",
+   "args": {
+    "texto": "Organizar objetos físicos ou digitais considerando diferentes características para esta organização, explicitando semelhanças (padrões) e diferenças.",
+    "n": 1
+   },
+   "esperado": [
+    "EF01CO01"
+   ],
+   "nota": "issue #14: mesmo caso de busca-enunciado-exato-primeiro, no complemento de Computação"
+  },
+  {
    "id": "C8-progressao-ei",
    "operacao": "progressaoEI_codigos",
    "args": "EI02TS01",

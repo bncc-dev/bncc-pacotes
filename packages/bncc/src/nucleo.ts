@@ -344,8 +344,8 @@ export function criarConsultas(dados: DadosBNCC) {
   /**
    * Busca textual com ranking determinístico (issue #14). Consulta e enunciado
    * são reduzidos a radicais sem palavras vazias; a pontuação é BM25 sobre o
-   * enunciado mais os campos estruturais (com peso menor). Três estratos:
-   * (A) todos os radicais e o trecho literal; (B) todos os radicais; (C) parte
+   * enunciado mais os campos estruturais (com peso menor). Estratos: enunciado
+   * idêntico à consulta; (A) todos os radicais e o trecho literal; (B) todos os radicais; (C) parte
    * dos radicais, só quando A e B estão vazios. Dentro de cada estrato, por
    * pontuação decrescente e código.
    */
@@ -362,7 +362,7 @@ export function criarConsultas(dados: DadosBNCC) {
       : undefined;
     const { docs, df, tamanhoMedio } = indiceBusca();
     const n = docs.length;
-    type Pontuado = { doc: DocBusca; casados: number; literal: boolean; pontuacao: number };
+    type Pontuado = { doc: DocBusca; casados: number; exato: boolean; literal: boolean; pontuacao: number };
     const pontuados: Pontuado[] = [];
     for (const doc of docs) {
       const r = doc.reg;
@@ -385,13 +385,17 @@ export function criarConsultas(dados: DadosBNCC) {
       // uma só, ele reintroduziria a diferença singular/plural que o radical
       // acabou de apagar.
       const literal = termos.length >= 2 && doc.textoNorm.includes(alvo);
-      pontuados.push({ doc, casados, literal, pontuacao: Math.round(s * 1000) / 1000 });
+      // Enunciado idêntico à consulta vem antes dos que apenas a contêm: um
+      // texto mais longo que inclui a consulta pode pontuar mais no BM25.
+      const exato = doc.textoNorm === alvo;
+      pontuados.push({ doc, casados, exato, literal, pontuacao: Math.round(s * 1000) / 1000 });
     }
     const porRelevancia = (a: Pontuado, b: Pontuado) => b.pontuacao - a.pontuacao || (a.doc.reg.codigo < b.doc.reg.codigo ? -1 : 1);
     const todos = pontuados.filter((p) => p.casados === termos.length);
-    const estratoA = todos.filter((p) => p.literal).sort(porRelevancia);
-    const estratoB = todos.filter((p) => !p.literal).sort(porRelevancia);
-    const escolhidos = todos.length > 0 ? [...estratoA, ...estratoB] : pontuados.sort(porRelevancia);
+    const exatos = todos.filter((p) => p.exato).sort(porRelevancia);
+    const estratoA = todos.filter((p) => p.literal && !p.exato).sort(porRelevancia);
+    const estratoB = todos.filter((p) => !p.literal && !p.exato).sort(porRelevancia);
+    const escolhidos = todos.length > 0 ? [...exatos, ...estratoA, ...estratoB] : pontuados.sort(porRelevancia);
     return escolhidos.map((p) => ({ ...resolver(p.doc.reg), pontuacao: p.pontuacao }));
   }
 

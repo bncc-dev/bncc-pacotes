@@ -125,10 +125,15 @@ pacotes, escrita à mão, sem biblioteca (regra 6):
    estruturado; é o "contextual retrieval" de graça.
 3. **Pontuação.** BM25 com k1 = 1,2 e b = 0,75, arredondada a 3 casas e
    devolvida no campo `pontuacao` de cada resultado.
-4. **Estratos.** (A) casam todos os radicais e contêm a consulta literal; (B)
-   casam todos os radicais; (C) casam parte deles, **só quando A e B estão
-   vazios**. A antes de B; dentro de cada um, pontuação decrescente e empate
-   por código. O estrato literal só se aplica a consultas de duas ou mais
+4. **Estratos.** Primeiro, o enunciado idêntico à consulta; depois (A) casam
+   todos os radicais e contêm a consulta literal; (B) casam todos os radicais;
+   (C) casam parte deles, **só quando os anteriores estão vazios**. Dentro de
+   cada um, pontuação decrescente e empate por código. O estrato do idêntico
+   existe porque um enunciado mais longo que contém a consulta pode pontuar
+   mais no BM25 (EF08GE05 contém o texto de EF08HI06). Buscando cada uma das
+   1.721 aprendizagens pelo próprio enunciado, 16 não vêm em primeiro: todas
+   têm texto idêntico ao de outro código (ex.: EF69CO02 e EF06CO02), e o
+   empate por código decide. O estrato literal só se aplica a consultas de duas ou mais
    palavras; com uma só, ele reintroduziria a diferença singular/plural que o
    radical acabou de apagar.
 5. **Ordem conferida pela fixture.** Operação `primeiros_buscar`

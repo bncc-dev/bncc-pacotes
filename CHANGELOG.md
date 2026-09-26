@@ -24,14 +24,15 @@ pedagógica registrada.
   enunciado mais os campos estruturais (componente, unidade temática ou
   prática, objeto de conhecimento; peso 0,5). Três estratos: trecho literal com
   todos os radicais, todos os radicais, e parte deles só quando os dois
-  primeiros estão vazios. Empate desfeito por código. `fração`, `frações` e
+  primeiros estão vazios; acima de todos, o enunciado idêntico à consulta.
+  Empate desfeito por código. `fração`, `frações` e
   `fracionário` passam a devolver o mesmo conjunto (22) e o mesmo topo; `de`
   sozinho devolve vazio; `texto` deixa de casar `contexto`. Cada item traz
   `pontuacao` (campo novo em `AprendizagemResolvida`). Exports novos:
   `radical`, `tokenizar`, `STOPWORDS`. Minor por mudar a semântica e a forma
   do resultado.
 - Fixture dourada: operação `primeiros_buscar` (ordem dos N primeiros) com
-  cinco casos; cinco casos novos de `contar_buscar`; três casos existentes
+  sete casos; cinco casos novos de `contar_buscar`; três casos existentes
   revisados com o valor novo anotado (`C6-busca-fracoes` e `busca-sem-acento`
   6 → 22, `busca-co-tema` 13 → 14). Dados inalterados (`dados-2026.07.1`).
 

@@ -83,3 +83,8 @@ def test_buscar_literal_e_enunciado_completo():
 
 def test_buscar_parcial_ultima_passada():
     assert [x['codigo'] for x in bncc.buscar('brincadeiras de roda')] == ['EF12EF11']
+
+
+def test_buscar_enunciado_identico_primeiro():
+    texto = bncc.por_codigo('EF08HI06')['texto']
+    assert [x['codigo'] for x in bncc.buscar(texto)[:2]] == ['EF08HI06', 'EF08GE05']
