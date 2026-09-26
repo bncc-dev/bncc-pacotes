@@ -192,8 +192,8 @@
     "etapa": "EF",
     "componente": "MA"
    },
-   "esperado": 6,
-   "nota": "plural exato; a consulta C6 do caso âncora usava prefixo 'fraç' (9)"
+   "esperado": 22,
+   "nota": "issue #14: radical (fração/frações/fracionário) e índice sobre enunciado + objetos de conhecimento; era 6 (plural exato) na 0.4.0. A consulta C6 do caso âncora usava prefixo 'fraç' (9)"
   },
   {
    "id": "busca-sem-acento",
@@ -203,8 +203,8 @@
     "etapa": "EF",
     "componente": "MA"
    },
-   "esperado": 6,
-   "nota": "normalização: mesma contagem com e sem acento"
+   "esperado": 22,
+   "nota": "normalização: mesma contagem com e sem acento (issue #14: era 6 na 0.4.0)"
   },
   {
    "id": "busca-co-texto-exato",
@@ -223,8 +223,8 @@
     "texto": "algoritmo",
     "componente": "CO"
    },
-   "esperado": 13,
-   "nota": "issue #8: Computação filtrável em buscar como em habilidadesEF (só habilidades EF; sem filtro são 34, 17 delas CO nas três etapas)"
+   "esperado": 14,
+   "nota": "issue #8: Computação filtrável em buscar como em habilidadesEF (só habilidades EF). issue #14: 14 com radical (algoritmo/algoritmos) e objetos de conhecimento; era 13 na 0.4.0"
   },
   {
    "id": "busca-co-ano",
@@ -253,7 +253,7 @@
     "texto": "velocidades ritmos"
    },
    "esperado": 1,
-   "nota": "EI01ET06; issue #9: passada por palavras (todas presentes, qualquer ordem) quando o trecho contíguo não casa"
+   "nota": "EI01ET06; issue #9: todas as palavras, em qualquer ordem. issue #14: continua 1 (estrato B exige todos os radicais)"
   },
   {
    "id": "busca-palavras-com-filtro",
@@ -265,6 +265,127 @@
    },
    "esperado": 3,
    "nota": "issue #9: passada por palavras respeita os filtros (EF05CO11, EF06CO05, EF69CO05)"
+  },
+  {
+   "id": "busca-so-stopwords",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "de"
+   },
+   "esperado": 0,
+   "nota": "issue #14: consulta só de palavras vazias devolve vazio (na 0.4.0, 'de' casava 1.614 registros por substring)"
+  },
+  {
+   "id": "busca-radical-singular",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "fração"
+   },
+   "esperado": 22,
+   "nota": "issue #14: mesma contagem de 'frações' e 'fracionário' (radical frac); na 0.4.0 eram 3, 6 e 2, disjuntos"
+  },
+  {
+   "id": "busca-radical-plural",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "fracionário"
+   },
+   "esperado": 22,
+   "nota": "issue #14: ver busca-radical-singular"
+  },
+  {
+   "id": "busca-sem-substring",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "texto"
+   },
+   "esperado": 378,
+   "nota": "issue #14: casa 'texto'/'textos' e não mais 'contexto'/'hipertexto' (na 0.4.0 eram 394 por substring)"
+  },
+  {
+   "id": "busca-parcial-ultima-passada",
+   "operacao": "contar_buscar",
+   "args": {
+    "texto": "brincadeiras de roda"
+   },
+   "esperado": 1,
+   "nota": "issue #14: nenhum enunciado tem todos os radicais; entra o estrato parcial (EF12EF11 tem 'brincadeiras' e 'roda')"
+  },
+  {
+   "id": "busca-fracao-topo",
+   "operacao": "primeiros_buscar",
+   "args": {
+    "texto": "fração",
+    "n": 5
+   },
+   "esperado": [
+    "EF06MA07",
+    "EF06MA10",
+    "EF08MA05",
+    "EF09MA03",
+    "EF05MA04"
+   ],
+   "nota": "issue #14: singular e plural compartilham o topo (radical); BM25 sobre enunciado + campos, empate por código"
+  },
+  {
+   "id": "busca-fracoes-topo",
+   "operacao": "primeiros_buscar",
+   "args": {
+    "texto": "frações",
+    "n": 5
+   },
+   "esperado": [
+    "EF06MA07",
+    "EF06MA10",
+    "EF08MA05",
+    "EF09MA03",
+    "EF05MA04"
+   ],
+   "nota": "issue #14: idêntico a busca-fracao-topo"
+  },
+  {
+   "id": "busca-texto-topo",
+   "operacao": "primeiros_buscar",
+   "args": {
+    "texto": "texto",
+    "n": 5
+   },
+   "esperado": [
+    "EF15LP05",
+    "EF03LP17",
+    "EF15LP08",
+    "EF05LP24",
+    "EF35LP05"
+   ],
+   "nota": "issue #14: topo estável para consulta com centenas de resultados (na 0.4.0 vinham na ordem do dataset, EI primeiro)"
+  },
+  {
+   "id": "busca-leitura-graficos-topo",
+   "operacao": "primeiros_buscar",
+   "args": {
+    "texto": "leitura de gráficos",
+    "n": 5
+   },
+   "esperado": [
+    "EI03EF07",
+    "EF01MA21",
+    "EF15LP18",
+    "EF15LP04",
+    "EF06LI07"
+   ],
+   "nota": "issue #14: 'de' ignorada; EI03EF07 ('observação gráfica e/ou de leitura') e EF01MA21 ('Leitura de tabelas e de gráficos') no topo"
+  },
+  {
+   "id": "busca-literal-primeiro",
+   "operacao": "primeiros_buscar",
+   "args": {
+    "texto": "velocidades ritmos",
+    "n": 1
+   },
+   "esperado": [
+    "EI01ET06"
+   ],
+   "nota": "issue #14: EI01ET06 continua o único resultado"
   },
   {
    "id": "C8-progressao-ei",

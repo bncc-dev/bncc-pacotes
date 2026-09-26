@@ -1,6 +1,9 @@
 """API de consulta em português — espelho 1:1 do pacote npm @bncc/dados (snake_case)."""
 from ._codigos import decodificar
-from ._indice import indice, normalizar_busca, resolver_nome, versao as _versao
+import math
+from functools import lru_cache
+
+from ._indice import indice, normalizar_busca, resolver_nome, tokenizar, versao as _versao
 
 
 def _resolver_co(reg):
@@ -149,28 +152,82 @@ def objetivos_ei(campo=None, grupo_etario=None):
             if (not cid or o['campo_experiencias'] == cid) and (not gid or o['grupo_etario'] == gid)]
 
 
-def buscar(texto, etapa=None, componente=None, ano=None):
-    """Busca textual nos enunciados, sem rede. Acentos, caixa e pontuação não importam.
+# Parâmetros do BM25 (DECISOES.md D10). Os mesmos no pacote npm.
+_BM25_K1 = 1.2
+_BM25_B = 0.75
+_PESO_CAMPOS = 0.5
 
-    Duas passadas, determinísticas (issue #9): (1) trecho contíguo do enunciado;
-    (2) se nada casou, todas as palavras da consulta presentes, em qualquer ordem.
+
+def _nome_co(id_):
+    i = indice()
+    return i['co_eixos'].get(id_) or i['co_objetos'].get(id_) or resolver_nome(id_)
+
+
+def _texto_campos(reg):
+    """Nomes dos campos estruturais que entram no índice, além do enunciado."""
+    ids = []
+    if reg.get('documento') == 'computacao-2022':
+        ids.append('Computação')
+        if 'eixo' in reg:
+            ids.append(reg['eixo'])
+        ids += reg.get('objetos_conhecimento') or []
+        return ' '.join(_nome_co(x) for x in ids)
+    if reg.get('campo_experiencias'):
+        ids.append(reg['campo_experiencias'])
+    if reg.get('area'):
+        ids.append(reg['area'])
+    if reg.get('componente'):
+        ids.append(reg['componente'])
+    org = reg.get('organizacao') or {}
+    if 'unidade_tematica' in org:
+        ids.append(org['unidade_tematica'])
+    if org.get('tipo') == 'campo_pratica':
+        ids.append(org['pratica_linguagem'])
+    if org.get('tipo') == 'eixo':
+        ids.append(org['eixo'])
+    ids += reg.get('objetos_conhecimento') or []
+    return ' '.join(resolver_nome(x) for x in ids)
+
+
+def _contar(tokens):
+    m = {}
+    for t in tokens:
+        m[t] = m.get(t, 0) + 1
+    return m
+
+
+@lru_cache(maxsize=1)
+def _indice_busca():
+    i = indice()
+    universo = (i['objetivos_ei'] + i['habilidades_ef'] + i['habilidades_em']
+                + i['co_objetivos_ei'] + i['co_habilidades_ef'] + i['co_habilidades_em'])
+    docs, df, soma = [], {}, 0
+    for reg in universo:
+        te = tokenizar(reg['texto'])
+        tc = tokenizar(_texto_campos(reg))
+        doc = {'reg': reg, 'texto_norm': normalizar_busca(reg['texto']),
+               'enunciado': _contar(te), 'campos': _contar(tc), 'tamanho': len(te) + len(tc)}
+        soma += doc['tamanho']
+        for t in set(te + tc):
+            df[t] = df.get(t, 0) + 1
+        docs.append(doc)
+    return {'docs': docs, 'df': df, 'tamanho_medio': soma / len(docs)}
+
+
+def buscar(texto, etapa=None, componente=None, ano=None):
+    """Busca textual nos enunciados, ordenada por relevância, sem rede.
+
+    Ranking determinístico (issue #14, DECISOES.md D10): consulta e enunciado são
+    reduzidos a radicais sem palavras vazias; a pontuação é BM25 sobre o enunciado
+    mais os campos estruturais (peso menor). Três estratos: (A) todos os radicais e
+    o trecho literal; (B) todos os radicais; (C) parte dos radicais, só quando A e B
+    estão vazios. Dentro de cada estrato, por pontuação decrescente e código. Cada
+    item traz 'pontuacao'.
     """
     alvo = normalizar_busca(texto)
-    palavras = [w for w in alvo.split(' ') if w]
-    i = indice()
-    universo = []
-    if etapa in (None, 'EI'):
-        universo += i['objetivos_ei']
-    if etapa in (None, 'EF'):
-        universo += i['habilidades_ef']
-    if etapa in (None, 'EM'):
-        universo += i['habilidades_em']
-    if etapa in (None, 'EI'):
-        universo += i['co_objetivos_ei']
-    if etapa in (None, 'EF'):
-        universo += i['co_habilidades_ef']
-    if etapa in (None, 'EM'):
-        universo += i['co_habilidades_em']
+    termos = list(dict.fromkeys(tokenizar(texto)))
+    if not termos:
+        return []
     # Computação: os registros CO não trazem o campo `componente` (ele é
     # sintetizado na resolução), então o filtro restringe às habilidades EF de
     # Computação, mesma regra de habilidades_ef (issue #8).
@@ -178,19 +235,42 @@ def buscar(texto, etapa=None, componente=None, ano=None):
     comp = None
     if componente and not filtra_co:
         comp = componente if '-comp-' in componente else f'ef-comp-{componente.lower()}'
-    candidatos = []
-    for r in universo:
+    ib = _indice_busca()
+    n = len(ib['docs'])
+    df, tamanho_medio = ib['df'], ib['tamanho_medio']
+    pontuados = []
+    for doc in ib['docs']:
+        r = doc['reg']
+        if etapa and decodificar(r['codigo'])['etapa'] != etapa:
+            continue
         if filtra_co and not (r.get('documento') == 'computacao-2022' and 'anos' in r):
             continue
         if comp and r.get('componente') != comp:
             continue
         if ano and ano not in r.get('anos', []):
             continue
-        candidatos.append((r, normalizar_busca(r['texto'])))
-    contiguos = [r for r, t in candidatos if alvo in t]
-    if contiguos or len(palavras) < 2:
-        return [_resolver(r) for r in contiguos]
-    return [_resolver(r) for r, t in candidatos if all(w in set(t.split(' ')) for w in palavras)]
+        casados, s = 0, 0.0
+        for t in termos:
+            f = doc['enunciado'].get(t, 0) + _PESO_CAMPOS * doc['campos'].get(t, 0)
+            if f == 0:
+                continue
+            casados += 1
+            d = df.get(t, 0)
+            idf = math.log(1 + (n - d + 0.5) / (d + 0.5))
+            s += idf * (f * (_BM25_K1 + 1)) / (f + _BM25_K1 * (1 - _BM25_B + _BM25_B * doc['tamanho'] / tamanho_medio))
+        if casados == 0:
+            continue
+        # O trecho literal só distingue consultas de duas ou mais palavras; com
+        # uma só, ele reintroduziria a diferença singular/plural que o radical apagou.
+        literal = len(termos) >= 2 and alvo in doc['texto_norm']
+        pontuados.append((doc, casados, literal, round(s * 1000) / 1000))
+    chave = lambda p: (-p[3], p[0]['reg']['codigo'])
+    todos = [p for p in pontuados if p[1] == len(termos)]
+    if todos:
+        escolhidos = sorted([p for p in todos if p[2]], key=chave) + sorted([p for p in todos if not p[2]], key=chave)
+    else:
+        escolhidos = sorted(pontuados, key=chave)
+    return [{**_resolver(p[0]['reg']), 'pontuacao': p[3]} for p in escolhidos]
 
 
 def progressao_ei(codigo):

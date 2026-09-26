@@ -66,6 +66,12 @@ def test_dourada(caso):
         a = args_em_snake(args)
         texto = a.pop('texto')
         assert len(bncc.buscar(texto, **a)) == esperado
+    elif op == 'primeiros_buscar':
+        # Ordem dos n primeiros, posição a posição (docs/paridade.md).
+        a = args_em_snake(args)
+        texto = a.pop('texto')
+        n = a.pop('n')
+        assert [r['codigo'] for r in bncc.buscar(texto, **a)[:n]] == esperado
     elif op == 'progressaoEI_codigos':
         assert [o['codigo'] for o in bncc.progressao_ei(args)['objetivos']] == esperado
     elif op == 'estatisticas':

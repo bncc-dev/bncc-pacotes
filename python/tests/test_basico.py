@@ -30,3 +30,56 @@ def test_para_dataframe():
     df = bncc.para_dataframe('EF')
     assert len(df) == 1304
     assert 'codigo' in df.columns
+
+
+# --- busca com ranking (issue #14, DECISOES.md D10) ---
+
+def test_radical_tabela():
+    from bncc._indice import radical
+    # Tabela espelhada em packages/bncc/test/nucleo.test.ts.
+    tabela = [
+        ('fracao', 'frac'), ('fracoes', 'frac'), ('fracionario', 'frac'), ('fracionarias', 'frac'),
+        ('texto', 'text'), ('textos', 'text'), ('contexto', 'context'),
+        ('graficos', 'grafic'), ('grafica', 'grafic'), ('leitura', 'leitur'),
+        ('de', 'de'), ('ler', 'ler'),
+        ('conta', 'cont'), ('conto', 'cont'),  # colisão aceita
+    ]
+    for palavra, esperado in tabela:
+        assert radical(palavra) == esperado, palavra
+
+
+def test_tokenizar():
+    from bncc._indice import tokenizar
+    assert tokenizar('Leitura de gráficos, e textos!') == ['leitur', 'grafic', 'text']
+    assert tokenizar('de a o') == []
+
+
+def test_buscar_so_stopwords_vazio():
+    assert bncc.buscar('de') == []
+    assert bncc.buscar('a de em') == []
+
+
+def test_buscar_pontuacao_decrescente_e_sem_substring():
+    r = bncc.buscar('texto')
+    assert len(r) > 100
+    for a, b in zip(r, r[1:]):
+        assert a['pontuacao'] > b['pontuacao'] or (a['pontuacao'] == b['pontuacao'] and a['codigo'] < b['codigo'])
+    # Registros que só têm 'contexto' (substring) ficam fora; na 0.4.0 entravam (394 no total).
+    cods = {x['codigo'] for x in r}
+    assert not cods & {'EI02ET07', 'EI03EF04', 'EF15LP13', 'EF35LP10', 'EF04LP03'}
+    assert len(r) < 394
+
+
+def test_buscar_radical_mesmo_conjunto():
+    cods = lambda t: [x['codigo'] for x in bncc.buscar(t)]
+    assert cods('fração') == cods('frações') == cods('fracionário')
+
+
+def test_buscar_literal_e_enunciado_completo():
+    assert [x['codigo'] for x in bncc.buscar('velocidades ritmos')] == ['EI01ET06']
+    completo = bncc.buscar('Identificar a adequação de diferentes tecnologias computacionais na resolução de problemas.')
+    assert [x['codigo'] for x in completo] == ['EF05CO11']
+
+
+def test_buscar_parcial_ultima_passada():
+    assert [x['codigo'] for x in bncc.buscar('brincadeiras de roda')] == ['EF12EF11']

@@ -11,7 +11,7 @@ export {
   estrutura, progressaoEI, estatisticas,
 } from './consultas.js';
 export type { FiltroEF, FiltroEM, FiltroEI, FiltroBusca } from './consultas.js';
-export { criarConsultas, normalizarTexto } from './nucleo.js';
+export { criarConsultas, normalizarTexto, radical, tokenizar, STOPWORDS } from './nucleo.js';
 export type { Consultas, DadosBNCC } from './nucleo.js';
 export type * from './tipos.js';
 

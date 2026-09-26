@@ -30,7 +30,7 @@ claude mcp add bncc-local -- node caminho/para/packages/mcp/dist/servidor.js
 | Tool | Para quê |
 |---|---|
 | `bncc_lookup` | Registro completo pelo código, com contexto resolvido e fonte oficial (página do PDF homologado) |
-| `bncc_buscar` | Busca textual normalizada nos enunciados, com filtros e limite |
+| `bncc_buscar` | Busca textual nos enunciados, ordenada por relevância, com filtros e limite |
 | `bncc_listar` | Listagem estruturada por etapa/componente/ano/área/campo (cobertura curricular) |
 | `bncc_decodificar` | Anatomia de um código (etapa, anos, componente, competência, sequência) |
 | `bncc_progressao_ei` | Objetivos do mesmo aspecto nas 3 faixas etárias da Educação Infantil (alinhamento oficial) |
