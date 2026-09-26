@@ -20,7 +20,7 @@ pedagógica registrada.
 
 ## `@bncc/dados`
 
-### 0.6.0 — a publicar
+### 0.6.0 — 26/set/2026
 - Ranking exportado para interfaces web (DECISOES.md D10): subpath
   `@bncc/dados/busca`, sem dados e sem dependência de Node, com
   `prepararIndice`, `ranquear`, `tokenizar`, `radical`, `STOPWORDS` e
@@ -126,7 +126,7 @@ pedagógica registrada.
 
 ## `bncc` (PyPI)
 
-### 0.5.0 — a publicar
+### 0.5.0 — 26/set/2026
 - `indice_busca()` e o módulo `bncc._busca` (`preparar_indice`, `ranquear`),
   espelhos do npm 0.6.0; `buscar()` passa a usá-los, com comportamento
   idêntico. Paridade do índice conferida pela fixture. Dados inalterados.
