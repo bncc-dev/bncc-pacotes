@@ -24,6 +24,7 @@ function compacto(r: ReturnType<Consultas['porCodigo']>) {
     codigo: r.codigo,
     etapa: r.etapa,
     texto: r.texto,
+    ...(r.pontuacao !== undefined ? { pontuacao: r.pontuacao } : {}),
     ...(r.componente ? { componente: r.componente.nome } : {}),
     ...(r.area ? { area: r.area.nome } : {}),
     ...(r.anos ? { anos: r.anos } : {}),
@@ -57,7 +58,7 @@ export function registrarTools(servidor: McpServer, bncc: Consultas, versao: Ver
 
   servidor.registerTool('bncc_buscar', {
     title: 'Busca textual nos enunciados',
-    description: 'Busca nos textos oficiais das aprendizagens. Acentos, maiúsculas e pontuação não importam. Casa primeiro o trecho contíguo; se nada casar, devolve as aprendizagens que contêm todas as palavras da consulta, em qualquer ordem (sem ranking: vazio significa que nenhum enunciado tem todas as palavras). Use para encontrar habilidades sobre um tema (ex.: texto="frações", componente="MA"). Retorna {total, exibindo, resultados}; se total > exibindo, refine os filtros ou aumente o limite. Componentes do EF: LP, AR, EF, LI, MA, CI, GE, HI, ER e CO (Computação). O complemento de Computação (códigos CO) entra na busca por padrão; componente="CO" restringe às habilidades EF de Computação. Para localizar o código de um enunciado, envie o enunciado completo, sem filtros.',
+    description: 'Busca nos textos oficiais das aprendizagens, ordenada por relevância. Acentos, maiúsculas, pontuação, plural, gênero e palavras vazias (de, a, em...) não importam. Ordem: quantidade e raridade das palavras da consulta no enunciado (e, com peso menor, no componente, unidade temática ou objeto de conhecimento); o trecho literal vem primeiro; cada resultado traz pontuacao. Se nenhum enunciado tiver todas as palavras, devolve os que têm parte delas. Consulta só de palavras vazias devolve vazio. Use para encontrar habilidades sobre um tema (ex.: texto="frações", componente="MA"). Retorna {total, exibindo, resultados}; se total > exibindo, refine os filtros ou aumente o limite. Componentes do EF: LP, AR, EF, LI, MA, CI, GE, HI, ER e CO (Computação). O complemento de Computação (códigos CO) entra na busca por padrão; componente="CO" restringe às habilidades EF de Computação. Para localizar o código de um enunciado, envie o enunciado completo, sem filtros.',
     inputSchema: {
       texto: z.string().describe('Termo a buscar nos enunciados'),
       etapa: z.enum(['EI', 'EF', 'EM']).optional(),

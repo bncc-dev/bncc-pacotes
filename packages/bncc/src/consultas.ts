@@ -53,7 +53,11 @@ export function objetivosEI(filtro: FiltroEI = {}): AprendizagemResolvida[] {
   return consultas().objetivosEI(filtro);
 }
 
-/** Busca textual normalizada (sem acentos/caixa) nos enunciados. Sem rede, sem índice externo. */
+/**
+ * Busca textual nos enunciados, ordenada por relevância (BM25 sobre radicais;
+ * plural, gênero, acentos, caixa, pontuação e palavras vazias não importam;
+ * trecho literal vem primeiro). Cada item traz `pontuacao`. Sem rede.
+ */
 export function buscar(texto: string, filtro: FiltroBusca = {}): AprendizagemResolvida[] {
   return consultas().buscar(texto, filtro);
 }

@@ -104,3 +104,58 @@ caminho absoluto.
 de quem sincronizou. O que identifica a origem de forma reprodutível é o campo
 `commit`, que continua lá. Achado da auditoria de abertura; ver
 `docs/plano-abertura.md` (interno).
+
+## D10 · Busca com ranking determinístico, sem dependências (issue #14)
+
+**Decisão:** `buscar()` ordena por relevância e a regra é a mesma nos dois
+pacotes, escrita à mão, sem biblioteca (regra 6):
+
+1. **Tokens.** Normalização de sempre (acentos, caixa, pontuação), depois
+   remoção de uma lista fixa de palavras vazias do português e redução a
+   radical por regras curtas: plural (`coes→cao`, `oes→ao`, `ais→al`, ...,
+   `s→∅`), sufixos fortes (`mente`, `cao→c`, `ao`), vogal final de gênero e
+   quatro derivacionais (`cionari→c`, `cional→c`, `idad`, `ment`). Não é um
+   stemmer completo: o alvo é `fracao`, `fracoes` e `fracionario` no mesmo
+   radical sem que `texto` case `contexto`. Colisões conhecidas e aceitas:
+   `conta`/`conto`, `lida`/`lido`, `educacao`/`educacional` (viram o mesmo
+   radical). A tabela palavra→radical é teste unitário nos dois pacotes.
+2. **Índice.** Enunciado mais os nomes dos campos estruturais (componente,
+   área, campo de experiências, eixo, unidade temática ou prática de
+   linguagem, objetos de conhecimento), com peso 0,5. O dado já é
+   estruturado; é o "contextual retrieval" de graça.
+3. **Pontuação.** BM25 com k1 = 1,2 e b = 0,75, arredondada a 3 casas e
+   devolvida no campo `pontuacao` de cada resultado.
+4. **Estratos.** Primeiro, o enunciado idêntico à consulta; depois (A) casam
+   todos os radicais e contêm a consulta literal; (B) casam todos os radicais;
+   (C) casam parte deles, **só quando os anteriores estão vazios**. Dentro de
+   cada um, pontuação decrescente e empate por código. O estrato do idêntico
+   existe porque um enunciado mais longo que contém a consulta pode pontuar
+   mais no BM25 (EF08GE05 contém o texto de EF08HI06). Buscando cada uma das
+   1.721 aprendizagens pelo próprio enunciado, 16 não vêm em primeiro: todas
+   têm texto idêntico ao de outro código (ex.: EF69CO02 e EF06CO02), e o
+   empate por código decide. O estrato literal só se aplica a consultas de duas ou mais
+   palavras; com uma só, ele reintroduziria a diferença singular/plural que o
+   radical acabou de apagar.
+5. **Ordem conferida pela fixture.** Operação `primeiros_buscar`
+   (`docs/paridade.md`): os N primeiros códigos, posição a posição, iguais em
+   TS e Python.
+
+**Por quê:** na 0.4.0, `fração` e `frações` devolviam conjuntos disjuntos e
+`de` casava 94% da Base; sem ordem, `texto` devolvia 394 registros (254 só por
+substring, como `contexto`) e o cliente via os primeiros do dataset. Para uma
+fonte anti-alucinação, zero ou ruído confirmam ao modelo que o dado não existe.
+O "sem ranking" da 0.4.0 (#9) foi o passo intermediário possível sem mudar a
+API; a regra que continua é a de explicabilidade: a descrição da tool diz, numa
+frase, como ordena, e a ordem é reproduzível nos dois pacotes.
+
+**Por que o parcial é última passada e não padrão:** com casamento parcial
+sempre ligado, o enunciado completo de EF05CO11 passaria de `total` 1 para 47
+e o de EI01ET06 para 422. O `total` deixaria de servir ao caso de uso de
+lookup inverso (enunciado → código), que foi o motivo de #9. Medido em
+26/09/2026.
+
+**O que fica de fora:** busca semântica por embeddings. É camada inferida,
+precisa de modelo e de rótulo próprio; outra decisão, se a léxica não bastar.
+Também fica de fora, por ora, um golden set de busca com taxa de acerto
+medida; a issue #14 o sugere a partir do bncc-benchmark, mas ele não existe
+neste repositório.

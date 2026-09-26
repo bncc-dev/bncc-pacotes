@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { criarConsultas, decodificar, type DadosBNCC } from '../src/nucleo.js';
+import { criarConsultas, decodificar, radical, tokenizar, type DadosBNCC } from '../src/nucleo.js';
 import { porCodigo, estatisticas } from '../src/index.js';
 
 const DADOS = join(dirname(fileURLToPath(import.meta.url)), '..', 'dados');
@@ -98,5 +98,69 @@ describe('complemento de Computação injetado (computacao-2022)', () => {
     expect(c.estatisticas().total).toBe(1580);
     expect((c.estatisticas() as { computacao?: number }).computacao).toBeUndefined();
     expect(() => c.porCodigo('EF03CO05')).toThrow(/não existe/);
+  });
+});
+
+describe('busca com ranking (issue #14, DECISOES.md D10)', () => {
+  const c = criarConsultas({ ...dados, computacao: carregar('computacao.json') });
+
+  it('radical: plural, gênero e sufixos frequentes; colisões aceitas documentadas', () => {
+    // Tabela espelhada em python/tests/test_basico.py.
+    const tabela: Array<[string, string]> = [
+      ['fracao', 'frac'], ['fracoes', 'frac'], ['fracionario', 'frac'], ['fracionarias', 'frac'],
+      ['texto', 'text'], ['textos', 'text'], ['contexto', 'context'],
+      ['graficos', 'grafic'], ['grafica', 'grafic'], ['leitura', 'leitur'],
+      ['de', 'de'], ['ler', 'ler'],
+      ['conta', 'cont'], ['conto', 'cont'], // colisão aceita
+    ];
+    for (const [palavra, esperado] of tabela) expect(radical(palavra), palavra).toBe(esperado);
+  });
+
+  it('tokenizar normaliza, remove palavras vazias e reduz a radicais', () => {
+    expect(tokenizar('Leitura de gráficos, e textos!')).toEqual(['leitur', 'grafic', 'text']);
+    expect(tokenizar('de a o')).toEqual([]);
+  });
+
+  it('consulta só de palavras vazias devolve vazio', () => {
+    expect(c.buscar('de')).toEqual([]);
+    expect(c.buscar('a de em')).toEqual([]);
+  });
+
+  it('resultados trazem pontuacao decrescente e empate desfeito por código', () => {
+    const r = c.buscar('texto');
+    expect(r.length).toBeGreaterThan(100);
+    for (let i = 1; i < r.length; i++) {
+      const [a, b] = [r[i - 1], r[i]];
+      expect(a.pontuacao! > b.pontuacao! || (a.pontuacao === b.pontuacao && a.codigo < b.codigo), `${a.codigo} antes de ${b.codigo}`).toBe(true);
+    }
+    // Registros que só têm 'contexto' (substring) ficam fora; na 0.4.0 entravam (394 no total).
+    const cods = new Set(r.map((x) => x.codigo));
+    for (const fora of ['EI02ET07', 'EI03EF04', 'EF15LP13', 'EF35LP10', 'EF04LP03']) expect(cods.has(fora), fora).toBe(false);
+    expect(r.length).toBeLessThan(394);
+  });
+
+  it('singular, plural e derivado devolvem o mesmo conjunto e o mesmo topo', () => {
+    const cods = (t: string) => c.buscar(t).map((x) => x.codigo);
+    expect(cods('fração')).toEqual(cods('frações'));
+    expect(cods('fração')).toEqual(cods('fracionário'));
+  });
+
+  it('trecho literal vem antes das demais combinações; enunciado completo continua único', () => {
+    const r = c.buscar('velocidades ritmos');
+    expect(r.map((x) => x.codigo)).toEqual(['EI01ET06']);
+    const completo = c.buscar('Identificar a adequação de diferentes tecnologias computacionais na resolução de problemas.');
+    expect(completo.map((x) => x.codigo)).toEqual(['EF05CO11']);
+  });
+
+  it('casamento parcial só quando nenhum enunciado tem todos os radicais', () => {
+    expect(c.buscar('brincadeiras de roda').map((x) => x.codigo)).toEqual(['EF12EF11']);
+  });
+});
+
+describe('enunciado idêntico à consulta vem primeiro (issue #14)', () => {
+  const c = criarConsultas({ ...dados, computacao: carregar('computacao.json') });
+  it('EF08HI06 antes de EF08GE05, que contém o mesmo texto', () => {
+    const texto = c.porCodigo('EF08HI06').texto;
+    expect(c.buscar(texto).map((x) => x.codigo).slice(0, 2)).toEqual(['EF08HI06', 'EF08GE05']);
   });
 });

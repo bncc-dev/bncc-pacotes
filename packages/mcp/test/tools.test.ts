@@ -63,6 +63,15 @@ describe('@bncc/mcp', () => {
     expect(r.resultados).toHaveLength(5);
   });
 
+  it('bncc_buscar devolve pontuacao decrescente (issue #14)', async () => {
+    const r = conteudo(await cliente.callTool({ name: 'bncc_buscar', arguments: { texto: 'frações', limite: 10 } }));
+    const pts = r.resultados.map((x: { pontuacao: number }) => x.pontuacao);
+    expect(pts.every((p: number) => typeof p === 'number')).toBe(true);
+    expect(pts).toEqual([...pts].sort((a: number, b: number) => b - a));
+    const vazio = conteudo(await cliente.callTool({ name: 'bncc_buscar', arguments: { texto: 'de a em' } }));
+    expect(vazio.total).toBe(0);
+  });
+
   it('bncc_listar cobre as três etapas', async () => {
     const ef = conteudo(await cliente.callTool({ name: 'bncc_listar', arguments: { etapa: 'EF', componente: 'MA', ano: 4 } }));
     expect(ef.total).toBe(28);

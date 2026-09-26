@@ -67,6 +67,47 @@ def normalizar_busca(t):
     return normalizar_texto(re.sub(r'[.,;:!?()"\'«»“”‘’\[\]/-]', ' ', t))
 
 
+# Palavras vazias do português ignoradas por buscar (DECISOES.md D10). Lista
+# fixa e curta, idêntica à do pacote npm; consulta só de palavras vazias devolve vazio.
+STOPWORDS = frozenset(
+    'de a o e em para da do das dos na no nas nos com por um uma uns umas as os que ao aos se sua suas seu seus ou como sobre entre etc pelo pela pelos pelas'.split()
+)
+
+_RADICAL_PLURAL = [('coes', 'cao'), ('oes', 'ao'), ('aes', 'ao'), ('ais', 'al'), ('eis', 'el'), ('ois', 'ol'),
+                   ('is', 'il'), ('ns', 'm'), ('res', 'r'), ('zes', 'z'), ('ses', 's'), ('s', '')]
+_RADICAL_FORTE = [('mente', ''), ('cao', 'c'), ('ao', '')]
+_RADICAL_DERIVACIONAL = [('cionari', 'c'), ('cional', 'c'), ('idad', ''), ('ment', '')]
+
+
+def _trocar_sufixo(w, regras):
+    for suf, rep in regras:
+        if w.endswith(suf) and len(w) - len(suf) >= 3:
+            return w[:-len(suf)] + rep
+    return None
+
+
+def radical(palavra):
+    """Radical de uma palavra já normalizada, por regras curtas de plural, gênero e
+    sufixos frequentes do português. Não é um stemmer completo: o objetivo é `fracao`,
+    `fracoes` e `fracionario` caírem no mesmo radical sem que `texto` case `contexto`.
+    Regras e colisões aceitas em DECISOES.md D10. Idêntica à função `radical` do npm."""
+    w = palavra
+    if len(w) <= 3:
+        return w
+    w = _trocar_sufixo(w, _RADICAL_PLURAL) or w
+    forte = _trocar_sufixo(w, _RADICAL_FORTE)
+    if forte is not None:
+        return forte
+    if len(w) >= 5 and w[-1] in 'aoe':
+        w = w[:-1]
+    return _trocar_sufixo(w, _RADICAL_DERIVACIONAL) or w
+
+
+def tokenizar(texto):
+    """Tokens de busca de um texto: normalizado, sem palavras vazias, por radical."""
+    return [radical(w) for w in normalizar_busca(texto).split(' ') if w and w not in STOPWORDS]
+
+
 def resolver_nome(id_):
     i = indice()
     ctx = i['contextos'].get(id_)

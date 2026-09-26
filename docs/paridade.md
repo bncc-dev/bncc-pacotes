@@ -24,7 +24,7 @@ Os dois rodam no CI a cada push. Se qualquer um vermelhar, a paridade quebrou. N
 ```
 
 - `id`: nome do teste. Prefixo `C*` indica consulta do caso de uso âncora do projeto (teste de aceitação do dataset).
-- `operacao`: uma das operações que os runners conhecem (`decodificar`, `porCodigo`, `contar_habilidadesEF`, `contar_uniao_anos_ef`, `contar_habilidadesEM`, `contar_objetivosEI`, `contar_buscar`, `progressaoEI_codigos`, `estatisticas` e as variantes `_erro`).
+- `operacao`: uma das operações que os runners conhecem (`decodificar`, `porCodigo`, `contar_habilidadesEF`, `contar_uniao_anos_ef`, `contar_habilidadesEM`, `contar_objetivosEI`, `contar_buscar`, `primeiros_buscar`, `progressaoEI_codigos`, `estatisticas` e as variantes `_erro`).
 - `args`/`esperado`: em camelCase (a convenção do runner TS). O runner Python converte mecanicamente camelCase→snake_case para chaves de argumento e de resultado.
 - Asserções abstratas (`praticaLinguagem`, `competenciasNumeros`, `temLocalizadorPdf`) são interpretadas por cada runner contra a estrutura do seu pacote; a semântica é a mesma.
 
@@ -34,6 +34,34 @@ Os dois rodam no CI a cada push. Se qualquer um vermelhar, a paridade quebrou. N
 2. **Um runner novo não adapta a fixture; adapta-se a ela.** Se o runner Python precisasse mudar a fixture para passar, isso seria uma divergência do pacote Python (foi exatamente assim que validamos o M3: 23/23 sem tocar o arquivo).
 3. **Toda operação nova da API ganha pelo menos um caso.** API sem caso dourado é API sem prova de paridade.
 4. **Valores esperados vêm do dataset validado**, capturados por execução e conferidos contra o relatório de validação do bncc-dados quando aplicável (ex.: contagens do caso âncora).
+
+## Ordem de resultados: `primeiros_buscar`
+
+Com o ranking de `buscar` (DECISOES.md D10), contar não basta: dois pacotes
+podem devolver os mesmos registros em ordens diferentes e a fixture não veria.
+A operação `primeiros_buscar` compara a **ordem**:
+
+```json
+{
+  "id": "busca-fracao-topo",
+  "operacao": "primeiros_buscar",
+  "args": { "texto": "fração", "n": 5 },
+  "esperado": ["EF06MA07", "EF06MA10", "EF08MA05", "EF09MA03", "EF05MA04"],
+  "nota": "singular e plural compartilham o topo (radical)"
+}
+```
+
+- `args` leva `texto`, `n` e os filtros de `buscar` (`etapa`, `componente`,
+  `ano`); os runners tiram `n` antes de repassar o resto como filtro.
+- `esperado` é a lista dos `n` primeiros códigos, na ordem. Igualdade é
+  posição a posição, não de conjunto.
+- Empates são desfeitos por código (ordem lexicográfica), então a ordem é
+  determinística e a mesma nos dois runners. A pontuação é arredondada a 3
+  casas antes de ordenar, para que diferenças de último bit entre as duas
+  linguagens não troquem posições.
+- `contar_buscar` continua existindo. Na 0.5.0 três casos mudaram de valor
+  (motivo b: nova semântica de API, implementada nos dois pacotes primeiro),
+  com o valor novo capturado por execução e o anterior anotado na `nota`.
 
 ## Origem dos valores atuais
 

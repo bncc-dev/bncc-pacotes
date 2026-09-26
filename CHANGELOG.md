@@ -17,6 +17,25 @@ pedagógica registrada.
 
 ## `@bncc/dados`
 
+### 0.5.0 — a publicar
+- `buscar`: ranking determinístico (issue #14, DECISOES.md D10). Consulta e
+  enunciado são reduzidos a radicais (plural, gênero e sufixos frequentes do
+  português) sem palavras vazias; a pontuação é BM25 (k1 1,2; b 0,75) sobre o
+  enunciado mais os campos estruturais (componente, unidade temática ou
+  prática, objeto de conhecimento; peso 0,5). Três estratos: trecho literal com
+  todos os radicais, todos os radicais, e parte deles só quando os dois
+  primeiros estão vazios; acima de todos, o enunciado idêntico à consulta.
+  Empate desfeito por código. `fração`, `frações` e
+  `fracionário` passam a devolver o mesmo conjunto (22) e o mesmo topo; `de`
+  sozinho devolve vazio; `texto` deixa de casar `contexto`. Cada item traz
+  `pontuacao` (campo novo em `AprendizagemResolvida`). Exports novos:
+  `radical`, `tokenizar`, `STOPWORDS`. Minor por mudar a semântica e a forma
+  do resultado.
+- Fixture dourada: operação `primeiros_buscar` (ordem dos N primeiros) com
+  sete casos; cinco casos novos de `contar_buscar`; três casos existentes
+  revisados com o valor novo anotado (`C6-busca-fracoes` e `busca-sem-acento`
+  6 → 22, `busca-co-tema` 13 → 14). Dados inalterados (`dados-2026.07.1`).
+
 ### 0.4.0 — 25/ago/2026
 - `buscar`: consulta por palavras (issue #9). Pontuação passa a ser ignorada e,
   quando o trecho contíguo não casa, a busca devolve as aprendizagens que
@@ -50,6 +69,12 @@ pedagógica registrada.
 
 ## `@bncc/mcp`
 
+### 0.4.0 — a publicar
+- Reempacota com `@bncc/dados` 0.5.0: `bncc_buscar` devolve os resultados por
+  relevância e cada um traz `pontuacao` (issue #14). A descrição da tool diz
+  como ordena, que plural, gênero e palavras vazias não importam, e que o
+  casamento parcial só entra quando nenhum enunciado tem todas as palavras.
+
 ### 0.3.0 — 25/ago/2026
 - Reempacota com `@bncc/dados` 0.4.0: `bncc_buscar` aceita consulta por
   palavras e o filtro `componente="CO"` funciona (issues #8 e #9). Descrição
@@ -80,6 +105,12 @@ pedagógica registrada.
   dependência: o pacote saiu ininstalável. Origem da regra D6.
 
 ## `bncc` (PyPI)
+
+### 0.4.0 — a publicar
+- `buscar`: ranking determinístico com radical, stopwords e BM25, campo
+  `pontuacao` em cada resultado (issue #14); paridade com o npm 0.5.0
+  conferida pelas mesmas fixtures, inclusive a ordem (`primeiros_buscar`).
+  Dados inalterados.
 
 ### 0.3.0 — 25/ago/2026
 - `buscar`: consulta por palavras e filtro `componente="CO"` (issues #8 e #9);

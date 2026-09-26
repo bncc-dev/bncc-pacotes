@@ -34,7 +34,7 @@ h.organizacao.nomes.praticaLinguagem;  // 'Leitura'
 h.fonte.localizador_pdf;               // 'Base-Nacional-Comum-Curricular-BNCC.pdf, página PDF 167'
 
 habilidadesEF({ componente: 'LP', ano: 6, pratica: 'Leitura' });  // 37 habilidades
-buscar('frações', { etapa: 'EF', componente: 'MA' });             // 6 resultados
+buscar('frações', { etapa: 'EF', componente: 'MA' });             // 22 resultados, por relevância
 decodificar('EM13LGG103');  // { etapa: 'EM', area: 'LGG', competenciaEspecifica: 1, sequencia: 3, ... }
 ```
 

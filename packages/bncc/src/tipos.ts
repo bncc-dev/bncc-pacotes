@@ -183,6 +183,8 @@ export interface AprendizagemResolvida {
   fonte: Fonte;
   /** 'computacao-2022' para o complemento de Computação; ausente = BNCC 2018. */
   documento?: 'computacao-2022';
+  /** Relevância BM25 (3 casas). Presente só em resultados de `buscar`. */
+  pontuacao?: number;
   /** Computação: eixo (Pensamento Computacional, Mundo Digital, Cultura Digital). */
   eixo?: { id: string; nome: string };
   /** Computação: competência específica do complemento associada (EM). */

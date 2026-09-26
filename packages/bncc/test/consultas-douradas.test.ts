@@ -61,6 +61,12 @@ describe('consultas douradas (paridade npm/PyPI)', () => {
           expect(buscar(texto, filtro)).toHaveLength(caso.esperado);
           break;
         }
+        case 'primeiros_buscar': {
+          // Ordem dos n primeiros, posição a posição (docs/paridade.md).
+          const { texto, n, ...filtro } = caso.args;
+          expect(buscar(texto, filtro).slice(0, n).map((r) => r.codigo)).toEqual(caso.esperado);
+          break;
+        }
         case 'progressaoEI_codigos':
           expect(progressaoEI(caso.args).objetivos.map((o) => o.codigo)).toEqual(caso.esperado);
           break;
