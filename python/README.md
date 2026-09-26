@@ -37,7 +37,7 @@ df = bncc.para_dataframe('EF')   # 1.304 linhas
 
 ## API
 
-`por_codigo` · `decodificar` · `habilidades_ef` · `habilidades_em` · `objetivos_ei` · `buscar` · `progressao_ei` · `estrutura` · `estatisticas` · `versao` · `para_dataframe`
+`por_codigo` · `decodificar` · `habilidades_ef` · `habilidades_em` · `objetivos_ei` · `buscar` · `indice_busca` · `progressao_ei` · `estrutura` · `estatisticas` · `versao` · `para_dataframe`
 
 Regras que o pacote respeita: códigos inexistentes lançam `ValueError` em vez de inventar; a numeração tem lacunas legítimas; registros trazem `vigencia` para filtrar aprendizagens revogadas em versões futuras.
 

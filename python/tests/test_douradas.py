@@ -72,6 +72,9 @@ def test_dourada(caso):
         texto = a.pop('texto')
         n = a.pop('n')
         assert [r['codigo'] for r in bncc.buscar(texto, **a)[:n]] == esperado
+    elif op == 'indice_busca_amostra':
+        e = next(x for x in bncc.indice_busca() if x['codigo'] == args['codigo'])
+        assert {'k': e['k'], 'kc': e['kc']} == esperado
     elif op == 'progressaoEI_codigos':
         assert [o['codigo'] for o in bncc.progressao_ei(args)['objetivos']] == esperado
     elif op == 'estatisticas':

@@ -88,3 +88,19 @@ def test_buscar_parcial_ultima_passada():
 def test_buscar_enunciado_identico_primeiro():
     texto = bncc.por_codigo('EF08HI06')['texto']
     assert [x['codigo'] for x in bncc.buscar(texto)[:2]] == ['EF08HI06', 'EF08GE05']
+
+
+def test_ranquear_sobre_indice_serializado_reproduz_buscar():
+    import json
+    from pathlib import Path
+    from bncc._busca import preparar_indice, ranquear
+    fixture = json.loads((Path(__file__).parents[2] / 'fixtures' / 'consultas-douradas.json').read_text(encoding='utf-8'))
+    casos = fixture if isinstance(fixture, list) else fixture['casos']
+    consultas = {c['args']['texto'] for c in casos if 'buscar' in c['operacao']}
+    consultas |= {'fração', 'texto', 'de', 'leitura de gráficos', 'brincadeiras de roda'}
+    entradas = json.loads(json.dumps(bncc.indice_busca()))  # ida e volta, como no navegador
+    indice = preparar_indice(entradas)
+    for q in sorted(consultas):
+        via_indice = [f"{entradas[p['i']]['codigo']}:{p['pontuacao']}" for p in ranquear(indice, q)]
+        via_buscar = [f"{r['codigo']}:{r['pontuacao']}" for r in bncc.buscar(q)]
+        assert via_indice == via_buscar, q

@@ -42,6 +42,7 @@ progressaoEI('EI02TS01');   // EI01TS01 → EI02TS01 → EI03TS01
 | `habilidadesEM(filtro?)` | Ensino Médio: por área, competência, só Língua Portuguesa |
 | `objetivosEI(filtro?)` | Educação Infantil: por campo de experiências e grupo etário |
 | `buscar(texto, filtro?)` | Busca textual nos enunciados, ordenada por relevância (BM25 sobre radicais; trecho literal primeiro); cada item traz `pontuacao` |
+| `indiceBusca()` | Índice de busca serializável (radicais por aprendizagem), para reproduzir `buscar()` fora do Node com `@bncc/dados/busca` |
 | `progressaoEI(codigo)` | Objetivos do mesmo aspecto nas três faixas etárias (alinhamento oficial) |
 | `estrutura()` | Espinha estrutural: etapas, áreas, componentes, competências, recortes |
 | `estatisticas()` | Contagens do dataset |
@@ -73,3 +74,20 @@ A mesma API (`porCodigo`, `buscar`, `habilidadesEF`...), a mesma semântica. É 
 1.721 aprendizagens: 1.580 da BNCC 2018 (93 EI + 1.304 EF + 183 EM) + 141 do complemento de Computação (11 EI + 104 EF + 26 EM) · 10 competências gerais · 105 específicas · 885 contextos de organização · install até a primeira consulta em ~1 segundo.
 
 Projeto **bncc.dev**, mantido pela Profy. Dados CC BY 4.0, código MIT.
+
+## Busca no navegador: `@bncc/dados/busca`
+
+Subpath sem dados e sem Node, para páginas que querem a mesma busca do pacote:
+
+```js
+// no build: sirva indiceBusca() como JSON
+import { indiceBusca } from '@bncc/dados';
+// no navegador
+import { prepararIndice, ranquear } from '@bncc/dados/busca';
+const entradas = await (await fetch('/indice-busca.json')).json();
+const indice = prepararIndice(entradas);
+ranquear(indice, 'frações').slice(0, 5).map(({ i, pontuacao }) => [entradas[i].codigo, pontuacao]);
+```
+
+Mesma ordem e mesma pontuação de `buscar()`. O terceiro argumento de `ranquear` é um filtro por posição (`(i) => boolean`).
+

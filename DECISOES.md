@@ -154,6 +154,16 @@ e o de EI01ET06 para 422. O `total` deixaria de servir ao caso de uso de
 lookup inverso (enunciado → código), que foi o motivo de #9. Medido em
 26/09/2026.
 
+**Uma só implementação, também no navegador (0.6.0):** as interfaces com
+busca própria (bncc.dev, verso) filtravam por substring no navegador, cada uma
+com sua regra. A lógica de ranking foi extraída para funções puras no subpath
+`@bncc/dados/busca` (sem dados, sem Node): `prepararIndice` e `ranquear`. O
+`buscar()` do pacote usa as mesmas funções, e `indiceBusca()` entrega a forma
+serializável do índice (radicais do enunciado e dos campos por aprendizagem).
+Uma interface web serve esse índice como JSON e obtém a mesma ordem e a mesma
+pontuação de `buscar()`, sem carregar os dados completos. Um teste nos dois
+pacotes prova a equivalência para todas as consultas de busca da fixture.
+
 **O que fica de fora:** busca semântica por embeddings. É camada inferida,
 precisa de modelo e de rótulo próprio; outra decisão, se a léxica não bastar.
 Também fica de fora, por ora, um golden set de busca com taxa de acerto

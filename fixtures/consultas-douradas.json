@@ -413,6 +413,30 @@
    "nota": "issue #14: mesmo caso de busca-enunciado-exato-primeiro, no complemento de Computação"
   },
   {
+   "id": "indice-busca-ef06ma07",
+   "operacao": "indice_busca_amostra",
+   "args": {
+    "codigo": "EF06MA07"
+   },
+   "esperado": {
+    "k": "compreender comparar ordenar frac associad idei part inteir resultad divis identificand frac equivalent",
+    "kc": "matematic numer frac significad part todo quocient equivalenci comparac adic subtrac calcul frac numer natural adic subtrac frac"
+   },
+   "nota": "@bncc/dados 0.6.0: forma serializável do índice de busca (radicais do enunciado e dos campos), igual nos dois pacotes; é o que interfaces web usam com prepararIndice e ranquear"
+  },
+  {
+   "id": "indice-busca-ef01co03",
+   "operacao": "indice_busca_amostra",
+   "args": {
+    "codigo": "EF01CO03"
+   },
+   "esperado": {
+    "k": "reorganizar criar sequenci pass meio fisic digital relacionand essa sequenci palavr algoritm",
+    "kc": "computac pensa computac conceituac algoritm"
+   },
+   "nota": "@bncc/dados 0.6.0: forma serializável do índice de busca (radicais do enunciado e dos campos), igual nos dois pacotes; é o que interfaces web usam com prepararIndice e ranquear"
+  },
+  {
    "id": "C8-progressao-ei",
    "operacao": "progressaoEI_codigos",
    "args": "EI02TS01",
