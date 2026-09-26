@@ -17,7 +17,7 @@ pedagógica registrada.
 
 ## `@bncc/dados`
 
-### 0.5.0 — a publicar
+### 0.5.0 — 26/set/2026
 - `buscar`: ranking determinístico (issue #14, DECISOES.md D10). Consulta e
   enunciado são reduzidos a radicais (plural, gênero e sufixos frequentes do
   português) sem palavras vazias; a pontuação é BM25 (k1 1,2; b 0,75) sobre o
@@ -69,11 +69,12 @@ pedagógica registrada.
 
 ## `@bncc/mcp`
 
-### 0.4.0 — a publicar
+### 0.4.0 — 26/set/2026
 - Reempacota com `@bncc/dados` 0.5.0: `bncc_buscar` devolve os resultados por
   relevância e cada um traz `pontuacao` (issue #14). A descrição da tool diz
   como ordena, que plural, gênero e palavras vazias não importam, e que o
   casamento parcial só entra quando nenhum enunciado tem todas as palavras.
+  No ar em `mcp.bncc.dev` desde o `mcp-worker` 0.3.0 (26/set/2026).
 
 ### 0.3.0 — 25/ago/2026
 - Reempacota com `@bncc/dados` 0.4.0: `bncc_buscar` aceita consulta por
@@ -106,7 +107,7 @@ pedagógica registrada.
 
 ## `bncc` (PyPI)
 
-### 0.4.0 — a publicar
+### 0.4.0 — 26/set/2026
 - `buscar`: ranking determinístico com radical, stopwords e BM25, campo
   `pontuacao` em cada resultado (issue #14); paridade com o npm 0.5.0
   conferida pelas mesmas fixtures, inclusive a ordem (`primeiros_buscar`).
