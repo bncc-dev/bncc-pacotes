@@ -164,3 +164,31 @@ describe('enunciado idêntico à consulta vem primeiro (issue #14)', () => {
     expect(c.buscar(texto).map((x) => x.codigo).slice(0, 2)).toEqual(['EF08HI06', 'EF08GE05']);
   });
 });
+
+describe('ranking exportado: @bncc/dados/busca (DECISOES.md D10)', () => {
+  const c = criarConsultas({ ...dados, computacao: carregar('computacao.json') });
+  const fixture = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'fixtures', 'consultas-douradas.json'), 'utf8'));
+  const casos = (Array.isArray(fixture) ? fixture : fixture.casos) as Array<{ operacao: string; args: { texto?: string } }>;
+  const consultasFixture = [...new Set(casos.filter((x) => x.operacao.includes('buscar')).map((x) => x.args.texto!))];
+
+  it('prepararIndice + ranquear sobre o índice serializado reproduz buscar() (ordem e pontuação)', async () => {
+    const { prepararIndice, ranquear } = await import('../src/busca.js');
+    // ida e volta por JSON, como no navegador
+    const entradas = JSON.parse(JSON.stringify(c.indiceBusca()));
+    const indice = prepararIndice(entradas);
+    for (const q of [...consultasFixture, 'fração', 'texto', 'de', 'leitura de gráficos', 'brincadeiras de roda']) {
+      const viaIndice = ranquear(indice, q).map(({ i, pontuacao }) => `${entradas[i].codigo}:${pontuacao}`);
+      const viaBuscar = c.buscar(q).map((r) => `${r.codigo}:${r.pontuacao}`);
+      expect(viaIndice, q).toEqual(viaBuscar);
+    }
+  });
+
+  it('o subpath de busca não depende de Node nem de dados', () => {
+    const dist = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
+    const principal = readFileSync(join(dist, 'busca.js'), 'utf8');
+    const chunks = [...principal.matchAll(/from "\.\/(chunk-[A-Z0-9]+\.js)"/g)].map((m) => readFileSync(join(dist, m[1]), 'utf8'));
+    for (const codigo of [principal, ...chunks]) {
+      expect(codigo).not.toMatch(/node:|\.json|readFileSync|import\.meta/);
+    }
+  });
+});

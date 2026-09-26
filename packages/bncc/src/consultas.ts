@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { criarConsultas, type Consultas, type DadosBNCC } from './nucleo.js';
 import type { AprendizagemResolvida } from './tipos.js';
+import type { EntradaIndiceBusca } from './busca.js';
 
 export type { FiltroEF, FiltroEM, FiltroEI, FiltroBusca } from './nucleo.js';
 import type { FiltroEF, FiltroEM, FiltroEI, FiltroBusca } from './nucleo.js';
@@ -60,6 +61,15 @@ export function objetivosEI(filtro: FiltroEI = {}): AprendizagemResolvida[] {
  */
 export function buscar(texto: string, filtro: FiltroBusca = {}): AprendizagemResolvida[] {
   return consultas().buscar(texto, filtro);
+}
+
+/**
+ * Índice de busca serializável (radicais do enunciado e dos campos por
+ * aprendizagem). Com `prepararIndice` e `ranquear` de `@bncc/dados/busca`,
+ * reproduz a ordem e a pontuação de `buscar()` fora do Node, ex.: no navegador.
+ */
+export function indiceBusca(): EntradaIndiceBusca[] {
+  return consultas().indiceBusca();
 }
 
 /** A espinha estrutural completa (etapas, áreas, componentes, competências, recortes). */

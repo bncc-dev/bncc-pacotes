@@ -7,6 +7,7 @@
  * embutidos do disco.
  */
 import { decodificar } from './decodificar.js';
+import { prepararIndice, ranquear, tokenizar, type EntradaIndiceBusca, type IndicePreparado } from './busca.js';
 import type {
   Alinhamento, AprendizagemResolvida, ContextoOrganizacao, DadosComputacao, Estrutura,
   HabilidadeEF, HabilidadeEFCO, HabilidadeEM, HabilidadeEMCO, ObjetivoEI, ObjetivoEICO,
@@ -33,68 +34,10 @@ export interface DadosBNCC {
   computacao?: DadosComputacao;
 }
 
-/** Normalização para busca textual: minúsculas, sem acentos, espaços únicos. */
-export function normalizarTexto(t: string): string {
-  return t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
-}
-
-/**
- * Normalização de consulta: normalizarTexto + pontuação vira espaço. Interna
- * a buscar; normalizarTexto segue exportada com a semântica de sempre.
- */
-function normalizarBusca(t: string): string {
-  return normalizarTexto(t.replace(/[.,;:!?()"'«»“”‘’\[\]/-]/g, ' '));
-}
-
-/**
- * Palavras vazias do português ignoradas por buscar (DECISOES.md D10). Lista
- * fixa e curta, idêntica à do pacote Python; uma consulta só de palavras
- * vazias devolve vazio.
- */
-export const STOPWORDS: ReadonlySet<string> = new Set(
-  'de a o e em para da do das dos na no nas nos com por um uma uns umas as os que ao aos se sua suas seu seus ou como sobre entre etc pelo pela pelos pelas'.split(' '),
-);
-
-const RADICAL_PLURAL: ReadonlyArray<[string, string]> = [
-  ['coes', 'cao'], ['oes', 'ao'], ['aes', 'ao'], ['ais', 'al'], ['eis', 'el'], ['ois', 'ol'],
-  ['is', 'il'], ['ns', 'm'], ['res', 'r'], ['zes', 'z'], ['ses', 's'], ['s', ''],
-];
-const RADICAL_FORTE: ReadonlyArray<[string, string]> = [['mente', ''], ['cao', 'c'], ['ao', '']];
-const RADICAL_DERIVACIONAL: ReadonlyArray<[string, string]> = [['cionari', 'c'], ['cional', 'c'], ['idad', ''], ['ment', '']];
-
-function trocarSufixo(w: string, regras: ReadonlyArray<[string, string]>): string | undefined {
-  for (const [suf, rep] of regras) {
-    if (w.endsWith(suf) && w.length - suf.length >= 3) return w.slice(0, -suf.length) + rep;
-  }
-  return undefined;
-}
-
-/**
- * Radical de uma palavra já normalizada (sem acento, minúscula), por regras
- * curtas de plural, gênero e sufixos frequentes do português. Não é um stemmer
- * completo: o objetivo é `fracao`, `fracoes` e `fracionario` caírem no mesmo
- * radical sem que `texto` case `contexto`. Regras e colisões aceitas em
- * DECISOES.md D10. Idêntica à função `radical` do pacote Python.
- */
-export function radical(palavra: string): string {
-  let w = palavra;
-  if (w.length <= 3) return w;
-  w = trocarSufixo(w, RADICAL_PLURAL) ?? w;
-  const forte = trocarSufixo(w, RADICAL_FORTE);
-  if (forte !== undefined) return forte;
-  if (w.length >= 5 && 'aoe'.includes(w[w.length - 1])) w = w.slice(0, -1);
-  return trocarSufixo(w, RADICAL_DERIVACIONAL) ?? w;
-}
-
-/** Tokens de busca de um texto: normalizado, sem palavras vazias, por radical. */
-export function tokenizar(texto: string): string[] {
-  return normalizarBusca(texto).split(' ').filter((w) => w && !STOPWORDS.has(w)).map(radical);
-}
-
-// Parâmetros do BM25 (DECISOES.md D10). Os mesmos no pacote Python.
-const BM25_K1 = 1.2;
-const BM25_B = 0.75;
-const PESO_CAMPOS = 0.5;
+// Busca com ranking: funções puras em ./busca.ts (subpath @bncc/dados/busca),
+// reexportadas aqui para manter a API do núcleo.
+export { normalizarTexto, STOPWORDS, radical, tokenizar } from './busca.js';
+export type { EntradaIndiceBusca, IndicePreparado, Ranqueado } from './busca.js';
 
 export interface FiltroEF { componente?: string; ano?: number; unidadeTematica?: string; pratica?: string; campoAtuacao?: string }
 export interface FiltroEM { area?: string; competencia?: number; apenasLP?: boolean }
@@ -281,15 +224,8 @@ export function criarConsultas(dados: DadosBNCC) {
   }
 
   // ---- Busca com ranking (DECISOES.md D10) ------------------------------
-
-  interface DocBusca {
-    reg: Registro;
-    textoNorm: string;
-    enunciado: Map<string, number>; // radical → frequência no enunciado
-    campos: Map<string, number>;    // radical → frequência nos campos estruturais
-    tamanho: number;
-  }
-  interface IndiceBusca { docs: DocBusca[]; df: Map<string, number>; tamanhoMedio: number }
+  // A lógica fica em ./busca.ts (funções puras). Aqui só se monta o índice a
+  // partir dos dados e se aplicam os filtros de FiltroBusca.
 
   function nomeCO(id: string): string {
     return eixosCO.get(id) ?? objetosCO.get(id) ?? resolverNome(id);
@@ -317,42 +253,33 @@ export function criarConsultas(dados: DadosBNCC) {
     return ids.map(resolverNome).join(' ');
   }
 
-  function contar(tokens: string[]): Map<string, number> {
-    const m = new Map<string, number>();
-    for (const t of tokens) m.set(t, (m.get(t) ?? 0) + 1);
-    return m;
-  }
+  const universoBusca: Registro[] = [...ei.objetivos, ...ef.habilidades, ...em.habilidades, ...registrosCO];
+  let entradasCache: EntradaIndiceBusca[] | undefined;
+  let preparadoCache: IndicePreparado | undefined;
 
-  let indiceBuscaCache: IndiceBusca | undefined;
-  function indiceBusca(): IndiceBusca {
-    if (indiceBuscaCache) return indiceBuscaCache;
-    const universo: Registro[] = [...ei.objetivos, ...ef.habilidades, ...em.habilidades, ...registrosCO];
-    const df = new Map<string, number>();
-    let soma = 0;
-    const docs = universo.map((reg) => {
-      const te = tokenizar(reg.texto);
-      const tc = tokenizar(textoCampos(reg));
-      const doc: DocBusca = { reg, textoNorm: normalizarBusca(reg.texto), enunciado: contar(te), campos: contar(tc), tamanho: te.length + tc.length };
-      soma += doc.tamanho;
-      for (const t of new Set([...te, ...tc])) df.set(t, (df.get(t) ?? 0) + 1);
-      return doc;
-    });
-    indiceBuscaCache = { docs, df, tamanhoMedio: soma / docs.length };
-    return indiceBuscaCache;
+  /**
+   * Índice de busca serializável: uma entrada por aprendizagem, com os
+   * radicais do enunciado (`k`) e dos campos estruturais (`kc`). Com
+   * `prepararIndice` e `ranquear` (subpath `@bncc/dados/busca`), uma interface
+   * web reproduz a mesma ordem e a mesma pontuação de `buscar()` sem carregar
+   * os dados completos.
+   */
+  function indiceBusca(): EntradaIndiceBusca[] {
+    entradasCache ??= universoBusca.map((reg) => ({
+      codigo: reg.codigo,
+      texto: reg.texto,
+      k: tokenizar(reg.texto).join(' '),
+      kc: tokenizar(textoCampos(reg)).join(' '),
+    }));
+    return entradasCache;
   }
 
   /**
-   * Busca textual com ranking determinístico (issue #14). Consulta e enunciado
-   * são reduzidos a radicais sem palavras vazias; a pontuação é BM25 sobre o
-   * enunciado mais os campos estruturais (com peso menor). Estratos: enunciado
-   * idêntico à consulta; (A) todos os radicais e o trecho literal; (B) todos os radicais; (C) parte
-   * dos radicais, só quando A e B estão vazios. Dentro de cada estrato, por
-   * pontuação decrescente e código.
+   * Busca textual com ranking determinístico (issue #14): `ranquear` sobre o
+   * índice de todas as aprendizagens, com os filtros aplicados como predicado.
+   * Estratos e pontuação descritos em ./busca.ts e em DECISOES.md D10.
    */
   function buscar(texto: string, filtro: FiltroBusca = {}): AprendizagemResolvida[] {
-    const alvo = normalizarBusca(texto);
-    const termos = [...new Set(tokenizar(texto))];
-    if (termos.length === 0) return [];
     // Computação: os registros CO não trazem o campo `componente` (ele é
     // sintetizado na resolução), então o filtro restringe às habilidades EF de
     // Computação, mesma regra de habilidadesEF (issue #8).
@@ -360,43 +287,16 @@ export function criarConsultas(dados: DadosBNCC) {
     const comp = !filtraCO && filtro.componente
       ? (filtro.componente.includes('-comp-') ? filtro.componente : `ef-comp-${filtro.componente.toLowerCase()}`)
       : undefined;
-    const { docs, df, tamanhoMedio } = indiceBusca();
-    const n = docs.length;
-    type Pontuado = { doc: DocBusca; casados: number; exato: boolean; literal: boolean; pontuacao: number };
-    const pontuados: Pontuado[] = [];
-    for (const doc of docs) {
-      const r = doc.reg;
-      if (filtro.etapa && decodificar(r.codigo).etapa !== filtro.etapa) continue;
-      if (filtraCO && !(ehComputacao(r) && 'anos' in r)) continue;
-      if (comp && !('componente' in r && (r as HabilidadeEF).componente === comp)) continue;
-      if (filtro.ano && !('anos' in r && (r as HabilidadeEF).anos.includes(filtro.ano))) continue;
-      let casados = 0;
-      let s = 0;
-      for (const t of termos) {
-        const f = (doc.enunciado.get(t) ?? 0) + PESO_CAMPOS * (doc.campos.get(t) ?? 0);
-        if (f === 0) continue;
-        casados += 1;
-        const d = df.get(t) ?? 0;
-        const idf = Math.log(1 + (n - d + 0.5) / (d + 0.5));
-        s += idf * (f * (BM25_K1 + 1)) / (f + BM25_K1 * (1 - BM25_B + BM25_B * doc.tamanho / tamanhoMedio));
-      }
-      if (casados === 0) continue;
-      // O trecho literal só distingue consultas de duas ou mais palavras; com
-      // uma só, ele reintroduziria a diferença singular/plural que o radical
-      // acabou de apagar.
-      const literal = termos.length >= 2 && doc.textoNorm.includes(alvo);
-      // Enunciado idêntico à consulta vem antes dos que apenas a contêm: um
-      // texto mais longo que inclui a consulta pode pontuar mais no BM25.
-      const exato = doc.textoNorm === alvo;
-      pontuados.push({ doc, casados, exato, literal, pontuacao: Math.round(s * 1000) / 1000 });
-    }
-    const porRelevancia = (a: Pontuado, b: Pontuado) => b.pontuacao - a.pontuacao || (a.doc.reg.codigo < b.doc.reg.codigo ? -1 : 1);
-    const todos = pontuados.filter((p) => p.casados === termos.length);
-    const exatos = todos.filter((p) => p.exato).sort(porRelevancia);
-    const estratoA = todos.filter((p) => p.literal && !p.exato).sort(porRelevancia);
-    const estratoB = todos.filter((p) => !p.literal && !p.exato).sort(porRelevancia);
-    const escolhidos = todos.length > 0 ? [...exatos, ...estratoA, ...estratoB] : pontuados.sort(porRelevancia);
-    return escolhidos.map((p) => ({ ...resolver(p.doc.reg), pontuacao: p.pontuacao }));
+    preparadoCache ??= prepararIndice(indiceBusca());
+    const aceitar = (i: number) => {
+      const r = universoBusca[i];
+      if (filtro.etapa && decodificar(r.codigo).etapa !== filtro.etapa) return false;
+      if (filtraCO && !(ehComputacao(r) && 'anos' in r)) return false;
+      if (comp && !('componente' in r && (r as HabilidadeEF).componente === comp)) return false;
+      if (filtro.ano && !('anos' in r && (r as HabilidadeEF).anos.includes(filtro.ano))) return false;
+      return true;
+    };
+    return ranquear(preparadoCache, texto, aceitar).map(({ i, pontuacao }) => ({ ...resolver(universoBusca[i]), pontuacao }));
   }
 
   function progressaoEI(codigo: string): { alinhamento: string; objetivos: AprendizagemResolvida[]; nota?: string } {
@@ -429,7 +329,7 @@ export function criarConsultas(dados: DadosBNCC) {
     };
   }
 
-  return { porCodigo, habilidadesEF, habilidadesEM, objetivosEI, buscar, progressaoEI, estrutura, estatisticas };
+  return { porCodigo, habilidadesEF, habilidadesEM, objetivosEI, buscar, indiceBusca, progressaoEI, estrutura, estatisticas };
 }
 
 export type Consultas = ReturnType<typeof criarConsultas>;

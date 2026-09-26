@@ -7,12 +7,12 @@ fonte oficial. Projeto bncc.dev · dados CC BY 4.0 · código MIT.
 from ._codigos import decodificar
 from ._consultas import (
     buscar, estatisticas, estrutura, habilidades_ef, habilidades_em,
-    objetivos_ei, por_codigo, progressao_ei, versao,
+    indice_busca, objetivos_ei, por_codigo, progressao_ei, versao,
 )
 from ._pandas import para_dataframe
 
 __all__ = [
     'buscar', 'decodificar', 'estatisticas', 'estrutura', 'habilidades_ef',
-    'habilidades_em', 'objetivos_ei', 'para_dataframe', 'por_codigo',
+    'habilidades_em', 'indice_busca', 'objetivos_ei', 'para_dataframe', 'por_codigo',
     'progressao_ei', 'versao',
 ]

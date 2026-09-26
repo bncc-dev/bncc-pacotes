@@ -1,6 +1,6 @@
 {
   "name": "@bncc/dados",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A BNCC (Base Nacional Comum Curricular) como dados estruturados e verificados, com API de consulta tipada. Inclui o complemento de Computação (1.721 aprendizagens). Em desenvolvimento: a v1.0 sai junto da release dados-v1.0.0 do bncc-dados.",
   "keywords": [
     "bncc",
@@ -33,6 +33,11 @@
       "import": "./dist/nucleo.js",
       "require": "./dist/nucleo.cjs"
     },
+    "./busca": {
+      "types": "./dist/busca.d.ts",
+      "import": "./dist/busca.js",
+      "require": "./dist/busca.cjs"
+    },
     "./dados/*.json": "./dados/*.json"
   },
   "files": [
@@ -42,7 +47,7 @@
     "LICENSE.md"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/nucleo.ts --format esm,cjs --dts --clean --shims",
+    "build": "tsup src/index.ts src/nucleo.ts src/busca.ts --format esm,cjs --dts --clean --shims",
     "test": "vitest run && node test/cjs-smoke.cjs"
   },
   "devDependencies": {

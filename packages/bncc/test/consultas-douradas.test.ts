@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
-  buscar, decodificar, estatisticas, habilidadesEF, habilidadesEM,
+  buscar, decodificar, estatisticas, habilidadesEF, habilidadesEM, indiceBusca,
   objetivosEI, porCodigo, progressaoEI,
 } from '../src/index.js';
 
@@ -65,6 +65,11 @@ describe('consultas douradas (paridade npm/PyPI)', () => {
           // Ordem dos n primeiros, posição a posição (docs/paridade.md).
           const { texto, n, ...filtro } = caso.args;
           expect(buscar(texto, filtro).slice(0, n).map((r) => r.codigo)).toEqual(caso.esperado);
+          break;
+        }
+        case 'indice_busca_amostra': {
+          const e = indiceBusca().find((x) => x.codigo === caso.args.codigo);
+          expect({ k: e?.k, kc: e?.kc }).toEqual(caso.esperado);
           break;
         }
         case 'progressaoEI_codigos':

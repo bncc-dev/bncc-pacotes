@@ -10,7 +10,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
-  buscar, estatisticas, estrutura, habilidadesEF, habilidadesEM,
+  buscar, estatisticas, estrutura, habilidadesEF, habilidadesEM, indiceBusca,
   objetivosEI, porCodigo, progressaoEI, versao,
 } from '@bncc/dados';
 import type { Consultas } from '@bncc/dados/nucleo';
@@ -18,7 +18,7 @@ import { instrucoesServidor, registrarTools } from './tools.js';
 
 const bncc: Consultas = {
   porCodigo, habilidadesEF, habilidadesEM, objetivosEI,
-  buscar, progressaoEI, estrutura, estatisticas,
+  buscar, indiceBusca, progressaoEI, estrutura, estatisticas,
 };
 const v = versao();
 

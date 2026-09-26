@@ -24,7 +24,7 @@ Os dois rodam no CI a cada push. Se qualquer um vermelhar, a paridade quebrou. N
 ```
 
 - `id`: nome do teste. Prefixo `C*` indica consulta do caso de uso âncora do projeto (teste de aceitação do dataset).
-- `operacao`: uma das operações que os runners conhecem (`decodificar`, `porCodigo`, `contar_habilidadesEF`, `contar_uniao_anos_ef`, `contar_habilidadesEM`, `contar_objetivosEI`, `contar_buscar`, `primeiros_buscar`, `progressaoEI_codigos`, `estatisticas` e as variantes `_erro`).
+- `operacao`: uma das operações que os runners conhecem (`decodificar`, `porCodigo`, `contar_habilidadesEF`, `contar_uniao_anos_ef`, `contar_habilidadesEM`, `contar_objetivosEI`, `contar_buscar`, `primeiros_buscar`, `indice_busca_amostra`, `progressaoEI_codigos`, `estatisticas` e as variantes `_erro`).
 - `args`/`esperado`: em camelCase (a convenção do runner TS). O runner Python converte mecanicamente camelCase→snake_case para chaves de argumento e de resultado.
 - Asserções abstratas (`praticaLinguagem`, `competenciasNumeros`, `temLocalizadorPdf`) são interpretadas por cada runner contra a estrutura do seu pacote; a semântica é a mesma.
 
@@ -34,6 +34,16 @@ Os dois rodam no CI a cada push. Se qualquer um vermelhar, a paridade quebrou. N
 2. **Um runner novo não adapta a fixture; adapta-se a ela.** Se o runner Python precisasse mudar a fixture para passar, isso seria uma divergência do pacote Python (foi exatamente assim que validamos o M3: 23/23 sem tocar o arquivo).
 3. **Toda operação nova da API ganha pelo menos um caso.** API sem caso dourado é API sem prova de paridade.
 4. **Valores esperados vêm do dataset validado**, capturados por execução e conferidos contra o relatório de validação do bncc-dados quando aplicável (ex.: contagens do caso âncora).
+
+## Índice de busca: `indice_busca_amostra`
+
+Desde a 0.6.0 o índice de busca é API pública (`indiceBusca()` /
+`indice_busca()`), consumida por interfaces web com `ranquear`. O caso compara
+os radicais do enunciado (`k`) e dos campos (`kc`) de uma aprendizagem:
+
+```json
+{ "operacao": "indice_busca_amostra", "args": { "codigo": "EF06MA07" }, "esperado": { "k": "...", "kc": "..." } }
+```
 
 ## Ordem de resultados: `primeiros_buscar`
 

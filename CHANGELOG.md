@@ -10,12 +10,31 @@ pedagógica registrada.
 
 ## Não publicado
 
+- `@bncc/mcp`: o servidor stdio inclui `indiceBusca` no objeto de consultas,
+  para compilar com `@bncc/dados` 0.6.0. Sem mudança nas tools; a 0.4.0
+  publicada fixa `@bncc/dados` 0.5.0 e segue funcionando.
 - Abertura do repositório: licenças separadas para código e dados, arquivos de
   comunidade (CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, DECISOES) e correção do
   `sincronizado_de`, que gravava caminho local no `VERSAO.json` embutido nos
   pacotes.
 
 ## `@bncc/dados`
+
+### 0.6.0 — a publicar
+- Ranking exportado para interfaces web (DECISOES.md D10): subpath
+  `@bncc/dados/busca`, sem dados e sem dependência de Node, com
+  `prepararIndice`, `ranquear`, `tokenizar`, `radical`, `STOPWORDS` e
+  `normalizarTexto`. Consulta nova `indiceBusca()`: o índice de busca em forma
+  serializável (`{codigo, texto, k, kc}` por aprendizagem, com os radicais do
+  enunciado e dos campos). Com os dois, uma página reproduz a ordem e a
+  pontuação de `buscar()` no navegador.
+- `buscar()` passa a usar as mesmas funções. Comportamento idêntico ao da
+  0.5.0: nenhum caso de busca da fixture mudou.
+- O tipo `Consultas` ganha `indiceBusca`: quem monta o objeto à mão, em vez
+  de usar `criarConsultas` (como o servidor stdio do `@bncc/mcp`), precisa
+  incluí-lo.
+- Fixture: operação `indice_busca_amostra` com dois casos. Minor por API nova.
+  Dados inalterados (`dados-2026.07.1`).
 
 ### 0.5.0 — 26/set/2026
 - `buscar`: ranking determinístico (issue #14, DECISOES.md D10). Consulta e
@@ -106,6 +125,11 @@ pedagógica registrada.
   dependência: o pacote saiu ininstalável. Origem da regra D6.
 
 ## `bncc` (PyPI)
+
+### 0.5.0 — a publicar
+- `indice_busca()` e o módulo `bncc._busca` (`preparar_indice`, `ranquear`),
+  espelhos do npm 0.6.0; `buscar()` passa a usá-los, com comportamento
+  idêntico. Paridade do índice conferida pela fixture. Dados inalterados.
 
 ### 0.4.0 — 26/set/2026
 - `buscar`: ranking determinístico com radical, stopwords e BM25, campo

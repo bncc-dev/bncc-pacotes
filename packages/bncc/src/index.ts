@@ -7,11 +7,13 @@
 export { decodificar, CAMPOS_EI, GRUPOS_EI, COMPONENTES_EF, BLOCOS_EF, AREAS_EM } from './decodificar.js';
 export type { CodigoDecodificado, CodigoEI, CodigoEF, CodigoEM } from './decodificar.js';
 export {
-  porCodigo, buscar, habilidadesEF, habilidadesEM, objetivosEI,
+  porCodigo, buscar, indiceBusca, habilidadesEF, habilidadesEM, objetivosEI,
   estrutura, progressaoEI, estatisticas,
 } from './consultas.js';
 export type { FiltroEF, FiltroEM, FiltroEI, FiltroBusca } from './consultas.js';
 export { criarConsultas, normalizarTexto, radical, tokenizar, STOPWORDS } from './nucleo.js';
+export { prepararIndice, ranquear } from './busca.js';
+export type { EntradaIndiceBusca, IndicePreparado, Ranqueado } from './busca.js';
 export type { Consultas, DadosBNCC } from './nucleo.js';
 export type * from './tipos.js';
 
