@@ -22,7 +22,7 @@ pedagógica registrada.
 
 ## `@bncc/dados`
 
-### 0.6.1 — a publicar
+### 0.6.1 — 15/out/2026
 - Mensagem de erro de `porCodigo` para código bem formado e inexistente deixa
   de dizer que "a numeração tem lacunas legítimas". Não tem: decodificando
   cada código, as sequências vão de 1 a n em todos os grupos (contrato 5b do
@@ -98,7 +98,7 @@ pedagógica registrada.
 
 ## `@bncc/mcp`
 
-### 0.4.1 — a publicar
+### 0.4.1 — 15/out/2026
 - Reempacota com `@bncc/dados` 0.6.1 (a 0.4.0 fixava a 0.5.0): o servidor
   stdio inclui `indiceBusca` no objeto de consultas. Regra (2) das instruções
   ao agente deixa de afirmar "lacunas legítimas" e passa a dizer para não
@@ -143,7 +143,7 @@ pedagógica registrada.
 
 ## `bncc` (PyPI)
 
-### 0.5.1 — a publicar
+### 0.5.1 — 15/out/2026
 - Mensagem de erro de `por_codigo` para código inexistente, espelho do npm
   0.6.1: sem "lacunas legítimas", com a regra de continuidade. Dados
   inalterados.
