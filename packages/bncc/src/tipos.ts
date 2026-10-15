@@ -4,13 +4,19 @@
  * conformidade acontece no repositório de dados a cada mudança.
  */
 
+/**
+ * Proveniência de um registro. Desde `dados-2026.08` (schema-v1.1.0) as
+ * competências gerais e específicas também trazem `localizador_pdf`, e os
+ * componentes do EM sem habilidades próprias trazem `proveniencia` e
+ * `localizador`. O campo `url_oficial`, nunca preenchido, foi removido do
+ * schema nessa versão.
+ */
 export interface Fonte {
   documento: string;
   arquivo?: string;
   proveniencia?: string;
   localizador?: string;
   localizador_pdf?: string;
-  url_oficial?: string;
 }
 
 export interface Vigencia {
@@ -102,6 +108,7 @@ export interface Estrutura {
   areas_conhecimento: Array<{ id: string; etapa: string; nome: string; documento?: string }>;
   componentes_curriculares: Array<{
     id: string; etapa: string; nome: string; sigla_codigo: string | null; area: string;
+    /** Anos em que o componente está presente. Explícito desde `dados-2026.08` nos componentes do EF (antes era `null` quando presente em todos os anos). */
     tem_aprendizagens_proprias: boolean; presenca?: { anos: number[] } | null;
     destaque_legal?: string; nota?: string; fonte?: Fonte;
   }>;

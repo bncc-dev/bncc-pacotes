@@ -23,7 +23,7 @@ r = await chamar('bncc_lookup', { codigo: 'EF01CI99' });
 t('lookup inexistente: isError + pedagógico', r.erro && /não existe na BNCC/.test(r.dados.erro));
 
 r = await chamar('bncc_buscar', { texto: 'fracoes', componente: 'MA', limite: 3 });
-t('buscar: normalização + limite + total', !r.erro && r.dados.total === 6 && r.dados.exibindo === 3);
+t('buscar: normalização + limite + total', !r.erro && r.dados.total === 22 && r.dados.exibindo === 3);
 
 r = await chamar('bncc_listar', { etapa: 'EF', componente: 'MA', ano: 4 });
 t('listar EF', !r.erro && r.dados.total === 28);
@@ -46,7 +46,7 @@ r = await chamar('bncc_estrutura', { colecao: 'modalidades' });
 t('estrutura: coleção EJA', !r.erro && r.dados[0].id === 'eja');
 
 r = await chamar('bncc_estatisticas', {});
-t('estatísticas com versão', !r.erro && r.dados.total === 1580 && r.dados.versao.data_version === 'dados-2026.07');
+t('estatísticas com versão', !r.erro && r.dados.total === 1721 && r.dados.versao.data_version === 'dados-2026.08');
 
 await cliente.close();
 console.log(`MCP: ${ok.length} ok, ${falhas.length} falhas`);

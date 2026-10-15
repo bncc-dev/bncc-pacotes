@@ -83,8 +83,8 @@ published, in [bncc-benchmark](https://github.com/bncc-dev/bncc-benchmark).
 
 | Directory | Publishes | Version |
 |---|---|---|
-| `packages/bncc` | npm [`@bncc/dados`](https://www.npmjs.com/package/@bncc/dados): embedded data + typed API | `0.6.0` |
-| `packages/mcp` | npm [`@bncc/mcp`](https://www.npmjs.com/package/@bncc/mcp): the MCP server, via npx | `0.4.0` |
+| `packages/bncc` | npm [`@bncc/dados`](https://www.npmjs.com/package/@bncc/dados): embedded data + typed API | `0.7.0` |
+| `packages/mcp` | npm [`@bncc/mcp`](https://www.npmjs.com/package/@bncc/mcp): the MCP server, via npx | `0.6.0` |
 | `python/` | PyPI [`bncc`](https://pypi.org/project/bncc/): the equivalent API in snake_case | `0.5.0` |
 | `mcp-worker/` | the same MCP hosted at `mcp.bncc.dev` (Cloudflare Workers) | live |
 

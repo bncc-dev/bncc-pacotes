@@ -22,6 +22,32 @@ pedagógica registrada.
 
 ## `@bncc/dados`
 
+### 0.7.0 — a publicar
+- Dados `dados-2026.08` do bncc-dados (schema-v1.1.0, mudança aditiva; DOI
+  da versão 10.5281/zenodo.23403987). Nenhum código de habilidade e nenhum
+  texto de aprendizagem mudou. O que muda:
+  - 11 ids de contexto removidos por defeito de extração (nomes partidos pela
+    quebra de linha da planilha, nota de rodapé absorvida em "Oralidade",
+    marcador "(cont.)" em Computação), com mapa id antigo → id novo na
+    decisão 14 do `DECISOES.md` do bncc-dados. Contextos do EF passam de 879
+    para 873 (objetos de conhecimento de 780 para 775); objetos de Computação
+    de 61 para 59. Habilidades que apontavam para ids removidos (EF07CI12 a
+    16, EF09LI16, EF67LP10, EF69LP10 a 12, EF69LP47, EF69LP48, EF09CO05)
+    passam a apontar para o id substituto.
+  - Competências gerais e específicas ganham `fonte.localizador_pdf`; textos
+    de `cg-09` e `ef-comp-lp-ce-04` corrigidos pelo PDF; 6 registros de EI/EF
+    com a página corrigida em `fonte.localizador_pdf`.
+  - `presenca` explícita nos componentes do EF; componentes do EM sem
+    habilidades próprias ganham `proveniencia` e `localizador`.
+  - `marcos-legais.json`: `ementa` passa a ser só o texto oficial (pode ser
+    `null`) e o comentário do projeto vai para `nota`. O pacote não expõe
+    consulta a marcos legais; o arquivo viaja nos dados embutidos.
+- Tipos: `Fonte.url_oficial` removido (nunca era preenchido; saiu do schema).
+  Minor pela remoção de ids e pela mudança de schema.
+- `scripts/sincronizar-dados.mjs`: sem tag exata no HEAD, aceita a tag
+  `dados-*` mais recente alcançável quando a árvore `dados/` é idêntica à
+  dela (caso do commit de docs que registra o DOI depois da tag).
+
 ### 0.6.1 — 15/out/2026
 - Mensagem de erro de `porCodigo` para código bem formado e inexistente deixa
   de dizer que "a numeração tem lacunas legítimas". Não tem: decodificando
@@ -98,6 +124,15 @@ pedagógica registrada.
 
 ## `@bncc/mcp`
 
+### 0.5.0 — a publicar
+- Reempacota com `@bncc/dados` 0.7.0 (dados `dados-2026.08`; ver a entrada
+  do `@bncc/dados` e a decisão 14 do `DECISOES.md` do bncc-dados para o mapa
+  de ids removidos). `bncc_estatisticas` passa a reportar
+  `data_version: dados-2026.08`. Sem mudança nas tools nem nas instruções.
+- Teste de aceitação (`scripts/teste-completo.mjs`) atualizado: a busca por
+  `fracoes` em MA devolve 22 desde o ranking da 0.5.0 do `@bncc/dados`, não 6,
+  e o total de aprendizagens é 1.721 desde a inclusão de Computação.
+
 ### 0.4.1 — 15/out/2026
 - Reempacota com `@bncc/dados` 0.6.1 (a 0.4.0 fixava a 0.5.0): o servidor
   stdio inclui `indiceBusca` no objeto de consultas. Regra (2) das instruções
@@ -142,6 +177,14 @@ pedagógica registrada.
   dependência: o pacote saiu ininstalável. Origem da regra D6.
 
 ## `bncc` (PyPI)
+
+### 0.6.0 — a publicar
+- Dados `dados-2026.08` embutidos, espelho do npm 0.7.0: 11 ids de contexto
+  removidos por defeito de extração (mapa na decisão 14 do `DECISOES.md` do
+  bncc-dados; DOI da versão 10.5281/zenodo.23403987), competências com
+  `fonte.localizador_pdf`, `ementa` só oficial e `nota` nos marcos legais,
+  `fonte.url_oficial` removido. Nenhum código nem texto de aprendizagem
+  mudou. Paridade com o npm conferida pela fixture.
 
 ### 0.5.1 — 15/out/2026
 - Mensagem de erro de `por_codigo` para código inexistente, espelho do npm

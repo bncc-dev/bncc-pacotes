@@ -35,4 +35,4 @@ references:
       - name: "Profy"
     repository-code: "https://github.com/bncc-dev/bncc-dados"
     license: CC-BY-4.0
-    notes: "Dataset embutido nos pacotes; DOI de conceito 10.5281/zenodo.21625233."
+    notes: "Dataset embutido nos pacotes (versão dados-2026.08, DOI 10.5281/zenodo.23403987); DOI de conceito 10.5281/zenodo.21625233."

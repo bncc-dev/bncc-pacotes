@@ -36,7 +36,7 @@ decodificar('EM13LGG103');    // anatomia do código: etapa, área, competência
 progressaoEI('EI02TS01');     // o mesmo objetivo nas 3 faixas etárias (alinhamento oficial)
 estrutura();                  // etapas, áreas, componentes, campos, competências
 estatisticas();               // { total: 1580, ensinoFundamental: 1304, ... }
-versao();                     // { data_version: 'dados-2026.07', commit, checksums }
+versao();                     // { data_version: 'dados-2026.08', commit, checksums }
 ```
 
 **Anti-alucinação por design**: código que não existe **lança erro** explicativo ("código válido na forma, mas não existe na BNCC", com a regra de continuidade da numeração), nunca null silencioso.

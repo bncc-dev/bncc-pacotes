@@ -1,15 +1,15 @@
 {
-  "data_version": "dados-2026.07.1",
+  "data_version": "dados-2026.08",
   "origem": "github.com/bncc-dev/bncc-dados",
-  "commit": "58eb2098a5e047b4627bfdd95f52ee0a6f545112",
+  "commit": "9c268978efa2aa250834c6a9edb6074432752838",
   "sincronizado_de": "bncc-dados",
   "checksums_sha256": {
-    "estrutura.json": "3c24cc32c4227ce372f39fe276216f8c6899708820156053824615706eb8bd74",
-    "educacao-infantil.json": "061d8b1709bef22b6e56d7cb7e07c6863f0d76ae464e07e932d1f41dae462801",
-    "ensino-fundamental.json": "892f7131657ed8706877b066c391b24cc5906c1359ec57ce68603e1b49851dfc",
+    "estrutura.json": "bb909eb1c9e41f37e0703b38b36d3a77dbc01cb28614aadf144d339bf258612e",
+    "educacao-infantil.json": "80d35189eaec4053db95a2b550aceb3de747715eb0afcfe9f3ef9a27a86373a1",
+    "ensino-fundamental.json": "bdc84d6bb6f4b38ca1331b0319cb04ea8f9240d076d3097928124c0b9ba38c0b",
     "ensino-medio.json": "febcb29cf1df94eb72344d26375d623e558c39264c6dcb9c37253e6c730311a4",
-    "marcos-legais.json": "5794179594f50e04aea367b7dfe37d3ef6ae900213ea25bbff8e09397015deb4",
+    "marcos-legais.json": "a5a55dd3dd294c05db8d5f8dad5e5cc55c5c683c15a56b9dcff4288f4e628fbe",
     "perfis.json": "2a684cadc8d9cc450143b4bb32fafd0b5ffb3b6e4e50d0a646345ea17031e57b",
-    "computacao.json": "7863d5a4bc21236e285e3f7d30f0f06182c50573bc61694899cc2f9207b65ad3"
+    "computacao.json": "6192c381961c55abfc886415e8ae60cc5e16ed783496c63d09bef9c6302b4f69"
   }
 }

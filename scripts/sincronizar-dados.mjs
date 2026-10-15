@@ -42,13 +42,25 @@ for (const [origem, nome] of ARQUIVOS) {
 }
 // A data-version preferida é a tag exata do commit sincronizado (cobre patches
 // como dados-2026.07.1, em que a vigência dos registros não muda). Sem tag
-// exata, cai no `vigencia.desde` do primeiro registro.
+// exata, aceita a tag `dados-*` mais recente alcançável a partir do HEAD desde
+// que a árvore `dados/` seja idêntica à dela (caso comum: um commit de docs,
+// como o registro do DOI, entra na main depois da tag). Se a árvore divergir,
+// cai no `vigencia.desde` do primeiro registro.
 let dataVersion;
 try {
   dataVersion = git('describe --tags --exact-match --match "dados-*"');
 } catch {
-  const ef = JSON.parse(readFileSync(join(dadosDir, 'bncc-2018', 'ensino-fundamental.json'), 'utf8'));
-  dataVersion = ef.habilidades[0].vigencia.desde;
+  dataVersion = null;
+  try {
+    const tag = git('describe --tags --abbrev=0 --match "dados-*"');
+    const diff = git(`diff --stat ${tag} HEAD -- dados/`);
+    if (diff === '') dataVersion = tag;
+    else console.warn(`aviso: dados/ difere da tag ${tag}; usando vigencia.desde como data_version.`);
+  } catch {}
+  if (!dataVersion) {
+    const ef = JSON.parse(readFileSync(join(dadosDir, 'bncc-2018', 'ensino-fundamental.json'), 'utf8'));
+    dataVersion = ef.habilidades[0].vigencia.desde;
+  }
 }
 
 const versao = {
