@@ -41,7 +41,7 @@ function limitar<T>(itens: T[], limite: number) {
 export function instrucoesServidor(bncc: Consultas, dataVersion: string): string {
   const total = bncc.estatisticas().total.toLocaleString('pt-BR');
   return `Dados oficiais e verificados da BNCC (Base Nacional Comum Curricular brasileira): ${total} aprendizagens das três etapas, cada uma com fonte oficial (página do PDF homologado).
-Regras: (1) nunca invente códigos ou textos de habilidade; se um código não está nos dados, ele não existe na BNCC; (2) a numeração tem lacunas legítimas; (3) ao citar uma aprendizagem para o usuário, inclua o código e, quando relevante, a fonte.
+Regras: (1) nunca invente códigos ou textos de habilidade; se um código não está nos dados, ele não existe na BNCC; (2) não deduza códigos a partir de vizinhos: a numeração é contínua dentro de cada grupo, e nos códigos de EM a centena é a competência (depois de EM13LGG105 vem EM13LGG201); (3) ao citar uma aprendizagem para o usuário, inclua o código e, quando relevante, a fonte.
 Etapas: EI (objetivos por campo de experiências e grupo etário), EF (habilidades por componente e ano), EM (habilidades por área, sem seriação). Códigos: EI02TS01, EF67LP08, EM13LGG103.
 O complemento de Computação (anexo ao Parecer CNE/CEB 2/2022, vigente e oficial) está incluído: códigos CO nas três etapas (ex.: EI03CO01, EF03CO05, EF15CO01, EM13CO26), organizados por eixo (Pensamento Computacional, Mundo Digital, Cultura Digital).
 Versão dos dados: ${dataVersion}.`;

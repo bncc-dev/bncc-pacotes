@@ -41,8 +41,10 @@ isso é vigiada pelo contrato de paridade, abaixo.
 4. **Zero dependências de runtime** nos pacotes de dados. O MCP depende só do
    SDK oficial e de `zod@^3` (não subir para zod 4 enquanto o SDK não suportar).
    Dependência nova precisa de justificativa no PR.
-5. **Nunca invente códigos ou textos de habilidade.** Se um código não está no
-   dataset, ele não existe na BNCC: a numeração tem lacunas legítimas.
+5. **Nunca invente códigos ou textos de habilidade.** Se um código bem formado não
+   está no dataset, ele não existe na BNCC. Não deduza códigos a partir de
+   vizinhos: a numeração é contínua dentro de cada grupo, e nos códigos de EM a
+   centena é a competência (depois de `EM13LGG105` vem `EM13LGG201`).
 
 ## Rodando localmente
 

@@ -170,7 +170,7 @@ export function criarConsultas(dados: DadosBNCC) {
     const reg = porCodigoMapa.get(cod);
     if (!reg) {
       decodificar(cod);
-      throw new Error(`${cod}: código válido na forma, mas não existe na BNCC (dica: a numeração tem lacunas legítimas)`);
+      throw new Error(`${cod}: código válido na forma, mas não existe na BNCC. A numeração é contínua dentro de cada grupo (etapa, anos, componente ou área + competência); nos códigos de EM a centena é a competência, não uma sequência`);
     }
     return resolver(reg);
   }

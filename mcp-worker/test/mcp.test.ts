@@ -102,7 +102,7 @@ describe('tools via HTTP', () => {
   it('bncc_lookup com código inexistente retorna isError pedagógico', async () => {
     const { msg } = await rpc(toolCall('bncc_lookup', { codigo: 'EF67LP99' }));
     expect(msg.result.isError).toBe(true);
-    expect(conteudo(msg).erro).toMatch(/lacunas/i);
+    expect(conteudo(msg).erro).toMatch(/não existe na BNCC/i);
   });
 
   it('bncc_estatisticas traz total e a versão dos dados', async () => {

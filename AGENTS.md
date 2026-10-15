@@ -16,7 +16,7 @@ Monorepo das interfaces para máquina do bncc.dev: pacote npm `@bncc/dados`, ser
 
 - API em português: `porCodigo()` (TS, camelCase) / `por_codigo()` (Python, snake_case). Mesma semântica sempre.
 - Tools MCP: prefixo `bncc_`, snake_case, descrições em pt-BR escritas para o agente (com regra anti-alucinação). Descrição de tool é produto: revise como copy.
-- Erros ensinam: mensagens explicam ("a numeração da BNCC tem lacunas legítimas"), nunca retornam null silencioso.
+- Erros ensinam: mensagens explicam ("código válido na forma, mas não existe na BNCC", com a regra de continuidade da numeração), nunca retornam null silencioso.
 - Documentos públicos sem travessão (—); use vírgula, dois-pontos ou parênteses.
 
 ## Comandos

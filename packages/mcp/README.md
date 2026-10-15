@@ -39,7 +39,7 @@ claude mcp add bncc-local -- node caminho/para/packages/mcp/dist/servidor.js
 
 Convergência de nomes com o bncc-mcp pioneiro (dfdb76) nas 4 tools equivalentes. Sem a camada Mapa de Foco (licença CC BY-NC do Instituto Reúna).
 
-As respostas incluem sempre a fonte oficial; erros explicam em vez de inventar ("a numeração da BNCC tem lacunas legítimas").
+As respostas incluem sempre a fonte oficial; erros explicam em vez de inventar ("código válido na forma, mas não existe na BNCC", com a regra de continuidade da numeração).
 
 Testado ponta a ponta no Claude Code (health-check ✔ Connected em 09/07/2026).
 

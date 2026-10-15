@@ -39,7 +39,7 @@ estatisticas();               // { total: 1580, ensinoFundamental: 1304, ... }
 versao();                     // { data_version: 'dados-2026.07', commit, checksums }
 ```
 
-**Anti-alucinação por design**: código que não existe **lança erro** explicativo ("a numeração da BNCC tem lacunas legítimas"), nunca null silencioso.
+**Anti-alucinação por design**: código que não existe **lança erro** explicativo ("código válido na forma, mas não existe na BNCC", com a regra de continuidade da numeração), nunca null silencioso.
 
 **Runtimes sem filesystem** (Cloudflare Workers etc.): use `@bncc/dados/nucleo` + os JSONs pelos subpaths `@bncc/dados/dados/*.json`. Exemplo completo no README do pacote.
 

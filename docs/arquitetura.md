@@ -28,7 +28,7 @@ flowchart LR
 2. **Uma implementação de consulta por runtime, nunca duas no mesmo.** O MCP importa o `@bncc/dados`; handlers têm ~5 linhas. A duplicação inevitável (npm vs PyPI, runtimes diferentes) é vigiada pelo contrato de paridade (ver `docs/paridade.md`).
 3. **Zero dependências de runtime no pacote de dados.** O `@bncc/dados` usa só Node stdlib; o `bncc` (PyPI) só stdlib Python (pandas é extra opcional). O MCP depende apenas do SDK oficial + zod.
 4. **API em português.** Decisão de produto (público dev BR, dado em pt-BR): `porCodigo()` no npm, `por_codigo()` no PyPI. A mesma semântica, a convenção de cada ecossistema.
-5. **Erros ensinam.** Código inexistente responde "a numeração da BNCC tem lacunas legítimas" em vez de null silencioso. Anti-alucinação é requisito, não detalhe.
+5. **Erros ensinam.** Código inexistente responde "código válido na forma, mas não existe na BNCC", explicando que a numeração é contínua dentro de cada grupo, em vez de null silencioso. Anti-alucinação é requisito, não detalhe.
 
 ## Por que um monorepo
 

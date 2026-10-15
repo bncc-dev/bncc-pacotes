@@ -53,7 +53,7 @@ describe('@bncc/mcp', () => {
   it('bncc_lookup com código inexistente retorna isError e mensagem pedagógica', async () => {
     const resp = await cliente.callTool({ name: 'bncc_lookup', arguments: { codigo: 'EF01CI99' } });
     expect(resp.isError).toBe(true);
-    expect(conteudo(resp).erro).toMatch(/lacunas/i);
+    expect(conteudo(resp).erro).toMatch(/não existe na BNCC/i);
   });
 
   it('bncc_buscar respeita limite e informa total', async () => {

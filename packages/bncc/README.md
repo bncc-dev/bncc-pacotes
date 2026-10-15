@@ -48,7 +48,7 @@ progressaoEI('EI02TS01');   // EI01TS01 → EI02TS01 → EI03TS01
 | `estatisticas()` | Contagens do dataset |
 | `versao()` | Data-version, commit de origem e checksums dos dados embutidos |
 
-Regras que o pacote respeita (e você deveria também): códigos que não existem lançam erro em vez de inventar; a numeração tem lacunas legítimas; registros trazem `vigencia` para filtrar aprendizagens revogadas em versões futuras.
+Regras que o pacote respeita (e você deveria também): códigos que não existem lançam erro em vez de inventar; a numeração é contínua dentro de cada grupo, então não deduza códigos a partir de vizinhos; registros trazem `vigencia` para filtrar aprendizagens revogadas em versões futuras.
 
 ## Uso sem sistema de arquivos (Workers, Deno Deploy, bundlers)
 
