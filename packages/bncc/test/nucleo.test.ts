@@ -41,7 +41,7 @@ describe('núcleo injetável (criarConsultas)', () => {
     expect(c.buscar('fake news').length).toBeGreaterThan(0);
     expect(c.habilidadesEF({ componente: 'LP', ano: 6 }).length).toBeGreaterThan(0);
     expect(c.progressaoEI('EI02TS01').objetivos).toHaveLength(3);
-    expect(() => c.porCodigo('EF67LP99')).toThrow(/lacunas legítimas/);
+    expect(() => c.porCodigo('EF67LP99')).toThrow(/não existe na BNCC/);
   });
 });
 

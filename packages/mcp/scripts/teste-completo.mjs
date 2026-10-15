@@ -20,7 +20,7 @@ let r = await chamar('bncc_lookup', { codigo: 'ef67lp08' });
 t('lookup case-insensitive + fonte', !r.erro && r.dados.codigo === 'EF67LP08' && /página PDF/.test(r.dados.fonte.localizador_pdf));
 
 r = await chamar('bncc_lookup', { codigo: 'EF01CI99' });
-t('lookup inexistente: isError + pedagógico', r.erro && /lacunas/.test(r.dados.erro));
+t('lookup inexistente: isError + pedagógico', r.erro && /não existe na BNCC/.test(r.dados.erro));
 
 r = await chamar('bncc_buscar', { texto: 'fracoes', componente: 'MA', limite: 3 });
 t('buscar: normalização + limite + total', !r.erro && r.dados.total === 6 && r.dados.exibindo === 3);

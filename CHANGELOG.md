@@ -15,15 +15,20 @@ pedagógica registrada.
   nota de que o MCP hospedado roda em Cloudflare Workers com código em
   `mcp-worker/`; versões da tabela do README atualizadas para 0.6.0, 0.4.0 e
   0.5.0; dependências de runtime do `@bncc/mcp` declaradas.
-- `@bncc/mcp`: o servidor stdio inclui `indiceBusca` no objeto de consultas,
-  para compilar com `@bncc/dados` 0.6.0. Sem mudança nas tools; a 0.4.0
-  publicada fixa `@bncc/dados` 0.5.0 e segue funcionando.
 - Abertura do repositório: licenças separadas para código e dados, arquivos de
   comunidade (CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, DECISOES) e correção do
   `sincronizado_de`, que gravava caminho local no `VERSAO.json` embutido nos
   pacotes.
 
 ## `@bncc/dados`
+
+### 0.6.1 — a publicar
+- Mensagem de erro de `porCodigo` para código bem formado e inexistente deixa
+  de dizer que "a numeração tem lacunas legítimas". Não tem: decodificando
+  cada código, as sequências vão de 1 a n em todos os grupos (contrato 5b do
+  bncc-dados). A mensagem passa a explicar a continuidade e a centena dos
+  códigos de EM (depois de `EM13LGG105` vem `EM13LGG201`). Sem mudança de
+  dado nem de comportamento.
 
 ### 0.6.0 — 26/set/2026
 - Ranking exportado para interfaces web (DECISOES.md D10): subpath
@@ -93,6 +98,13 @@ pedagógica registrada.
 
 ## `@bncc/mcp`
 
+### 0.4.1 — a publicar
+- Reempacota com `@bncc/dados` 0.6.1 (a 0.4.0 fixava a 0.5.0): o servidor
+  stdio inclui `indiceBusca` no objeto de consultas. Regra (2) das instruções
+  ao agente deixa de afirmar "lacunas legítimas" e passa a dizer para não
+  deduzir códigos a partir de vizinhos, com a explicação da centena nos
+  códigos de EM. Sem mudança nas tools.
+
 ### 0.4.0 — 26/set/2026
 - Reempacota com `@bncc/dados` 0.5.0: `bncc_buscar` devolve os resultados por
   relevância e cada um traz `pontuacao` (issue #14). A descrição da tool diz
@@ -130,6 +142,11 @@ pedagógica registrada.
   dependência: o pacote saiu ininstalável. Origem da regra D6.
 
 ## `bncc` (PyPI)
+
+### 0.5.1 — a publicar
+- Mensagem de erro de `por_codigo` para código inexistente, espelho do npm
+  0.6.1: sem "lacunas legítimas", com a regra de continuidade. Dados
+  inalterados.
 
 ### 0.5.0 — 26/set/2026
 - `indice_busca()` e o módulo `bncc._busca` (`preparar_indice`, `ranquear`),

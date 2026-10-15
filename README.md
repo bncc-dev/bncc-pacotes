@@ -59,8 +59,8 @@ Que as duas respondam idêntico não é promessa: é
 Sete tools (`bncc_lookup`, `bncc_buscar`, `bncc_listar`, `bncc_decodificar`,
 `bncc_estatisticas`, `bncc_estrutura`, `bncc_progressao_ei`) que dão ao agente a
 BNCC verificada, com fonte oficial em cada resposta. Códigos inexistentes
-recebem um erro que explica que a numeração da BNCC tem lacunas legítimas, em
-vez de um `null` que convida à alucinação.
+recebem um erro que explica que um código bem formado ausente dos dados não
+existe na BNCC, em vez de um `null` que convida à alucinação.
 
 **Local**, sem instalação permanente:
 

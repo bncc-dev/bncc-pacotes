@@ -60,8 +60,8 @@ That both give identical answers is not a promise: the same golden queries
 Seven tools (`bncc_lookup`, `bncc_buscar`, `bncc_listar`, `bncc_decodificar`,
 `bncc_estatisticas`, `bncc_estrutura`, `bncc_progressao_ei`) that give the agent
 the verified BNCC, with the official source in every response. Codes that do not
-exist get an error explaining that BNCC numbering has legitimate gaps, instead of
-a `null` that invites hallucination.
+exist get an error explaining that a well-formed code absent from the data does
+not exist in the BNCC, instead of a `null` that invites hallucination.
 
 **Local**, without a permanent install:
 
