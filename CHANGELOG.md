@@ -10,6 +10,11 @@ pedagógica registrada.
 
 ## Não publicado
 
+- Documentação (sem mudança de código): `README.en.md` em inglês; titularidade em
+  nome da Profy Tecnologias Educacionais Ltda no `LICENSE-CODIGO.md` e no README;
+  nota de que o MCP hospedado roda em Cloudflare Workers com código em
+  `mcp-worker/`; versões da tabela do README atualizadas para 0.6.0, 0.4.0 e
+  0.5.0; dependências de runtime do `@bncc/mcp` declaradas.
 - `@bncc/mcp`: o servidor stdio inclui `indiceBusca` no objeto de consultas,
   para compilar com `@bncc/dados` 0.6.0. Sem mudança nas tools; a 0.4.0
   publicada fixa `@bncc/dados` 0.5.0 e segue funcionando.

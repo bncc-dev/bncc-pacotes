@@ -1,5 +1,7 @@
 # [bncc.dev](https://bncc.dev) · pacotes, MCP e API de consulta
 
+**Português** · [English](README.en.md)
+
 [![CI](https://github.com/bncc-dev/bncc-pacotes/actions/workflows/ci.yml/badge.svg)](https://github.com/bncc-dev/bncc-pacotes/actions/workflows/ci.yml)
 [![npm @bncc/dados](https://img.shields.io/npm/v/@bncc/dados?label=npm%20%40bncc%2Fdados)](https://www.npmjs.com/package/@bncc/dados)
 [![PyPI bncc](https://img.shields.io/pypi/v/bncc?label=PyPI%20bncc)](https://pypi.org/project/bncc/)
@@ -9,8 +11,9 @@
 A Base Nacional Comum Curricular (BNCC) consumível em uma linha de código. As
 1.721 aprendizagens da educação básica brasileira, verificadas contra os
 documentos oficiais do MEC/CNE, como pacote npm, pacote PyPI e servidor MCP para
-agentes de IA. Dados embutidos, zero dependências de runtime, zero rede: a
-consulta acontece na sua máquina.
+agentes de IA. Dados embutidos e zero rede: a consulta acontece na sua
+máquina. O `@bncc/dados` e o `bncc` (PyPI) não têm dependências de runtime; o
+`@bncc/mcp` usa o SDK oficial do MCP (MIT) e o `zod` (MIT).
 
 O dataset não nasce aqui, vem do [bncc-dados](https://github.com/bncc-dev/bncc-dados).
 Este repositório são as **interfaces para máquina** desse dataset.
@@ -68,6 +71,10 @@ vez de um `null` que convida à alucinação.
 **Hospedado**, sem instalação nenhuma e sem API key: `https://mcp.bncc.dev`
 (streamable HTTP).
 
+O servidor hospedado roda em Cloudflare Workers, com o código em
+[`mcp-worker/`](mcp-worker/), também sob MIT. As tools são as mesmas da versão
+local, que não depende de nenhum serviço externo.
+
 Quanto isso muda a resposta de um modelo está medido, com dados brutos
 publicados, no [bncc-benchmark](https://github.com/bncc-dev/bncc-benchmark).
 
@@ -75,9 +82,9 @@ publicados, no [bncc-benchmark](https://github.com/bncc-dev/bncc-benchmark).
 
 | Diretório | Publica | Versão |
 |---|---|---|
-| `packages/bncc` | npm [`@bncc/dados`](https://www.npmjs.com/package/@bncc/dados): dados embutidos + API tipada | `0.3.1` |
-| `packages/mcp` | npm [`@bncc/mcp`](https://www.npmjs.com/package/@bncc/mcp): o servidor MCP, via npx | `0.2.0` |
-| `python/` | PyPI [`bncc`](https://pypi.org/project/bncc/): a API equivalente em snake_case | `0.2.0` |
+| `packages/bncc` | npm [`@bncc/dados`](https://www.npmjs.com/package/@bncc/dados): dados embutidos + API tipada | `0.6.0` |
+| `packages/mcp` | npm [`@bncc/mcp`](https://www.npmjs.com/package/@bncc/mcp): o servidor MCP, via npx | `0.4.0` |
+| `python/` | PyPI [`bncc`](https://pypi.org/project/bncc/): a API equivalente em snake_case | `0.5.0` |
 | `mcp-worker/` | o mesmo MCP hospedado em `mcp.bncc.dev` (Cloudflare Workers) | no ar |
 
 Os dados embutidos são sincronizados de um commit específico do bncc-dados por
@@ -128,8 +135,11 @@ passando nos testes.
 
 ## Quem mantém
 
-O bncc.dev é mantido pela [Profy](https://www.profy.ai/). A Profy opera produtos
-que usam LLMs sobre a BNCC; estes pacotes são a camada verificada que esses
+O bncc.dev é mantido pela [Profy Tecnologias Educacionais Ltda](https://profy.com.br)
+(CNPJ 53.669.787/0001-45, Brasília, Brasil), titular dos direitos sobre o código
+deste repositório. Responsável técnico: Marcos Roberto Martins de Oliveira.
+
+A Profy opera produtos que usam LLMs sobre a BNCC; estes pacotes são a camada verificada que esses
 produtos consomem, publicada aberta para que qualquer um consuma a mesma coisa.
 
 ## Licenças
